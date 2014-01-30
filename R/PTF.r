@@ -1,3 +1,5 @@
+# Utility functions for Quant Reconstructions
+
 rand.t.test <- function(object, ...) UseMethod("rand.t.test")
 
 rand.t.test.default <- function(object, ...) { 

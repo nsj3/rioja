@@ -1,5 +1,9 @@
 rioja Change Log
 
+Version 0.8-7
+changed into to long in chclust c++ code to handle large data
+
+
 Version 0.8-6
 * Released on CRAN 19/11/13
 Fixed incompatabilities in C++ code

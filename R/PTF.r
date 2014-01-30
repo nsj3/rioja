@@ -1,4 +1,4 @@
-# Utility functions for Quant Reconstructions
+# Utility functions for Quant Reconstructions II
 
 rand.t.test <- function(object, ...) UseMethod("rand.t.test")
 

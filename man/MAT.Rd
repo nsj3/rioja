@@ -62,7 +62,7 @@ paldist2(y1, y2, dist.method="sq.chord")
   \item{add.ref}{ add 1:1 line on plot. }
   \item{add.smooth}{ add loess smooth to plot. }
   \item{cv.method}{ cross-validation method, either "lgo" or "bootstrap". }
-  \item{verbose}{ logical or integer to show feedback during cross-validaton. If TRUE print feedback every 50 cycles, if integer, use this value. }
+  \item{verbose}{ logical to show feedback during cross-validaton. }
   \item{nboot}{ number of bootstrap samples. }  
   \item{ngroups}{ number of groups in leave-group-out cross-validation, or a vector contain leave-out group menbership. }  
   \item{h.cutoff}{ cutoff for h-block cross-validation.  Only training samples greater than \code{h.cutoff} from each test sample will be used. }

@@ -171,7 +171,10 @@ performance.default <- function(object, ...) {
   predict.func <- paste("predict.internal", class(object)[1], sep=".")
   result <- matrix(nrow=nsam, ncol=nres)
   object$cv.summary$cv.method=METHODS[cv.method]
-  feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
+  if (verbose) {
+    pb <- txtProgressBar(min = 0, max = 1, style = 3)
+    on.exit(close(pb))
+  }
   if (cv.method == 1) {
     for (i in 1:nsam) {
       y <- object$y[-i, ]
@@ -182,18 +185,23 @@ performance.default <- function(object, ...) {
 #      xHat <- do.call(predict, args=list(object=quote(mod), y=quote(y.test), lean=TRUE))
       result[i, ] <- xHat
       if (verbose) {
-          if (i %% feedback == 0) {
-            cat (paste("LOO sample", i, "\n"))
-            flush.console()
-          }
-      }
+        setTxtProgressBar(pb, i/nsam)
+      }        
+#        if (verbose) {
+#          if (i %% feedback == 0) {
+#            cat (paste("LOO sample", i, "\n"))
+#            flush.console()
+#          }
+#      }
     }
   } 
   if (cv.method == 2) {
     if (length(ngroups) > 1) {
-       grps <- as.integer(ngroups)
-       ngroups <- length(unique(ngroups))
-       o <- 1:nsam
+      if (length(ngroups) != nsam)
+        stop("length of leave-out groups does not equal number of samples")
+      grps <- as.integer(ngroups)
+      ngroups <- length(unique(ngroups))
+      o <- 1:nsam
     }
     else {
       o <- sample(nsam)
@@ -208,9 +216,12 @@ performance.default <- function(object, ...) {
       xHat <- do.call(predict.func, args=list(object=quote(mod), y=quote(y.test), lean=TRUE))
       result[out, ] <- xHat
       if (verbose) {
-            cat (paste("Leavout group", i, "\n"))
-            flush.console()
+        setTxtProgressBar(pb, i/ngroups)
       }
+#        if (verbose) {
+#            cat (paste("Leavout group", i, "\n"))
+#            flush.console()
+#      }
     }
     object$cv.summary$ngroups=ngroups
   } 
@@ -229,10 +240,13 @@ performance.default <- function(object, ...) {
       xHat <- do.call(predict.func, args=list(object=quote(mod), y=quote(y.test), lean=TRUE))
       res2[out, , i] <- xHat
       if (verbose) {
-          if (i %% feedback == 0) {
-            cat (paste("Bootstrap sample", i, "\n"))
-            flush.console()
-          }
+        setTxtProgressBar(pb, i/nboot)
+      }
+#        if (verbose) {
+#          if (i %% feedback == 0) {
+#            cat (paste("Bootstrap sample", i, "\n"))
+#            flush.console()
+#          }
        }
     }
     result <- apply(res2, c(1,2), mean, na.rm=TRUE)

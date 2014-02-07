@@ -47,8 +47,8 @@ LWR(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE,
   \item{full}{ logical to show head and tail of output in summaries. }
   \item{match.data}{ logical indicate the function will match two species datasets by their column names.  You should only set this to \code{FALSE} if you are sure the column names match exactly. }
   \item{lean}{ logical to exclude some output from the resulting models (used when cross-validating to speed calculations). }
-  \item{cv.method}{ cross-validation method, either "loo", "lgo" or "bootstrap". }
-  \item{verbose}{ logical or integer to show feedback during cross-validaton. If TRUE print feedback every 50 cycles, if integer, use this value. }
+  \item{cv.method}{ cross-validation method, either "lgo" or "bootstrap". }
+  \item{verbose}{ logical to show feedback during cross-validaton. }
   \item{nboot}{ number of bootstrap samples. }  
   \item{ngroups}{ number of groups in leave-group-out cross-validation. }
   \item{h.cutoff}{ cutoff for h-block cross-validation.  Only training samples greater than \code{h.cutoff} from each test sample will be used. }

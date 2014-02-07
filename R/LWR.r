@@ -21,9 +21,14 @@ LWR <- function(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE, fit.model
   colnames(dist.n) <- paste("N", sprintf("%02d", 1:k), sep="")
   nsam <- nrow(y)
   ncol.res <- NA
-  feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
+  #feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
   cut1 <- 0
   cut2 <- 0
+  if (verbose) {
+    pb <- txtProgressBar(min = 0, max = 1, style = 3)
+    on.exit(close(pb))
+  }
+  
   if (funname=="MLRC") {
      cut1 <- 2
      cut2 <- 0.01
@@ -31,11 +36,14 @@ LWR <- function(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE, fit.model
   if (fit.model) {
     for (i in 1:nsam) {
       if (verbose) {
-          if (i %% feedback == 0) {
-            cat (paste("Fitting sample", i, "\n"))
-            flush.console()
-          }
+        setTxtProgressBar(pb, i/nsam)
       }
+#      if (verbose) {
+#          if (i %% feedback == 0) {
+#            cat (paste("Fitting sample", i, "\n"))
+#            flush.console()
+#          }
+#      }
       ytrain <- y[ind[, i], ]
       N <- apply(ytrain>0, 2, sum)
       Mx <- apply(ytrain, 2, sum)
@@ -101,13 +109,13 @@ predict.LWR <- function(object, newdata=NULL, k=object$k, sse=FALSE, nboot=100, 
   x1 <- object$x
   diss <- paldist2(y1, y2, dist.method=object$dist.method)
   ind <- apply(diss, 2, order)
-  ind <- ind[n:(n+k-1), ]
-  dist.n <- t(apply(diss, 2, sort)[n:(n+k-1), ])
+  ind <- ind[n:(n+k-1), drop=FALSE]
+  dist.n <- t(apply(diss, 2, sort)[n:(n+k-1), drop=FALSE])
   rownames(dist.n) <- rownames(y2)
   colnames(dist.n) <- paste("N", sprintf("%02d", 1:k), sep="")
   ncol.res <- NA
   for (i in 1:nrow(y2)) {
-    ytrain <- y1[ind[, i], ]
+    ytrain <- y1[ind[, i], drop=FALSE]
     xtrain <- x1[ind[, i]]
     mx <- apply(ytrain, 2, sum)
     ytrain <- ytrain[, mx>0]
@@ -203,13 +211,16 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
   nres <- ncol(object$fitted.values)
   result <- matrix(nrow=nsam, ncol=nres)
   object$cv.summary$cv.method=METHODS[cv.method]
-  feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
   k <- object$k
+  if(verbose) {
+    pb <- txtProgressBar(min = 0, max = 1, style = 3)
+    on.exit(close(pb))
+  }
   if (cv.method == 1) {
     if (length(ngroups) > 1) {
        if (length(ngroups) != nsam)
-          stop("length of leave-out groups does not equal number of samples")
-       grps <- ngroups
+          stop("Length of leave-out groups does not equal number of samples")
+       grps <- as.integer(ngroups)
        ngroups <- length(unique(ngroups))
        o <- 1:nsam
     }
@@ -230,9 +241,12 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       xHat <- predict.LWR(mod, y.test, verbose=FALSE)
       result[out, ] <- xHat$fit
       if (verbose) {
-          cat (paste("Leavout group", i, "\n"))
-          flush.console()
+        setTxtProgressBar(pb, i/nboot)
       }
+#      if (verbose) {
+#          cat (paste("Leavout group", i, "\n"))
+#          flush.console()
+#      }
     }
     object$cv.summary$ngroups=ngroups
   } else if (cv.method == 2) {
@@ -250,11 +264,14 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       xHat <- predict.LWR(mod, y.test, verbose=FALSE)
       res2[out, , ] <- xHat$fit
       if (verbose) {
-          if (i %% feedback == 0) {
-            cat (paste("Bootstrap sample", i, "\n"))
-            flush.console()
-          }
+        setTxtProgressBar(pb, i/nboot)
       }
+#        if (verbose) {
+#          if (i %% feedback == 0) {
+#            cat (paste("Bootstrap sample", i, "\n"))
+#            flush.console()
+#          }
+#      }
     }
     result <- apply(res2, c(1,2), mean, na.rm=TRUE)
     rownames(result) <- rownames(object$fitted.values)

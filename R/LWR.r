@@ -21,10 +21,10 @@ LWR <- function(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE, fit.model
   colnames(dist.n) <- paste("N", sprintf("%02d", 1:k), sep="")
   nsam <- nrow(y)
   ncol.res <- NA
-  #feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
   cut1 <- 0
   cut2 <- 0
   if (verbose) {
+    writeLines("Fitting models:")
     pb <- txtProgressBar(min = 0, max = 1, style = 3)
     on.exit(close(pb))
   }
@@ -38,12 +38,6 @@ LWR <- function(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE, fit.model
       if (verbose) {
         setTxtProgressBar(pb, i/nsam)
       }
-#      if (verbose) {
-#          if (i %% feedback == 0) {
-#            cat (paste("Fitting sample", i, "\n"))
-#            flush.console()
-#          }
-#      }
       ytrain <- y[ind[, i], ]
       N <- apply(ytrain>0, 2, sum)
       Mx <- apply(ytrain, 2, sum)
@@ -51,10 +45,10 @@ LWR <- function(y, x, FUN=WA, dist.method="sq.chord", k=30, lean=TRUE, fit.model
       if (funname=="MLRC") {
          ytrain <- ytrain[, N>cut1 & Mx > cut2]
          mod <- FUN(ytrain, xtrain, check.data=FALSE, ...)
-         pred <- predict(mod, y[i, N>cut1 & Mx>cut2, drop=FALSE])$fit
+         pred <- predict(mod, y[i, N>cut1 & Mx>cut2, drop=FALSE], verbose=FALSE)$fit
       } else {
          mod <- FUN(ytrain, xtrain, check.data=FALSE, ...)
-         pred <- predict(mod, y[i, , drop=FALSE])$fit
+         pred <- predict(mod, y[i, , drop=FALSE], verbose=FALSE)$fit
       }
       if (i == 1) {
          ncol.res <- ncol(pred)
@@ -109,19 +103,19 @@ predict.LWR <- function(object, newdata=NULL, k=object$k, sse=FALSE, nboot=100, 
   x1 <- object$x
   diss <- paldist2(y1, y2, dist.method=object$dist.method)
   ind <- apply(diss, 2, order)
-  ind <- ind[n:(n+k-1), drop=FALSE]
-  dist.n <- t(apply(diss, 2, sort)[n:(n+k-1), drop=FALSE])
+  ind <- ind[n:(n+k-1), , drop=FALSE]
+  dist.n <- t(apply(diss, 2, sort)[n:(n+k-1), , drop=FALSE])
   rownames(dist.n) <- rownames(y2)
   colnames(dist.n) <- paste("N", sprintf("%02d", 1:k), sep="")
   ncol.res <- NA
   for (i in 1:nrow(y2)) {
-    ytrain <- y1[ind[, i], drop=FALSE]
+    ytrain <- y1[ind[, i], , drop=FALSE]
     xtrain <- x1[ind[, i]]
     mx <- apply(ytrain, 2, sum)
     ytrain <- ytrain[, mx>0]
     ytest <- y2[i, mx>0, drop=FALSE]
     mod <- FUN(ytrain, xtrain, check.data=FALSE, ...)
-    pred <- predict(mod, ytest)$fit
+    pred <- predict(mod, ytest, verbose=FALSE)$fit
     if (i == 1) {
        ncol.res <- ncol(pred)
        xHat <- matrix(NA, nrow=nrow(y2), ncol=ncol.res)
@@ -213,6 +207,7 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
   object$cv.summary$cv.method=METHODS[cv.method]
   k <- object$k
   if(verbose) {
+    writeLines("Cross-validating:")
     pb <- txtProgressBar(min = 0, max = 1, style = 3)
     on.exit(close(pb))
   }
@@ -241,12 +236,8 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       xHat <- predict.LWR(mod, y.test, verbose=FALSE)
       result[out, ] <- xHat$fit
       if (verbose) {
-        setTxtProgressBar(pb, i/nboot)
+        setTxtProgressBar(pb, i/ngroups)
       }
-#      if (verbose) {
-#          cat (paste("Leavout group", i, "\n"))
-#          flush.console()
-#      }
     }
     object$cv.summary$ngroups=ngroups
   } else if (cv.method == 2) {
@@ -266,12 +257,6 @@ crossval.LWR <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       if (verbose) {
         setTxtProgressBar(pb, i/nboot)
       }
-#        if (verbose) {
-#          if (i %% feedback == 0) {
-#            cat (paste("Bootstrap sample", i, "\n"))
-#            flush.console()
-#          }
-#      }
     }
     result <- apply(res2, c(1,2), mean, na.rm=TRUE)
     rownames(result) <- rownames(object$fitted.values)

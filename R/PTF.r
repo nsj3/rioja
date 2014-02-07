@@ -187,15 +187,8 @@ performance.default <- function(object, ...) {
       if (verbose) {
         setTxtProgressBar(pb, i/nsam)
       }        
-#        if (verbose) {
-#          if (i %% feedback == 0) {
-#            cat (paste("LOO sample", i, "\n"))
-#            flush.console()
-#          }
-#      }
     }
-  } 
-  if (cv.method == 2) {
+  } else if (cv.method == 2) {
     if (length(ngroups) > 1) {
       if (length(ngroups) != nsam)
         stop("length of leave-out groups does not equal number of samples")
@@ -218,14 +211,9 @@ performance.default <- function(object, ...) {
       if (verbose) {
         setTxtProgressBar(pb, i/ngroups)
       }
-#        if (verbose) {
-#            cat (paste("Leavout group", i, "\n"))
-#            flush.console()
-#      }
     }
     object$cv.summary$ngroups=ngroups
-  } 
-  if (cv.method == 3) {
+  } else if (cv.method == 3) {
     nest <- ncol(object$fitted.values)
     res2 <- array(dim=c(nsam, nest, nboot))
 #    .set.rand.seed(100)
@@ -242,20 +230,13 @@ performance.default <- function(object, ...) {
       if (verbose) {
         setTxtProgressBar(pb, i/nboot)
       }
-#        if (verbose) {
-#          if (i %% feedback == 0) {
-#            cat (paste("Bootstrap sample", i, "\n"))
-#            flush.console()
-#          }
-       }
     }
     result <- apply(res2, c(1,2), mean, na.rm=TRUE)
     MS <- apply((object$x-res2)^2, c(1,2), mean, na.rm=TRUE)
     RMSE.boot <- sqrt(apply(MS, 2, mean, na.rm=TRUE))
     object$cv.summary$nboot=nboot
     object$cv.summary$RMSE.boot <- RMSE.boot
-  } 
-  if (cv.method == 4) {
+  } else if (cv.method == 4) {
     if (is.null(h.dist))
        stop("h-block cross-validation requested but h.dist is null") 
     h.dist <- as.matrix(h.dist)  

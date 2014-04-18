@@ -12,3 +12,5 @@ Description: Functions for the analysis of Quaternary science data, including
          functions, and stratigraphic diagrams.
 License: GPL-3
 URL: http://www.staff.ncl.ac.uk/staff/stephen.juggins/
+NeedsCompilation: yes
+Repository: CRAN

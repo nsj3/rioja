@@ -1,16 +1,16 @@
-MLRC <- function(y, x, check.data=TRUE, lean=FALSE, ...)
+MLRC <- function(y, x, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, ...)
 {
   if (check.data) {
     if (any(apply(y, 1, sum) < 1.0E-8))
        stop(paste("Species data have zero abundances for the following rows:", paste(which(apply(y, 1, sum) < 1.0E-8), collapse=",")))
     if (any(apply(y, 2, sum) < 1.0E-8))
        stop(paste("Species data have zero abundances for the following columns:", paste(which(apply(y, 2, sum) < 1.0E-8), collapse=",")))
-    if(any(apply(y>0, 2, sum) < 5))
+    if(n.cut < 5 & any(apply(y>0, 2, sum) < 5))
        warning("Trying to fit responses to some taxa with less than 5 occurrences - results may be unreliable")
   }
   if (any(y>1) | any (y<0))
      stop("Species data must be proportions between 0 and 1")
-  fit <- MLRC.fit(y=y, x=x, lean=lean, ...)
+  fit <- MLRC.fit(y=y, x=x, lean=lean, n.cut=n.cut, verbose=verbose, ...)
   xHat <- predict.internal.MLRC(object=fit, y=y, lean=lean, ...) 
   call.print <- match.call()
   call.fit <- as.call(list(quote(MLRC.fit), y=quote(y), x=quote(x), lean=FALSE))
@@ -22,7 +22,7 @@ MLRC <- function(y, x, check.data=TRUE, lean=FALSE, ...)
   result
 }
 
-MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, ...)
+MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, verbose=TRUE, ...)
 { 
   glr <- function(x, e) {
     gfit <- glm.fit(e, x, family = quasibinomial(link=logit), ...)
@@ -47,7 +47,7 @@ MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, ..
     rownames(beta) <- c("b0", "b1", "b2")
 	  return (list(coefficients=t(BETA), meanX=mean(x, na.rm=TRUE)))
   } else {
-    res <- .Call("MLRC_regress", as.matrix(y[, !skip]), as.matrix(x), as.integer(max.iter), NAOK=TRUE, PACKAGE="rioja")  
+    res <- .Call("MLRC_regress", as.matrix(y[, !skip]), as.matrix(x), as.integer(max.iter), as.integer(verbose), NAOK=TRUE, PACKAGE="rioja")  
     beta <- matrix(res$Beta, ncol=3)
     BETA <- matrix(NA, ncol = 3, nrow = ncol(y))
     BETA[!skip, ] <- beta

@@ -51,9 +51,9 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
        stop("Length of graph.widths should equal number of curves")
     cc.line <- rep(col.line, length.out=nsp)
     if (sep.bar)
-      cc.bar <- rep(col.line, length.out=nsam)
+      cc.bar <- rep(col.bar, length.out=nsam)
     else      
-      cc.bar <- rep(col.line, length.out=nsp)
+      cc.bar <- rep(col.bar, length.out=nsp)
     cc.poly <- rep(col.poly, length.out=nsp)
     cc.poly.line <- rep(col.poly.line, length.out=nsp)
     inc <- 0.002
@@ -130,7 +130,7 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                  polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
             }
             if (plot.bar) {
-               if (!sep.bar) {
+               if (sep.bar) {
                    segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
                } else {
                    segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
@@ -172,11 +172,11 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                  polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
             }
             if (plot.bar) {
-               if (!sep.bar) {
-                  segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+               if (sep.bar) {
+                 segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+                 
                } else {
-                  segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
-               }
+                 segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])               }
             }
             lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), 
                 ...)

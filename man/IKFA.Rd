@@ -99,11 +99,6 @@ Function \code{screeplot} displays the RMSE of prediction for the training set a
 \value{
 Function \code{IKFA} returns an object of class \code{IKFA} with the following named elements:
 \item{coefficients}{ species coefficients (the updated "optima"). }
-\item{meanY}{ weighted mean of the environmental variable. }
-\item{iswapls}{ logical indicating whether analysis was IKFA (TRUE) or PLS (FALSE). }
-\item{T}{ sample scores. }
-\item{P}{ variable (species) scores. }
-\item{npls}{ number of pls components extracted. }
 \item{fitted.values}{ fitted values for the training set. }
 \item{call}{ original function call. }
 \item{x}{ environmental variable used in the model. }

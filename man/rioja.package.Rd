@@ -13,8 +13,8 @@ Analysis of Quaternary Science Data
 \tabular{ll}{
 Package: \tab rioja\cr
 Type: \tab Package\cr
-Version: \tab 0.8-7\cr
-Date: \tab 2014-01-30\cr
+Version: \tab 0.9-1\cr
+Date: \tab 2014-11-02\cr
 License: \tab GPL-3\cr
 }
 
@@ -27,6 +27,7 @@ MAT                     Modern analogue technique transfer functions
 IKFA                    Imbrie and Kipp Factor Analysis
 MLRC                    Maximum likelihood response curves
 LWR                     Locally weighted transfer functions
+MR                      Multiple regression transfer functions
 crossval                Cross validate a transfer function model
 predict                 Predict using a transfer function model, 
                         with sample-specific errors

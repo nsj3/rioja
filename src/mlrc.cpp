@@ -418,10 +418,12 @@ void powell(double *p, double **xi, int n, double ftol, int *iterate,
          pt[j] = p[j];
       }
       fptt =(*func)(ptt, params, SpecData);
+      double arg1, arg2;
       if (fptt < fp) {
 //         t = 2.0*(fp-2.0*(*fret)+fptt)*SQR(fp-(*fret)-del)-del*SQR(fp-fptt);
-         t = 2.0*(fp-2.0*(*fret)+fptt)*SQR(fp-(*fret)-del)-del*SQR(fp-fptt);
-         
+         arg1 = fp-(*fret)-del;
+         arg2 = fp-fptt;
+         t = 2.0*(fp-2.0*(*fret)+fptt) * arg1*arg1 - del*arg2*arg2;
          if (t < 0.0) {
             linmin(p,xit,n,fret,params, SpecData, func);
             for (j=1;j<=n;j++) {

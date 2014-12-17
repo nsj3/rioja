@@ -14,6 +14,9 @@
 \alias{predict.internal.WAPLS}
 \alias{predict.internal.IKFA}
 \alias{predict.internal.MLRC}
+\alias{predict.internal.MR}
+\alias{predict.internal.LWR}
+
 
 \title{Internal rioja functions. }
 \description{

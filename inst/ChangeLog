@@ -1,8 +1,13 @@
 rioja Change Log
 
-Version 0.8-7
-changed into to long in chclust c++ code to handle large data
+Version 0.9-1
+* Released on CRAN ??/11/14
+Added multiple regression (MR) model for GDGT data
 
+Version 0.8-7
+* Released on CRAN 30/06/14
+Fixed problem in mlrc source
+changed into to long in chclust c++ code to handle large data
 
 Version 0.8-6
 * Released on CRAN 19/11/13

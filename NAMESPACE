@@ -19,7 +19,7 @@ export(hulls, figCnvt, communality, paldist, paldist2,
 export(IKFA, IKFA.fit, predict.internal.IKFA, LWR, MAT, 
        MLRC, MLRC.fit, predict.internal.MLRC, 
        WA, WA.fit, predict.internal.WA,
-       WAPLS, WAPLS.fit, predict.internal.WAPLS)
+       WAPLS, WAPLS.fit, predict.internal.WAPLS, MR, MR.fit, predict.internal.MR)
 
 ## export the following internal functions
 export(.crossval, .max.bias, 
@@ -48,6 +48,7 @@ S3method(crossval, MAT)
 S3method(crossval, MLRC)
 S3method(crossval, WA)
 S3method(crossval, WAPLS)
+S3method(crossval, MR)
 
 # dot: rioja
 S3method(dot, default)
@@ -56,6 +57,7 @@ S3method(dot, data.frame)
 # coef: stats
 S3method(coef, IKFA)
 S3method(coef, MLRC)
+S3method(coef, MR)
 
 # fitted: stats
 S3method(fitted, IKFA)
@@ -64,6 +66,7 @@ S3method(fitted, MAT)
 S3method(fitted, MLRC)
 S3method(fitted, WA)
 S3method(fitted, WAPLS)
+S3method(fitted, MR)
 
 # performance: rioja
 S3method(performance, default)
@@ -73,6 +76,7 @@ S3method(performance, MAT)
 S3method(performance, MLRC)
 S3method(performance, WA)
 S3method(performance, WAPLS)
+S3method(performance, MR)
 
 # plot: graphics
 S3method(plot, compare.datasets)
@@ -82,6 +86,7 @@ S3method(plot, MAT)
 S3method(plot, MLRC)
 S3method(plot, WA)
 S3method(plot, WAPLS)
+S3method(plot, MR)
 
 # predict: stats
 S3method(predict, IKFA)
@@ -90,6 +95,7 @@ S3method(predict, MAT)
 S3method(predict, MLRC)
 S3method(predict, WA)
 S3method(predict, WAPLS)
+S3method(predict, MR)
 
 # print: base
 S3method(print, C2)
@@ -99,6 +105,7 @@ S3method(print, MAT)
 S3method(print, MLRC)
 S3method(print, WA)
 S3method(print, WAPLS)
+S3method(print, MR)
 
 # rand.t.test: rioja
 S3method(rand.t.test, default)
@@ -113,6 +120,7 @@ S3method(residuals, MAT)
 S3method(residuals, MLRC)
 S3method(residuals, WA)
 S3method(residuals, WAPLS)
+S3method(residuals, MR)
 
 # screeplot: stats
 S3method(screeplot, IKFA)
@@ -131,4 +139,4 @@ S3method(summary, MAT)
 S3method(summary, MLRC)
 S3method(summary, WA)
 S3method(summary, WAPLS)
-
+S3method(summary, MR)

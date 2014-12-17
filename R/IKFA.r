@@ -83,7 +83,14 @@ predict.internal.IKFA <- function(object, y, lean=FALSE, ...)
 	U2 <- U[, object$ccoef, drop=FALSE]
   for (i in 1:length(object$ccoef)) {
     if (object$IsPoly) {
-      xHat[, i] <- cbind(rep(1, n), poly(U2[, 1:i, drop=FALSE], degree=2, raw=TRUE)) %*% object$regr[[i]]$coefficients
+      # workaround for bug in poly when called with matrix with one row
+      if (nrow(U2)==1) {
+        U2 <- rbind(U2, U2)
+        tmp <- cbind(rep(1, n), poly(U2[, 1:i, drop=FALSE], degree=2, raw=TRUE)) %*% object$regr[[i]]$coefficients
+        xHat[, i] <- tmp[1, ]
+      } else {
+        xHat[, i] <- cbind(rep(1, n), poly(U2[, 1:i, drop=FALSE], degree=2, raw=TRUE)) %*% object$regr[[i]]$coefficients
+      }
     }
     else {
       xHat[, i] <- cbind(rep(1, n), U2[, 1:i, drop=FALSE]) %*% object$regr[[i]]$coefficients

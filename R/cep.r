@@ -1,8 +1,8 @@
 read.CEP <- function(fName, mValue=-99.9, impZero=0) {
-  if (.Machine$sizeof.pointer == 8) {
-     print("This function is not yet working on 64-bit OSs.\nTry read.cep in the vegan package as an alternative.")
-     return (NULL)
-  }
+#  if (.Machine$sizeof.pointer == 8) {
+#     print("This function is not yet working on 64-bit OSs.\nTry read.cep in the vegan package as an alternative.")
+#     return (NULL)
+#  }
   if (!is.character(fName))
     stop("Expecting filename as first argument")
   if (!is.numeric(mValue))

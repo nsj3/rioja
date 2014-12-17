@@ -8,7 +8,7 @@
 Imports data from a C2 model saved in Excel format into R for further processing.
 }
 \usage{
-read.C2Model(fName)
+read.C2Model(fName, force.read.xls=FALSE)
 
 \method{print}{C2}(x, \dots)
 
@@ -17,13 +17,13 @@ read.C2Model(fName)
 
 \arguments{
   \item{fName}{ filename to read. }
+  \item{force.read.xls}{ logical to force function to use \code{read.xls} (see details). }
   \item{x, object}{ object of class \code{C2} produced by \code{read.C2Model}. }
   \item{\dots}{ additional arguments to \code{plot} and \code{print}. }
-  
 }
 
 \details{
-Function to import data from a C2 model into R for further processing. C2 is a Windows program for the analysis and visualisation of palaeoecological data (Juggins (2007).  On Windows \code{read.C2Model} uses the package \code{RODBC} to import data from the Excel spreadsheet whereas on Linux and MacOS X the function uses \code{read.xls} in the package \code{gdata}.
+Function to import data from a C2 model into R for further processing. C2 is a Windows program for the analysis and visualisation of palaeoecological data (Juggins (2007).  On Windows \code{read.C2Model} uses the package \code{RODBC} to import data from the Excel spreadsheet whereas on Linux and MacOS X the function uses \code{read.xls} in the package \code{gdata}.  Use the option \code{force.read.xls=TRUE} to force the function to use \code{read.xls} if you have 32/64 bit incompatibility problems with \code{RODBC} on Windows.
 }
 \value{
 Returns a list with elements corresponding to the worksheets in the saved C2 model: these are named after the original worksheets under Windows but "Sheet1", "Sheet2", etc. on Linux and MacOS X.

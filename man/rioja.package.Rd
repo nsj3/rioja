@@ -13,8 +13,8 @@ Analysis of Quaternary Science Data
 \tabular{ll}{
 Package: \tab rioja\cr
 Type: \tab Package\cr
-Version: \tab 0.9-1\cr
-Date: \tab 2014-11-02\cr
+Version: \tab 0.9-2\cr
+Date: \tab 2014-12-17\cr
 License: \tab GPL-3\cr
 }
 

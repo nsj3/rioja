@@ -49,27 +49,27 @@ write.list.Excel <- function(x, fName) {
      if (file.exists(fName)) 
          if (!file.remove(fName))
             stop("Could not remove existing file - is it open?")
-     on.exit(odbcCloseAll())
      if (! ("list" %in% class(x)))
         stop("object should be a list")
-     if (require(RODBC)==FALSE) {
+     if (requireNamespace("RODBC", quietly=TRUE)==FALSE) {
         stop("This function requires package RODBC")
      }
-#     fp <- RODBC:::full.path(fName)
+     on.exit(RODBC::odbcCloseAll())
+     #     fp <- RODBC:::full.path(fName)
 #     con <- paste("Driver={Microsoft Excel Driver (*.xls)};DriverId=790;Dbq=", fp, ";DefaultDir=", dirname(fp), ";", sep = "")
 #     con = paste(con, "ReadOnly=False", sep = ";")
 #     channel <- odbcDriverConnect(con, tabQuote = c("[", "]"))
-     channel <- odbcConnectExcel(fName, readOnly=FALSE)
+     channel <- RODBC::odbcConnectExcel(fName, readOnly=FALSE)
      if (channel == -1)
         stop(paste("Could not open file ", fName, "for writing. Is it already open?", sep=""))
      nms <- names(x)
      for (i in 1:length(x)) {
         if (class(x[[i]]) == "data.frame") {
            colnames(x[[i]]) <- gsub("\\.", "_", colnames(x[[i]]))
-           sqlSave(channel, x[[i]], nms[i], colnames=FALSE, rownames=TRUE)
+           RODBC::sqlSave(channel, x[[i]], nms[i], colnames=FALSE, rownames=TRUE)
         }
      }    
-     odbcCloseAll()
+     RODBC::odbcCloseAll()
   } else {
     stop("This function is only available on 32 bit Windows. See package WriteXLS for a Linux / MacOS X alternative.")
   }

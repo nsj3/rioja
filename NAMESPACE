@@ -17,10 +17,10 @@ importFrom(mgcv,
 
 ## gdata
 importFrom(gdata,
-           read.xls)
+           read.xls, sheetNames)
 
 ## Export regular function names (no dots)
-export(chclust, crossval, performance, inkspot, Merge)
+export(chclust, crossval, performance, inkspot, Merge, bstick)
 
 ## export regular functions with dot names
 export(read.CEP, read.Tilia, write.CEP, read.C2Model,
@@ -56,6 +56,7 @@ import(graphics)
 import(utils)
 
 # bstick: vegan
+#S3method(bstick, default)
 S3method(bstick, chclust)
 
 # crossval: rioja

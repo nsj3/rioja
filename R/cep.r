@@ -57,8 +57,8 @@ write.CEP <- function(x, fName, fTitle=fName, type = "condensed", nSig=5, nCoupl
      warning("Some sample names were longer than 8 characters and have been abbreviated - see returned list.")
   }
   if (any(nchar(cN)>8)) {
-     colnames(x) <- make.cepnames(cN)
-     warning("Some species names were longer than 8 characters and have been abbreviated - see returned list.")
+    colnames(x) <- make.cepnames(cN)
+    warning("Some species names were longer than 8 characters and have been abbreviated - see returned list.")
   }
   ret <- .Call("WriteCornellFile", x, fName, fTitle, as.integer(itype), as.integer(nSig), as.integer(nCouplets), as.integer(nSig), as.integer(nCouplets), as.double(mValue), PACKAGE="rioja")
   if (nchar(ret)>0) {
@@ -97,17 +97,17 @@ read.Tilia <- function(fName) {
 }
 
 read.C2Model <- function(fName) {
-    if (require(RODBC)==FALSE) {
+    if (requireNamespace("RODBC", quietly=TRUE)==FALSE) {
        stop("This function requires package RODBC")
     }
-    channel <- odbcConnectExcel(fName)
-    tabs <- sqlTables(channel, errors=TRUE)
+    channel <- RODBC::odbcConnectExcel(fName)
+    tabs <- RODBC::sqlTables(channel, errors=TRUE)
     tabs <- tabs[tabs$TABLE_TYPE == "TABLE", ]
     ntabs <- nrow(tabs)
     X <- vector("list", length=ntabs)
     names(X) <- tabs$TABLE_NAME
     for (i in 1:ntabs) {
-       X1 <- sqlFetch(channel, tabs$TABLE_NAME[i], colnames=FALSE, rownames=FALSE)
+       X1 <- RODBC::sqlFetch(channel, tabs$TABLE_NAME[i], colnames=FALSE, rownames=FALSE)
        if (tabs$TABLE_NAME[i] == "Summary") {
           X[[i]] <- as.character(X1[!is.na(X1), 1])
        } else {
@@ -115,7 +115,7 @@ read.C2Model <- function(fName) {
           X[[i]] <- X1[, -c(1:3)]
        }
     }
-    odbcCloseAll()
+    RODBC::odbcCloseAll()
     class(X) <- "C2"
     X
 }

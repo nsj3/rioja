@@ -1,7 +1,13 @@
 rioja Change Log
 
+Version 0.9-2
+* Released on CRAN 17/12/14
+Updated use of namespces
+Added MR reconstructions
+minor bug fixes
+
 Version 0.9-1
-* Released on CRAN ??/11/14
+* Released on CRAN 02/11/14
 Added multiple regression (MR) model for GDGT data
 
 Version 0.8-7

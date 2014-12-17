@@ -1,6 +1,7 @@
 \name{chclust}
 \alias{chclust}
 \alias{plot.chclust}
+\alias{bstick}
 \alias{bstick.chclust}
 \title{Constrained hierarchical clustering}
 \description{
@@ -12,6 +13,8 @@ chclust(d, method = "coniss")
 \method{plot}{chclust}(x, labels = NULL, hang = 0.1, axes = TRUE,
       xvar=1:(length(x$height)+1), xlim=NULL, ylim=NULL, 
       x.rev = FALSE, y.rev=FALSE, horiz=FALSE, \dots)
+
+bstick(n, \dots)
 
 \method{bstick}{chclust}(n, ng=10, plot=TRUE, \dots)
 }

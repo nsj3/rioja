@@ -6,7 +6,8 @@ Date: 2014-11-02
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: vegan
-Imports: mgcv, lattice, RODBC, gdata
+Imports: mgcv, lattice, gdata
+Suggests: RODBC
 Description: Functions for the analysis of Quaternary science data, including
          constrained clustering, WA, WAPLS, IKFA, MLRC and MAT transfer 
          functions, and stratigraphic diagrams.

@@ -13,8 +13,7 @@ importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
 
 ## RODBC
-importFrom(RODBC,
-           odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
+# importFrom(RODBC, odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
 
 ## gdata
 importFrom(gdata,

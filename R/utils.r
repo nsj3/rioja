@@ -52,9 +52,9 @@ write.list.Excel <- function(x, fName) {
      on.exit(odbcCloseAll())
      if (! ("list" %in% class(x)))
         stop("object should be a list")
-#     if (require(RODBC)==FALSE) {
-#        stop("This function requires package RODBC")
-#     }
+     if (require(RODBC)==FALSE) {
+        stop("This function requires package RODBC")
+     }
 #     fp <- RODBC:::full.path(fName)
 #     con <- paste("Driver={Microsoft Excel Driver (*.xls)};DriverId=790;Dbq=", fp, ";DefaultDir=", dirname(fp), ";", sep = "")
 #     con = paste(con, "ReadOnly=False", sep = ";")

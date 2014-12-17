@@ -2,9 +2,9 @@ read.C2Model <- function(fName) {
   if (!file.exists(fName)) 
       stop(paste("Cannot open file", fName))
   if(.Platform$OS.type == "windows" & .Machine$sizeof.pointer < 5) {
-#     if (require(RODBC, quietly=TRUE)==FALSE) {
-#        stop("This function requires package RODBC")
-#     }
+     if (require(RODBC, quietly=TRUE)==FALSE) {
+        stop("This function requires package RODBC")
+     }
      on.exit(odbcCloseAll())
 #     channel <- odbcConnectExcel(fName)
 #     fp <- RODBC:::full.path(fName)

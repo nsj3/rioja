@@ -1,10 +1,10 @@
 WA <- function(y, x, mono=FALSE, tolDW = FALSE, use.N2=TRUE, tol.cut=.01, check.data=TRUE, lean=FALSE)
 {
-  if (mono) {
-     if (!require(mgcv, quietly=TRUE)) {
-        stop("Function WA with monotonic deshrinking requires package mgcv")
-     }
-  }
+#  if (mono) {
+#     if (!require(mgcv, quietly=TRUE)) {
+#        stop("Function WA with monotonic deshrinking requires package mgcv")
+#     }
+#  }
   y <- as.matrix(y)
   if (!is.null(dim(x)))
      x <- x[, 1]

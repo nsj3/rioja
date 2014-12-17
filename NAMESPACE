@@ -1,6 +1,25 @@
 ## compiled code
 useDynLib(rioja)
 
+## Imports
+##
+importFrom(vegan, bstick, make.cepnames)
+
+## lattice
+importFrom(lattice,
+           current.panel.limits, panel.text, panel.xyplot, xyplot)
+## mgcv
+importFrom(mgcv,
+           gam, s, smoothCon, mono.con, pcls, Predict.matrix)
+
+## RODBC
+importFrom(RODBC,
+           odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
+
+## gdata
+importFrom(gdata,
+           read.xls)
+
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge)
 
@@ -34,7 +53,7 @@ export(.crossval, .max.bias,
 ## Registration of S3 methods
 import(stats)
 import(graphics)
-import(vegan)
+# import(vegan)
 import(utils)
 
 # bstick: vegan

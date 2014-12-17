@@ -271,7 +271,7 @@ strat.plot.simple <- function(y1, x1, y2=NULL, x2=NULL, col=c("blue", "red"), so
          ord <- 1:ncol(y1)
       }
    }
-   require(lattice)
+#   require(lattice)
    s <- stack(y1)
    s$x <- rep(x1, times=ncol(y1))
    s$set <- 1

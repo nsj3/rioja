@@ -6,11 +6,11 @@ Date: 2014-11-02
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: vegan
-Suggests: lattice, RODBC, gdata, mgcv
+Imports: mgcv, lattice, RODBC, gdata
 Description: Functions for the analysis of Quaternary science data, including
          constrained clustering, WA, WAPLS, IKFA, MLRC and MAT transfer 
          functions, and stratigraphic diagrams.
 License: GPL-3
-URL: http://www.staff.ncl.ac.uk/staff/stephen.juggins/
+URL: http://www.staff.ncl.ac.uk/stephen.juggins/
 NeedsCompilation: yes
 Repository: CRAN

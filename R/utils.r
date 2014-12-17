@@ -46,16 +46,15 @@ site.summ <- function(y, max.cut=c(2, 5, 10, 20)) {
 
 write.list.Excel <- function(x, fName) {
   if(.Platform$OS.type == "windows" & .Machine$sizeof.pointer < 5) {
-     require(RODBC)
      if (file.exists(fName)) 
          if (!file.remove(fName))
             stop("Could not remove existing file - is it open?")
      on.exit(odbcCloseAll())
      if (! ("list" %in% class(x)))
         stop("object should be a list")
-     if (require(RODBC)==FALSE) {
-        stop("This function requires package RODBC")
-     }
+#     if (require(RODBC)==FALSE) {
+#        stop("This function requires package RODBC")
+#     }
 #     fp <- RODBC:::full.path(fName)
 #     con <- paste("Driver={Microsoft Excel Driver (*.xls)};DriverId=790;Dbq=", fp, ";DefaultDir=", dirname(fp), ";", sep = "")
 #     con = paste(con, "ReadOnly=False", sep = ";")

@@ -97,9 +97,9 @@ read.Tilia <- function(fName) {
 }
 
 read.C2Model <- function(fName) {
-    if (require(RODBC)==FALSE) {
-       stop("This function requires package RODBC")
-    }
+#    if (require(RODBC)==FALSE) {
+#       stop("This function requires package RODBC")
+#    }
     channel <- odbcConnectExcel(fName)
     tabs <- sqlTables(channel, errors=TRUE)
     tabs <- tabs[tabs$TABLE_TYPE == "TABLE", ]

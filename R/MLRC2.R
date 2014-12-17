@@ -24,7 +24,7 @@ MLRC2 <- function(y, x, n.out=100, expand.grad=0.1, use.gam=FALSE, check.data=TR
 
 
 MLRC2.fit <- function(y, x, n.out=100, expand.grad=0.1, use.gam=FALSE, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, ...) {
-  require(mgcv)
+#  require(mgcv)
   glr <- function(y, e, pred) {
     gfit <- glm(y ~ V1 + V2 + I(V2^2) + I(V2^2) + V1*V2, data=e, family = quasibinomial(link=logit), maxit = 100)
     p2 <- predict.glm(gfit, pred, type="response")

@@ -162,7 +162,7 @@ performance.default <- function(object, ...) {
      stop("Unknown cross-validation method")
   nsam <- length(object$x)
   nres <- ncol(object$fitted.values)
-  func <- object$call.fit[1]
+#  func <- object$call.fit[1]
   call <- as.call(object$call.fit)
   predict.func <- paste("predict.internal", class(object)[1], sep=".")
   result <- matrix(nrow=nsam, ncol=nres)

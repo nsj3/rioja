@@ -8,7 +8,7 @@ sp.plot.formula <- function(formula, data=NULL, n.cut=5, sort.vars=c("original",
 }
 
 sp.plot.default <- function(y, x, n.cut=5, sort.vars=c("original","wa", "alphabetical"), subset=NULL, sp.scale=c("fixed", "free", "exaggerated"), xlab=NULL, ylab=NULL, sp.max=NULL, cex.max=NULL, as.table=TRUE, ...) {
-  require(lattice, quietly=TRUE)
+#  require(lattice, quietly=TRUE)
   nm <- substitute(x)
   if (is.null(subset))
      subset <- 1:ncol(y)

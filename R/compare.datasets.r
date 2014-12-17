@@ -45,7 +45,7 @@ plot.compare.datasets <- function(x, y, subset=1:nrow(x$obs), ...) {
    if (nrow(x$obs) != nrow(y)) {
       stop("Number of observations different in comparison and original data")
    }
-   require(lattice)
+#   require(lattice)
    n <- length(subset)
    d <- stack(data.frame(t(y[subset, ])))
    d$N2 <- rep(x$vars$N2.2, times=n)

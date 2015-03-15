@@ -14,7 +14,7 @@ WA <- function(y, x, mono=FALSE, tolDW = FALSE, use.N2=TRUE, tol.cut=.01, check.
     if (any(apply(y, 2, sum) < 1.0E-8))
        stop(paste("Species data have zero abundances for the following columns:", paste(which(apply(y, 2, sum) < 1.0E-8), collapse=",")))
   }
-  model <- WA.fit(y, x, mono=mono, tolDW, use.N2=use.N2, lean=lean)
+  model <- WA.fit(y, x, mono=mono, tolDW, use.N2=use.N2, tol.cut=tol.cut, lean=lean)
   xHat <- predict.internal.WA(model, y, lean=lean)
   call.fit <- as.call(list(quote(WA.fit), y=quote(y), x=quote(x), mono=mono, tolDW=tolDW, use.N2=use.N2, tol.cut=tol.cut, lean=TRUE))
   call.print <- match.call()
@@ -35,8 +35,9 @@ WA.fit <- function(y, x, mono=FALSE, tolDW=FALSE, use.N2=TRUE, tol.cut=0.01, lea
   bad <- is.nan(u)
   u[bad] <- NA
   u2 <- u
-  u2[bad] <- 1E8
-	xHat <- (y %*% u2 / rS)[, 1]
+#  u2[bad] <- 1E8
+  u2[bad] <- 0 # need to check this
+  xHat <- (y %*% u2 / rS)[, 1]
   xHat[is.nan(xHat)] <- NA
   x[rS<1.0E-8] <- NA
   x.mean <- mean(x, na.rm=TRUE)
@@ -71,6 +72,7 @@ WA.fit <- function(y, x, mono=FALSE, tolDW=FALSE, use.N2=TRUE, tol.cut=0.01, lea
     tol[is.na(tol) | tol < tol.cut] <- 1
     tol2 <- tol^2
     rS.t <- rowSums(sweep(y, 2, tol2, "/"), na.rm=TRUE)
+    tol[bad] <- NA
     u.tol <- u2/tol2
 #    u.tol[bad] <- 1E8
     xHat.t <- (y %*% u.tol / rS.t)[, 1]
@@ -205,16 +207,20 @@ plot.WA <- function(x, resid=FALSE, xval=FALSE, tolDW=FALSE, deshrink="inverse",
  
   if (is.na(deshrink))
      stop("Unknown deshrinking method")
-  if (is.na(deshrink)) {
-     stop("Unknown deshrinking method")
-  }
+
   if (deshrink == 3 & !x$mono) 
      stop("WA model does not have monotonic spline deshrinking estimates")
+  
   if (tolDW) {
-     if(x$tolDW)
-        deshrink <- deshrink + 3
-     else
-        stop("WA model does not have tolerance downweighting estimates")
+    if (!x$tolDW) {
+       stop("WA model does not have tolerance downweighting estimates")
+     } else {
+       if (x$mono) {
+         deshrink <- deshrink + 3
+       } else {
+         deshrink <- deshrink + 2
+       }
+     }
   }
   if (xval & x$cv.summary$cv.method=="none")
      stop("WA model does not have cross validation estimates")

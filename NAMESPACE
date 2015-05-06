@@ -34,10 +34,11 @@ export(hulls, figCnvt, communality, paldist, paldist2,
        Hill.N2, dot, write.list.Excel)
 
 ## export fit functions
-export(IKFA, IKFA.fit, predict.internal.IKFA, LWR, MAT, 
-       MLRC, MLRC.fit, predict.internal.MLRC, 
-       WA, WA.fit, predict.internal.WA,
-       WAPLS, WAPLS.fit, predict.internal.WAPLS, MR, MR.fit, predict.internal.MR)
+export(IKFA, IKFA.fit, LWR, MAT, 
+       MLRC, MLRC.fit, 
+       WA, WA.fit, 
+       WAPLS, WAPLS.fit, 
+       MR, MR.fit)
 
 ## export the following internal functions
 export(.crossval, .max.bias, 

@@ -157,7 +157,7 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
      stop("No distances: refit original model using \"lean=FALSE\"")
   if (cv.method == 1) {
     if (length(ngroups) > 1) {
-       grps <- ngroups
+       grps <- as.integer(factor(ngroups))
        ngroups <- length(unique(ngroups))
        o <- 1:nsam
     }
@@ -165,6 +165,7 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       o <- sample(nsam)
       grps <- rep(1:ngroups, length.out=nsam) 
     }
+    print(ngroups)
     for (i in 1:ngroups) {
       out <- o[grps==i]
       x <- object$x[-out, drop=FALSE]

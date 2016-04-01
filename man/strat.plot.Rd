@@ -18,11 +18,12 @@ strat.plot (d, yvar = NULL, scale.percent = FALSE,
     wa.order = "none", plot.line = TRUE,
     col.line = "black", lwd.line = 1, plot.bar = TRUE, 
     lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, 
-    plot.poly = FALSE, col.poly = "grey", col.poly.line = "black", 
+    plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, 
     lwd.poly = 1, plot.symb = FALSE, symb.pch=19, symb.cex=1,
     x.names=NULL, cex.xlabel = 1.1, srt.xlabel=90, 
     mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1, 
-    orig.fig=NULL, add=FALSE, ...)
+    orig.fig=NULL, add.smooth=FALSE, col.smooth="red", smooth.span=0.1, lwd.smooth=1, 
+    exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, add=FALSE, ...)
     
 addZone (x, upper, lower=NULL, ...)
 
@@ -60,6 +61,13 @@ addClustZone(x, clust, nZone, ...)
   \item{cex.xlabel}{ size of label for variable names. }
   \item{srt.xlabel}{ rotation angle for variable names. }
   \item{plot.symb, symb.pch, symb.cex}{ logical for plotting symbols and symbol type / size. }
+  \item{add.smooth}{ logical for adding loess smooth to a curve. Can be a single value or a vector to add smooths to individual curves. }
+  \item{col.smooth, lwd.smooth}{ colour / line width of loess smooth. }
+  \item{smooth.span}{ span for the loess smooth. }
+  \item{exag}{ logical to add exaggerated curves when \code{plot.poly=TRUE}. Can be a single value or a vector to add exaggeration to individual curves.}
+  \item{exag.mult}{ multiplier for exaggerated curves. Can be a single value or a vector to control exaggeration to individual curves.}
+  \item{col.exag}{ colour for exaggerated curves. Can be a single value, a vector to control colour of individual curves, or \code{"auto"} for transparent version of main curve.}
+  \item{exag.alpha}{ alpha channel for transparent exaggerated curves when \code{col.exag="auto"}. }
   \item{mgp}{ value of mgp for x-axes.  See \code{par} for details. }
   \item{cex.axis}{ text size for x-axis labels.  See \code{par} for details. }
   \item{clust}{ an constrained classification object of class \code{chclust} to add to plot. }
@@ -134,6 +142,30 @@ dca <- decorana(spec, iweigh=1)
 sc <- scores(dca, display="sites", choices=1:2)
 strat.plot(sc, xLeft = 0.7, yvar = depth, y.rev=TRUE, xRight=0.99,
 y.axis=FALSE, clust=clust, clust.width=0.08, add=TRUE)
+
+# Pollen diagram using built-in Abernethy Forest dataset
+
+data(aber)
+depth <- aber$ages$Age
+spec <- aber$spec
+
+# basic silhouette plot
+strat.plot(spec, yvar = depth, y.rev=TRUE, scale.percent=TRUE, ylabel="Depth (cm)", 
+plot.poly=TRUE, col.poly="darkgreen", col.poly.line=NA)
+
+# now with horizontal lines at sample positions
+strat.plot(spec, yvar = depth, y.rev=TRUE, scale.percent=TRUE, ylabel="Depth (cm)", 
+plot.poly=TRUE, col.poly="darkgreen", plot.bar="Full", col.poly.line=NA)
+
+# add exaggerated curves
+strat.plot(spec, yvar = depth, y.rev=TRUE, scale.percent=TRUE, ylabel="Depth (cm)", 
+plot.poly=TRUE, col.poly="darkgreen", plot.bar="Full", col.poly.line=NA, exag=TRUE)
+
+# use different colours for trees
+xx <- 1:ncol(spec)
+cc <- ifelse(xx < 8, "darkgreen", "darkred")
+strat.plot(spec, yvar = depth, y.rev=TRUE, scale.percent=TRUE, ylabel="Depth (cm)", 
+plot.poly=TRUE, col.poly=cc, plot.bar="Full", col.poly.line=NA, exag=TRUE, col.exag="auto")
 }
 
 \keyword{ hplot }

@@ -12,6 +12,9 @@ importFrom(lattice,
 importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
 
+## grDevices
+importFrom("grDevices", "chull")
+
 ## RODBC
 # importFrom(RODBC, odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
 

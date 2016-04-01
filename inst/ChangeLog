@@ -1,5 +1,10 @@
 rioja Change Log
 
+Version 0.9-6
+* Released on CRAN 01/04/16
+Added exaggerated curves and loess smooth to strat.plot
+minor bug fixes
+
 Version 0.9-5
 * Released on CRAN 02/05/15
 Updated aber data

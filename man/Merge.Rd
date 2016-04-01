@@ -5,7 +5,7 @@
 Merges two or more data frames on the basis of common column names.
 }
 \usage{
-Merge(..., join="outer", fill=0, split=FALSE)
+Merge(..., join="outer", fill=0, split=FALSE, verbose=TRUE)
 }
 
 \arguments{
@@ -13,6 +13,7 @@ Merge(..., join="outer", fill=0, split=FALSE)
   \item{join}{ type of join to perform.  Should be an unambiguous abbreviation of either "outer", "inner", or "leftouter". An outer join produces a data frame that contains all the unique column names of the input data, ie, the union of all input column names. An inner join produces a data frame containing only column names that are common across the input data, ie. the intersection of the input column names. A left outer join produces a data frame containing all column names of the first data frame only: column names that occur in subsequent data frames are omitted. }
   \item{fill}{ value to use to fill non-matched columns. Defaults to zero which is appropriate for species abundance data. }
   \item{split}{ logical to return a single data frame (TRUE) or a named list containing separate (original) data frames with a common set of merged columns (FALSE). Defaults to TRUE (a single data frame). }
+  \item{verbose}{ logical to suppress warning messages. }
 }
 
 \details{

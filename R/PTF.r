@@ -189,6 +189,7 @@ performance.default <- function(object, ...) {
     if (length(ngroups) > 1) {
       if (length(ngroups) != nsam)
         stop("length of leave-out groups does not equal number of samples")
+      ngroups <- factor(ngroups)
       grps <- as.integer(ngroups)
       ngroups <- length(unique(ngroups))
       o <- 1:nsam

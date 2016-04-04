@@ -13,7 +13,7 @@ importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
 
 ## grDevices
-importFrom("grDevices", "chull")
+importFrom("grDevices", "chull", "col2rgb", "rgb")
 
 ## RODBC
 # importFrom(RODBC, odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)

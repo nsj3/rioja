@@ -56,7 +56,7 @@ MR.fit(y, x, lean=FALSE)
   \item{xlab, ylab, xlim, ylim}{ additional graphical arguments to \code{plot.wa}. }
   \item{add.ref}{ add 1:1 line on plot. }
   \item{add.smooth}{ add loess smooth to plot. }
-  \item{cv.method}{ cross-validation method, either "loo", "lgo" or "bootstrap". }
+  \item{cv.method}{ cross-validation method, either "loo", "lgo", "bootstrap" or "h-block". }
   \item{verbose}{ logical to show feedback during cross-validaton. }
   \item{nboot}{ number of bootstrap samples. }  
   \item{ngroups}{ number of groups in leave-group-out cross-validation, or a vector contain leave-out group menbership. }  

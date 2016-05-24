@@ -256,9 +256,7 @@ performance.default <- function(object, ...) {
           mod <- eval(call)
           xHat <- do.call(predict.func, args=list(object=quote(mod), y=quote(y.test), lean=TRUE, ...))
           result[i, ] <- xHat
-       } else {
-          nmiss <- nmiss + 1
-       }
+       } 
        if (verbose) {
          setTxtProgressBar(pb, i/nsam)
        }

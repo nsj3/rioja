@@ -65,7 +65,7 @@ WA.fit(y, x, mono=FALSE, tolDW=FALSE, use.N2=TRUE, tol.cut=.01,
   \item{deshrink}{ deshrinking type to show in plot. }
   \item{add.ref}{ add 1:1 line on plot. }
   \item{add.smooth}{ add loess smooth to plot. }
-  \item{cv.method}{ cross-validation method, either "loo", "lgo" or "bootstrap". }
+  \item{cv.method}{ cross-validation method, either "loo", "lgo", "bootstrap" or "h-block". }
   \item{verbose}{ logical to show feedback during cross-validaton. }
   \item{nboot}{ number of bootstrap samples. }  
   \item{ngroups}{ number of groups in leave-group-out cross-validation. } 

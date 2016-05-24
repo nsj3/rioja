@@ -12,12 +12,12 @@ strat.plot (d, yvar = NULL, scale.percent = FALSE,
     graph.widths=1, minmax=NULL, 
     scale.minmax = TRUE, xLeft = 0.07, xRight = 1, 
     yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, 
-    y.axis=TRUE, min.width = 5, ylim = NULL, y.rev = FALSE, 
+    y.axis=TRUE, x.axis=TRUE, min.width = 5, ylim = NULL, y.rev = FALSE, 
     y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=1, 
     xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
     wa.order = "none", plot.line = TRUE,
     col.line = "black", lwd.line = 1, plot.bar = TRUE, 
-    lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, 
+    lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
     plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, 
     lwd.poly = 1, plot.symb = FALSE, symb.pch=19, symb.cex=1,
     x.names=NULL, cex.xlabel = 1.1, srt.xlabel=90, 
@@ -40,7 +40,8 @@ addClustZone(x, clust, nZone, ...)
   \item{title}{ main title for plot. }
   \item{x.names}{ character vector of names for each graph, of same length as \code{ncol(d)}. }
   \item{cex.title}{ size of label for title. }
-  \item{y.axis}{ logical to control drawing to left-hand y-axis scale. Defaults to TRUE. }
+  \item{y.axis}{ logical to control drawing of left-hand y-axis scale. Defaults to TRUE. }
+  \item{x.axis}{ logical or logical vector to control drawing of x-axes. Defaults to TRUE. }
   \item{min.width}{ minimum upper value of x-axis when scaled for percent data. }
   \item{ylim}{ numeric vector of 2 values to control limist of y-axis. Defaults to data range. }
   \item{y.rev}{ logical to reverse y-axis. Defaults to FALSE. }
@@ -58,6 +59,7 @@ addClustZone(x, clust, nZone, ...)
   \item{lwd.line, lwd.poly, lwd.bar}{ line widths for line, silhouette or bar graphs. }
   \item{col.bar}{ colour of bars in a bar graph. \code{col.bar} can be a vector to specify colours of individual bars or graphs.}
   \item{sep.bar}{ If true, colours in \code{col.bar} are applied to individual bars, otherwise individual graphs. }
+  \item{bar.back}{ logical to plot bars behind (TRUE) or on top (FALSE: default) of curves. }
   \item{cex.xlabel}{ size of label for variable names. }
   \item{srt.xlabel}{ rotation angle for variable names. }
   \item{plot.symb, symb.pch, symb.cex}{ logical for plotting symbols and symbol type / size. }

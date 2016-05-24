@@ -1,5 +1,13 @@
 rioja Change Log
 
+Version 0.9-7
+* Released on CRAN 24/05/16
+Added grid lines to inkspot
+Added option to suppress x-axes in strat.plot
+Added h-block CV to MAT
+Other minor fixes to MAT
+minor bug fixes
+
 Version 0.9-6
 * Released on CRAN 01/04/16
 Added exaggerated curves and loess smooth to strat.plot

@@ -2,12 +2,17 @@ MAT <- function(y, x, dist.method="sq.chord", k=5, lean=TRUE)
 {
   call.fit <- as.call(list(quote(MAT), y=quote(y), x=quote(x), dist.method=dist.method, k=k, lean=lean))
   x1 <- as.numeric(x)
-  n <- 2
+  n <- 2 # closest match is itself so start at second closest
   diss <- as.matrix(paldist(y, dist.method=dist.method))
   ind <- apply(diss, 2, order)
   dist.n <- t(apply(diss, 2, sort)[n:(n+k-1), , drop=FALSE])
   rownames(dist.n) <- rownames(y)
   colnames(dist.n) <- paste("N", sprintf("%02d", 1:k), sep="")
+  warn.dist <- FALSE  
+  if (any(dist.n < 1.0E-6)) {
+    dist.n[dist.n < 1.0E-6] <- 1.0E-6
+    warn.dist <- TRUE
+  }
   x.n <- t(matrix(x1[ind[n:(n+k-1), , drop=FALSE]], nrow=k))
   rownames(x.n) <- rownames(y)
   colnames(x.n) <- paste("N", sprintf("%02d", 1:k), sep="")
@@ -33,6 +38,9 @@ MAT <- function(y, x, dist.method="sq.chord", k=5, lean=TRUE)
      result <- c(result, list(dist=diss))
   result$cv.summary <- list(cv.method="none")
 	class(result) <- "MAT"
+	if (warn.dist) {
+	  warning("Inter-sample distances < 1.0E-6 found (duplicate samples?\nThese have been replaced by 1.0E-6")
+	}
 	result
 }
 
@@ -47,6 +55,7 @@ predict.MAT <- function(object, newdata=NULL, k=object$k, sse=FALSE, nboot=100, 
     d <- Merge(object$y, newdata, split=TRUE)
     y1 <- as.matrix(d[[1]])
     y2 <- as.matrix(d[[2]])
+    rownames(y2) <- rownames(newdata)
   } else {
     if (ncol(object$y) != ncol(newdata)) 
        stop("Number of taxa does not match between datasets")
@@ -143,18 +152,24 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
 {
   if (k < 1 | k > object$k)
     stop("k out of range")
-  METHODS <- c("lgo", "bootstrap")
+  METHODS <- c("lgo", "bootstrap", "h-block")
   cv.method <- pmatch(cv.method, METHODS)
   if (is.na(cv.method))
      stop("Unknown cross-validation method")
   nsam <- length(object$x)
   nres <- ncol(object$fitted.values)
   result <- matrix(nrow=nsam, ncol=nres)
+  minDC.cv <- vector("numeric", length=nsam)
   object$cv.summary$cv.method=METHODS[cv.method]
   feedback <- ifelse(is.logical(verbose), 50, as.integer(verbose))
   k <- object$k
   if (is.null(object$dist))
      stop("No distances: refit original model using \"lean=FALSE\"")
+  if (verbose) {
+    writeLines("Cross-validating:")
+    pb <- txtProgressBar(min = 0, max = 1, style = 3)
+    on.exit(close(pb))
+  }
   if (cv.method == 1) {
     if (length(ngroups) > 1) {
        grps <- as.integer(factor(ngroups))
@@ -165,8 +180,10 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       o <- sample(nsam)
       grps <- rep(1:ngroups, length.out=nsam) 
     }
-    print(ngroups)
     for (i in 1:ngroups) {
+      if (verbose) {
+        setTxtProgressBar(pb, i/ngroups)
+      }
       out <- o[grps==i]
       x <- object$x[-out, drop=FALSE]
       diss <- object$dist[-out, out, drop=FALSE]
@@ -174,15 +191,14 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       dist.n <- t(apply(diss, 2, sort)[1:k, , drop=FALSE])
       x.n <- t(matrix(x[ind[1:k, , drop=FALSE]], nrow=k))
       xHat <- matrix(NA, nrow=length(out), ncol=k*2)
+      if (any(dist.n < 1.0E-6))
+        dist.n[dist.n < 1.0E-6] <- 1.0E-6
       for (j in 1:k) {
         xHat[, j] <- apply(x.n[ ,1:j, drop=FALSE], 1, mean, na.rm=TRUE)
         xHat[, j+k] <- rowSums((x.n / dist.n)[ ,1:j, drop=FALSE], na.rm=TRUE) / rowSums(1/dist.n[ ,1:j, drop=FALSE])
       }
+      minDC.cv[out] <- apply(dist.n, 1, min)
       result[out, ] <- xHat
-      if (verbose) {
-          cat (paste("Leavout group", i, "\n"))
-          flush.console()
-      }
     }
     object$cv.summary$ngroups=ngroups
   } else if (cv.method == 2) {
@@ -190,6 +206,9 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
 #    .set.rand.seed(100)
     for (i in 1:nboot) {
 #      o <- apply(data.frame(rep(nsam, nsam)), 1, .get.rand) + 1
+      if (verbose) {
+        setTxtProgressBar(pb, i/nboot)
+      }
       o <- sample(nsam, replace=TRUE)
       out <- (1:nsam)[-unique(o)]
       x <- object$x[o]
@@ -197,15 +216,11 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
       ind <- apply(diss, 2, order)
       dist.n <- t(apply(diss, 2, sort)[1:k, ])
       x.n <- t(matrix(x[ind[1:k, ]], nrow=k))
+      if (any(dist.n < 1.0E-6))
+        dist.n[dist.n < 1.0E-6] <- 1.0E-6
       for (j in 1:k) {
         res2[out, j, i] <- apply(x.n[ ,1:j, drop=FALSE], 1, mean, na.rm=TRUE)
         res2[out, j+k, i] <- rowSums((x.n / dist.n)[ ,1:j, drop=FALSE], na.rm=TRUE) / rowSums(1/dist.n[ ,1:j, drop=FALSE])
-      }
-      if (verbose) {
-          if (i %% feedback == 0) {
-            cat (paste("Bootstrap sample", i, "\n"))
-            flush.console()
-          }
       }
     }
     result <- apply(res2, c(1,2), mean, na.rm=TRUE)
@@ -214,10 +229,52 @@ crossval.MAT <- function(object, k=object$k, cv.method="lgo", verbose=TRUE, ngro
     RMSE.boot <- sqrt(apply(MS, 2, mean, na.rm=TRUE))
     object$cv.summary$nboot=nboot
     object$cv.summary$RMSE.boot <- RMSE.boot
+  } else if (cv.method == 3) {
+      if (is.null(h.dist))
+         stop("h-block cross-validation requested but h.dist is null") 
+      h.dist <- as.matrix(h.dist)  
+      if (nrow(h.dist) != ncol(h.dist))
+         stop("h.dist doesn't look like a matrix of inter-site distances") 
+      if (nrow(h.dist) != nsam) 
+         stop(paste("Number of rows in h.dist (", nrow(h.dist), ") not equal to number of samples (", nsam, ")", sep="")) 
+      xHat <- vector("numeric", length=k*2)
+      nSamp <- vector("numeric", length=nsam)
+      for (i in 1:nsam) {
+         d <- h.dist[i, ]
+         sel <- d > h.cutoff
+         nSamp[i] <- sum(sel)
+         if (nSamp[i] >= k) {
+           diss <- object$dist[i, sel]
+           ind <- order(diss)
+           x <- object$x[sel]
+           dist.n <- sort(diss)[1:k]
+           x.n <- x[ind[1:k]]
+           if (any(dist.n < 1.0E-6)) {
+             dist.n[dist.n < 1.0E-6] <- 1.0E-6
+           }
+           for (j in 1:k) {
+             xHat[j] <- mean(x.n[1:j], na.rm=TRUE)
+             xHat[j+k] <- sum((x.n / dist.n)[1:j], na.rm=TRUE) / sum(1/dist.n[1:j])
+           }
+           result[i, ] <- xHat
+         } 
+         if (verbose) {
+           setTxtProgressBar(pb, i/nsam)
+         }
+         minDC.cv[i] <- min(dist.n)
+      }
+      object$cv.summary$ngroups=ngroups
+      if (sum(nSamp < 1) > 0) {
+        warning(paste(sum(nSamp < 1), "samples had less than k training samples with distance greater than ", h.cutoff, " and have not been predicted"))
+      }
+      object$n.h.block <- nSamp
+      object$cv.summary$h.cutoff=h.cutoff
   } 
+  names(minDC.cv) <- rownames(object$fitted.values)
   colnames(result) <- colnames(object$fitted.values)
   object$predicted=result
   object$residuals.cv=result-object$x
+  object$minDC.cv <- minDC.cv
   object
 }
 
@@ -312,10 +369,19 @@ fitted.MAT <- function(object, ...) {
 
 screeplot.MAT <- function(x, ...) {
   summ <- performance(x)
-  yR <- range(summ$object[ ,"RMSE"])
-  plot(1:x$k, summ$object[1:x$k, "RMSE"], type="b", ylim=yR, col="black", ylab="RMSE", xlab="Number of analogues")
-  lines(1:x$k, summ$object[(x$k+1):(2*x$k), "RMSE"], type="b", col="red")
-  legend("topright", c("mean", "w-mean"), lty=1, col=c("black", "red"))
+  if (!is.null(summ$crossval)) {
+     yR <- range(c(summ$crossval[ ,"RMSE"], summ$object[ ,"RMSE"]))
+     plot(1:x$k, summ$crossval[1:x$k, "RMSE"], type="b", ylim=yR, col="red", ylab="RMSE", xlab="Number of analogues")
+     lines(1:x$k, summ$crossval[(x$k+1):(2*x$k), "RMSE"], type="b", col="red", lty=2)
+     lines(1:x$k, summ$object[1:x$k, "RMSE"], type="b", col="black")
+     lines(1:x$k, summ$object[(x$k+1):(2*x$k), "RMSE"], type="b", col="black", lty=2)
+     legend("topright", c("mean", "w-mean", "mean-cv", "w-mean-cv"), lty=c(1,2,1,2), col=c("black", "black", "red", "red"))
+  } else {    
+    yR <- range(summ$object[ ,"RMSE"])
+    plot(1:x$k, summ$object[1:x$k, "RMSE"], type="b", ylim=yR, col="black", ylab="RMSE", xlab="Number of analogues")
+    lines(1:x$k, summ$object[(x$k+1):(2*x$k), "RMSE"], type="b", col="red")
+    legend("topright", c("mean", "w-mean"), lty=1, col=c("black", "red"))
+  }
 }
 
 

@@ -1,4 +1,5 @@
-inkspot <- function(data, gradient=1:nrow(data), use.rank=FALSE, reorder.species = TRUE, x.axis=c("sites", "gradient", "none"), x.axis.top=FALSE, site.names=NULL, spec.names=NULL, pch=21, cex.max=3, col="black", bg="darkgrey", legend.values=c(2, 5, 10, 20, 50), ...) {
+inkspot <- function(data, gradient=1:nrow(data), use.rank=FALSE, reorder.species = TRUE, x.axis=c("sites", "gradient", "none"), x.axis.top=FALSE, site.names=NULL, spec.names=NULL, pch=21, cex.max=3, col="black", bg="darkgrey", x.grid=FALSE, y.grid=FALSE, grid.col="grey", grid.lty="dotted",
+legend.values=c(2, 5, 10, 20, 50), ...) {
    x.axis = match.arg(x.axis)
    ord <- order(gradient)
    grad.srt <- sort(gradient)
@@ -28,7 +29,13 @@ inkspot <- function(data, gradient=1:nrow(data), use.rank=FALSE, reorder.species
       spn <- spec.names[ss$spec]
    else
       spn <- colnames(data)[ss$spec]
-   plot(c, r, cex=ddd, pch=pch, yaxt="n", xaxt="n", ylab="", xlab="", col=col, bg=bg, ...)
+   plot(c, r, cex=ddd, pch=pch, yaxt="n", xaxt="n", ylab="", xlab="", ...)
+   if (x.grid)
+     abline(v=1:nR, col=grid.col, lty=grid.lty)
+   if (y.grid)
+     abline(h=1:nC, col=grid.col, lty=grid.lty)
+   points(c, r, cex=ddd, pch=pch, col=col, bg=bg, ...)
+   
 #   axis(side=1, at=1:nR, labels=sn, las=2, ...)
    if (x.axis=="sites")
      axis(side=1, at=grad.srt, labels=sn, las=2, ...)

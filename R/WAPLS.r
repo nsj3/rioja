@@ -137,10 +137,10 @@ screeplot.WAPLS <- function(x, rand.test=TRUE, ...) {
   axis(1, at=1:x$npls, labels=as.character(1:x$npls))
   box()
   args <- names(as.list(match.call()))
-  if ("main" %in% args) 
-     title(...)
-  else 
-     title(main=substitute(x))
+#  if ("main" %in% args) 
+#     title(...)
+#  else 
+#     title(main=substitute(x))
   if (rand.test) {
     res <- rand.t.test(x, ...)
     rY <- range(pretty(res[-1, "delta.RMSE"]), na.rm=TRUE)
@@ -152,7 +152,8 @@ screeplot.WAPLS <- function(x, rand.test=TRUE, ...) {
     lines(1:x$npls, res[, "delta.RMSE"], type="b", col="blue")
     mtext("% change in RMSE", 4, line=2)
     text(1:x$npls, res[, "delta.RMSE"], sprintf("%.3f", res[, "p"], 3), pos=2, xpd=NA, cex=0.8, col="blue") 
-    legend("bottomleft", c("model RMSE", "x-val RMSE", "% change RMSE"), lty=1, col=c("black", "red", "blue"))
+    par(usr=c(0, 1, 0, 1))
+    legend("topleft", c("model RMSE", "x-val RMSE", "% change RMSE"), lty=1, col=c("black", "red", "blue"), inset=c(0, -0.1), ncol=3, xpd=NA)
     par(mar=oldmar)
     invisible(res)
   }

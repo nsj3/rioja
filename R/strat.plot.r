@@ -1,8 +1,9 @@
 strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, scale.minmax = TRUE,
-    xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE,
+    xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
     min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=1,
-    xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order = "none", plot.line = TRUE, col.line = "black", lwd.line = 1, 
-    plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, 
+    xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order = "none", 
+    plot.line = TRUE, col.line = "black", lwd.line = 1, 
+    plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
     plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, lwd.poly = 1,
     plot.symb = FALSE, symb.pch=19, symb.cex=1, x.names=NULL,
     cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1,
@@ -70,6 +71,10 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
       smooth.span <- rep(smooth.span[1], nsp)
     if (length(smooth.span) != nsp)
       stop("Length of smooth.span should equal number of curves")
+    if (length(x.axis) == 1)
+      x.axis <- rep(x.axis[1], nsp)
+    if (length(x.axis) != nsp)
+      stop("Length of x.axis should equal number of curves")
     cc.line <- rep(col.line, length.out=nsp)
     if (sep.bar)
       cc.bar <- rep(col.bar, length.out=nsam)
@@ -96,6 +101,17 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
            minmax <- minmax[opt.order, ]
         if (!is.null(x.names))
            x.names <- x.names[opt.order]
+        graph.widths <- graph.widths[opt.order]
+        exag <- exag[opt.order]
+        exag.mult <- exag.mult[opt.order]
+        add.smooth <- add.smooth[opt.order]
+        smooth.span <- smooth.span[opt.order]
+        x.axis <- x.axis[opt.order]
+        cc.poly <- cc.poly[opt.order]
+        cc.poly.line <- cc.poly.line[opt.order]
+        cc.line <- cc.line[opt.order]
+        if (!sep.bar)
+          cc.bar <- cc.bar[opt.order]
     }
     if (scale.percent) {
         colM <- apply(d, 2, max)
@@ -149,6 +165,21 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
             par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
             plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
                 xaxs = "i", type = "n", yaxs = "r", ylim = ylim, xlab="", ylab="", ...)
+            if (bar.back) {
+              if (is.logical(plot.bar)) {
+                if (plot.bar) {
+                  if (sep.bar) {
+                    segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+                  } else {
+                    segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
+                  }
+                }
+              } else {
+                 if (plot.bar=="Full") {
+                   abline(h=yvar, col=cc.bar, lwd=lwd.bar)
+                 }
+              }
+            }
             if (plot.symb) {
                points(d[, i], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
             }
@@ -161,18 +192,20 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                }
                polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
             }
-            if (is.logical(plot.bar)) {
-               if (plot.bar) {
-                  if (sep.bar) {
-                      segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
-                  } else {
-                   segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
+            if ( !bar.back) {
+               if (is.logical(plot.bar)) {
+                  if (plot.bar) {
+                     if (sep.bar) {
+                        segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+                     } else {
+                        segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
+                     }
+                  }
+               } else {
+                  if (plot.bar=="Full") {
+                     abline(h=yvar, col=cc.bar, lwd=lwd.bar)
                   }
                }
-            } else {
-              if (plot.bar=="Full") {
-                abline(h=yvar, col=cc.bar)
-              }
             }
             lines(c(0, 0), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), ...)
             if (ty == "l") 
@@ -184,15 +217,17 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
               lines(lo$y, lo$x, col=col.smooth, lwd=lwd.smooth)
             }
             xlabb <- seq(0, colM[i], by = x.pc.inc[i])
-            if (x.pc.lab) {
-               xlabbt <- as.character(xlabb)
-               if (x.pc.omit0)
-                  xlabbt[1] <- ""
-               mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll),0) } else { mgp }
-               axis(side = 1, at = xlabb, labels = xlabbt, mgp=mgpX, cex.axis=cex.axis, ...)
+            if (x.axis[i]) {
+               if (x.pc.lab) {
+                  xlabbt <- as.character(xlabb)
+                  if (x.pc.omit0)
+                     xlabbt[1] <- ""
+                  mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll),0) } else { mgp }
+                  axis(side = 1, at = xlabb, labels = xlabbt, mgp=mgpX, cex.axis=cex.axis, ...)
+               }
+               else
+                  axis(side = 1, at = xlabb, labels = FALSE, ...)
             }
-            else
-               axis(side = 1, at = xlabb, labels = FALSE, ...)
             x1 <- x1 + inc2 + xSpace
         }
         else {
@@ -207,6 +242,20 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
             }
             tks <- axTicks(1)
             us <- par("usr")
+            if (bar.back) {
+               if (is.logical(plot.bar)) {
+                 if (plot.bar) {
+                   if (sep.bar) {
+                     segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+                   } else {
+                     segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])                            }
+                }
+              } else {
+                 if (plot.bar=="Full") {
+                   abline(h=yvar, col=cc.bar, lwd=lwd.bar)
+                 }
+              }
+            }
             if (plot.symb) {
                points(d[, i], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
             }
@@ -219,17 +268,19 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                }
                polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
             }
-            if (is.logical(plot.bar)) {
-              if (plot.bar) {
-               if (sep.bar) {
-                 segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+            if (!bar.back) {
+               if (is.logical(plot.bar)) {
+                 if (plot.bar) {
+                  if (sep.bar) {
+                    segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+                  } else {
+                    segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])                              }
+                 }
                } else {
-                 segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])               }
-               }
-            } else {
-               if (plot.bar=="Full") {
-                  abline(h=yvar, col=cc.bar)
-               }
+                  if (plot.bar=="Full") {
+                     abline(h=yvar, col=cc.bar, lwd=lwd.bar)
+                 }
+              }
             }
             lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), 
                 ...)
@@ -242,13 +293,15 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
               lines(lo$y, lo$x, col=col.smooth, lwd=lwd.smooth)
             }
             mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll),0) } else { mgp }
-            if (scale.minmax) {
-               nn <- length(axTicks(1))
-               tk <- c(axTicks(1)[1], axTicks(1)[nn])
-               axis(side = 1, at = tk, labels = as.character(tk), cex.axis=cex.axis, mgp=mgpX, ...)
-            }
-            else {
-               axis(side = 1, cex.axis=cex.axis, mgp=mgpX, ...)
+            if (x.axis[i]) {
+               if (scale.minmax) {
+                  nn <- length(axTicks(1))
+                  tk <- c(axTicks(1)[1], axTicks(1)[nn])
+                  axis(side = 1, at = tk, labels = as.character(tk), cex.axis=cex.axis, mgp=mgpX, ...)
+               }
+               else {
+                  axis(side = 1, cex.axis=cex.axis, mgp=mgpX, ...)
+               }
             }
             x1 <- x1 + inc2 + xSpace
         }

@@ -12,6 +12,7 @@ inkspot(data, gradient=1:nrow(data), use.rank=FALSE,
       reorder.species = TRUE, x.axis=c("sites", "gradient", 
       "none"), x.axis.top=FALSE, site.names=NULL, spec.names=NULL, 
       pch=21, cex.max=3, col="black", bg="darkgrey", 
+      x.grid=FALSE, y.grid=FALSE, grid.col="grey", grid.lty="dotted",
       legend.values=c(2, 5, 10, 20, 50), \dots)
 }
 
@@ -27,6 +28,8 @@ inkspot(data, gradient=1:nrow(data), use.rank=FALSE,
   \item{pch, col, bg}{ plotting symbol and line / fill colour. }
   \item{\dots}{ additional arguments to \code{plot}. }
   \item{legend.values}{ if not null, places a legend in the top-left corner displaying the listed values. }
+  \item{x.grid, y.grid}{ draw grid at x and y ticks. }
+  \item{grid.col, grid.lty}{grid colour and line type. }
 }
 
 \details{

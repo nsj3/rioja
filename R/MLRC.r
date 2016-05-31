@@ -22,7 +22,7 @@ MLRC <- function(y, x, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, ...)
   result
 }
 
-MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, verbose=TRUE, ...)
+MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, verbose=FALSE, ...)
 { 
   glr <- function(x, e) {
     gfit <- glm.fit(e, x, family = quasibinomial(link=logit), ...)
@@ -60,15 +60,14 @@ MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, ve
   }
 }
 
-
-predict.internal.MLRC <- function(object, y, lean=FALSE, ...)
+predict.internal.MLRC <- function(object, y, lean=FALSE, verbose=FALSE, ...)
 {
 	coef <- object$coefficients
 	if (!lean) {
 	   if (nrow(object$coefficients) != ncol(y))
 	      stop("Number of columns different in y, beta in predict.internal.MLRC")
 	}
-  xHat <- .Call("MLRC_predict", as.matrix(y), as.matrix(object$coefficients), as.double(object$meanX), NAOK=TRUE, PACKAGE="rioja")
+  xHat <- .Call("MLRC_predict", as.matrix(y), as.matrix(object$coefficients), as.double(object$meanX), as.integer(verbose), NAOK=TRUE, PACKAGE="rioja")
   xHat <- as.matrix(xHat, ncol=1)
   colnames(xHat) <- "MLRC"
   rownames(xHat) <- rownames(y)

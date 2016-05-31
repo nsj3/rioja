@@ -13,8 +13,8 @@ Analysis of Quaternary Science Data
 \tabular{ll}{
 Package: \tab rioja\cr
 Type: \tab Package\cr
-Version: \tab 0.9-7\cr
-Date: \tab 2016-05-24\cr
+Version: \tab 0.9-8\cr
+Date: \tab 2016-06-01\cr
 License: \tab GPL (>= 2)\cr
 }
 
@@ -31,6 +31,8 @@ MR                      Multiple regression transfer functions
 crossval                Cross validate a transfer function model
 predict                 Predict using a transfer function model, 
                         with sample-specific errors
+randomPTF               Variable important via random palaeoecological 
+                        transfer functions                        
 read.CEP                Read and write data in Cornell Ecology 
                         Program format
 read.Tilia              Read Tilia files

@@ -21,7 +21,7 @@ int ncom = 0;
 double (*nrfunc)(double *, dMat &, dMat &);
 
 #define SQR(a) (sqrarg=(a),sqrarg*sqrarg)
-static double sqrarg;
+//  static double sqrarg;
 
 /*
 #ifdef _WIN32
@@ -163,13 +163,14 @@ extern "C" {
 /*
 __declspec(dllexport) 
 */
-SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX)
+SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX, SEXP sexp_verbose)
 {
    SEXP dims, R_pred;
    dims = Rf_getAttrib(sexp_SpecData, R_DimSymbol);
    int nr = INTEGER(dims)[0];
    int nc = INTEGER(dims)[1];
    double meanX = REAL(sexp_meanX)[0];
+   int verbose = INTEGER(sexp_verbose)[0];
    double **xi;
    double *p, fret;
    int iter;
@@ -213,7 +214,8 @@ SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX)
           powell(p, xi, nDimen, FTOL, &iter, &fret, beta, sp, calib_func);
        }
        catch (const char *e) {
-          REprintf("\n%s\n", e);
+         if (verbose)
+             REprintf("\n%s\n", e);
           retval = TRUE;
        }
        if (retval) {
@@ -231,7 +233,6 @@ SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX)
    return(R_pred);
 }
 }
-
 
 double calib_func(double *xt, dMat &params, dMat &SpecData)
 {

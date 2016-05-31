@@ -18,7 +18,7 @@ Functions for reconstructing (predicting) environmental values from biological a
 \usage{
 MLRC(y, x, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, \dots)
 
-MLRC.fit(y, x, n.cut=2, use.glm=FALSE, max.iter=50, lean=FALSE, verbose=TRUE, \dots)
+MLRC.fit(y, x, n.cut=2, use.glm=FALSE, max.iter=50, lean=FALSE, verbose=FALSE, \dots)
 
 \method{predict}{MLRC} (object, newdata=NULL, sse=FALSE, nboot=100,
       match.data=TRUE, verbose=TRUE, \dots)
@@ -58,7 +58,7 @@ MLRC.fit(y, x, n.cut=2, use.glm=FALSE, max.iter=50, lean=FALSE, verbose=TRUE, \d
   \item{add.ref}{ add 1:1 line on plot. }
   \item{add.smooth}{ add loess smooth to plot. }
   \item{cv.method}{ cross-validation method, either "loo", "lgo", "bootstrap" or "h-block". }
-  \item{verbose}{ logical to show feedback during cross-validaton. }
+  \item{verbose}{ logical to show feedback during cross-validation. }
   \item{nboot}{ number of bootstrap samples. }  
   \item{ngroups}{ number of groups in leave-group-out cross-validation, or a vector contain leave-out group menbership. }  
   \item{h.cutoff}{ cutoff for h-block cross-validation.  Only training samples greater than \code{h.cutoff} from each test sample will be used. }

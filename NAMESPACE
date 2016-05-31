@@ -41,7 +41,7 @@ export(IKFA, IKFA.fit, LWR, MAT,
        MLRC, MLRC.fit, 
        WA, WA.fit, 
        WAPLS, WAPLS.fit, 
-       MR, MR.fit)
+       MR, MR.fit, randomPTF)
 
 ## export the following internal functions
 export(.crossval, .max.bias, 
@@ -110,6 +110,7 @@ S3method(plot, MLRC)
 S3method(plot, WA)
 S3method(plot, WAPLS)
 S3method(plot, MR)
+S3method(plot, randomPTF)
 
 # predict: stats
 S3method(predict, IKFA)
@@ -129,6 +130,8 @@ S3method(print, MLRC)
 S3method(print, WA)
 S3method(print, WAPLS)
 S3method(print, MR)
+S3method(print, randomPTF)
+
 
 # rand.t.test: rioja
 S3method(rand.t.test, default)

@@ -34,12 +34,10 @@ WAPLS.fit <- function(y, x, npls=5, iswapls=TRUE, standx=FALSE, lean=FALSE)
      stop("Components could not be extracted, please check data")
   if (ncol(beta) != npls)
      warning(paste("Only", ncol(beta), "components could be extracted"))
-  if (!lean) {
-    rownames(beta) <- colnames(y)
-    if (ncol(beta) != npls)
-       warning(paste("Only", ncol(beta), "components could be extracted"))
-    colnames(beta) <- paste("Comp", formatC(1:ncol(beta), width=2, flag="0"), sep="")
-  }
+  rownames(beta) <- colnames(y)
+  if (ncol(beta) != npls & !lean)
+     warning(paste("Only", ncol(beta), "components could be extracted"))
+  colnames(beta) <- paste("Comp", formatC(1:ncol(beta), width=2, flag="0"), sep="")
   ret <- list(coefficients=beta, meanY=result$meanY, iswapls=iswapls)
   if (!lean) {
     T <- matrix(result$T, nrow=nrow(y))

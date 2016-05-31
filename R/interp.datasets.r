@@ -34,4 +34,3 @@ interp.dataset <- function(y, x, xout, method=c("linear","loess","sspline", "asp
    }
    res
 }
-

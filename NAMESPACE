@@ -1,0 +1,162 @@
+## compiled code
+useDynLib(rioja)
+
+## Imports
+##
+importFrom(vegan, bstick, make.cepnames)
+
+## lattice
+importFrom(lattice,
+           current.panel.limits, panel.text, panel.xyplot, xyplot)
+## mgcv
+importFrom(mgcv,
+           gam, s, smoothCon, mono.con, pcls, Predict.matrix)
+
+## grDevices
+importFrom("grDevices", "chull", "col2rgb", "rgb")
+
+## RODBC
+# importFrom(RODBC, odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
+
+## Export regular function names (no dots)
+export(chclust, crossval, performance, inkspot, Merge, bstick)
+
+## export regular functions with dot names
+export(read.CEP, read.Tilia, write.CEP, compare.datasets, 
+       rand.t.test, interp.dataset,
+       sp.plot, strat.plot, strat.plot.simple, addClustZone,
+       addZone)
+
+## export utility functions
+export(hulls, figCnvt, communality, paldist, paldist2,
+       make.dummy, dummy2factor, sp.summ, site.summ,
+       Hill.N2, dot)
+
+## export fit functions
+export(IKFA, IKFA.fit, LWR, MAT, 
+       MLRC, MLRC.fit, 
+       WA, WA.fit, 
+       WAPLS, WAPLS.fit, 
+       MR, MR.fit, randomPTF)
+
+## export the following internal functions
+export(.crossval, .max.bias, 
+         .rmse, .r2, .get.rand, .set.rand.seed,
+        .check.data, .print.crossval, .print.performance,
+        .performance, .predict, .crossval,
+        .mono.fit, .mono.predict)
+        
+## Do not export fillowing internal functions
+## export(.find.groups, .drawdend)        
+
+## Registration of S3 methods
+import(stats)
+import(graphics)
+# import(vegan)
+import(utils)
+
+# bstick: vegan
+#S3method(bstick, default)
+S3method(bstick, chclust)
+
+# crossval: rioja
+S3method(crossval, default)
+S3method(crossval, IKFA)
+S3method(crossval, LWR)
+S3method(crossval, MAT)
+S3method(crossval, MLRC)
+S3method(crossval, WA)
+S3method(crossval, WAPLS)
+S3method(crossval, MR)
+
+# dot: rioja
+S3method(dot, default)
+S3method(dot, data.frame)
+
+# coef: stats
+S3method(coef, IKFA)
+S3method(coef, MLRC)
+S3method(coef, MR)
+
+# fitted: stats
+S3method(fitted, IKFA)
+S3method(fitted, LWR)
+S3method(fitted, MAT)
+S3method(fitted, MLRC)
+S3method(fitted, WA)
+S3method(fitted, WAPLS)
+S3method(fitted, MR)
+
+# performance: rioja
+S3method(performance, default)
+S3method(performance, IKFA)
+S3method(performance, LWR)
+S3method(performance, MAT)
+S3method(performance, MLRC)
+S3method(performance, WA)
+S3method(performance, WAPLS)
+S3method(performance, MR)
+
+# plot: graphics
+S3method(plot, compare.datasets)
+S3method(plot, chclust)
+S3method(plot, IKFA)
+S3method(plot, MAT)
+S3method(plot, MLRC)
+S3method(plot, WA)
+S3method(plot, WAPLS)
+S3method(plot, MR)
+S3method(plot, randomPTF)
+
+# predict: stats
+S3method(predict, IKFA)
+S3method(predict, LWR)
+S3method(predict, MAT)
+S3method(predict, MLRC)
+S3method(predict, WA)
+S3method(predict, WAPLS)
+S3method(predict, MR)
+
+# print: base
+S3method(print, IKFA)
+S3method(print, LWR)
+S3method(print, MAT)
+S3method(print, MLRC)
+S3method(print, WA)
+S3method(print, WAPLS)
+S3method(print, MR)
+S3method(print, randomPTF)
+
+
+# rand.t.test: rioja
+S3method(rand.t.test, default)
+S3method(rand.t.test, IKFA)
+S3method(rand.t.test, WA)
+S3method(rand.t.test, WAPLS)
+
+# residuals: stats
+S3method(residuals, IKFA)
+S3method(residuals, LWR)
+S3method(residuals, MAT)
+S3method(residuals, MLRC)
+S3method(residuals, WA)
+S3method(residuals, WAPLS)
+S3method(residuals, MR)
+
+# screeplot: stats
+S3method(screeplot, IKFA)
+S3method(screeplot, MAT)
+S3method(screeplot, WAPLS)
+
+# sp.plot: rioja
+S3method(sp.plot, default)
+S3method(sp.plot, formula)
+
+# summary: base
+S3method(summary, IKFA)
+S3method(summary, LWR)
+S3method(summary, MAT)
+S3method(summary, MLRC)
+S3method(summary, WA)
+S3method(summary, WAPLS)
+S3method(summary, MR)

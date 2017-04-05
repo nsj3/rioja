@@ -160,3 +160,4 @@ S3method(summary, MLRC)
 S3method(summary, WA)
 S3method(summary, WAPLS)
 S3method(summary, MR)
+

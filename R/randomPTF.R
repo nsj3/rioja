@@ -56,9 +56,9 @@ randomPTF <- function (spec, env, fun, ncol=1, nVar, nTF=500, verbose=TRUE, do.p
     i <- seq_len(nTF)
     fe_call <- as.call(c(list(quote(foreach::foreach), i = i), .paropts))
     fe <- eval(fe_call)
-    res <- foreach::`%dopar%`(fe, do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...))
+#    res <- foreach::`%dopar%`(fe, do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...))
     
-#     res <- foreach::foreach(1:nTF, .packages=c('rioja')) %dopar% { do.TF(y, x, nsp, nsam, fun, ncol, nvar, ...) }
+     res <- foreach::foreach(1:nTF, .packages=c('rioja')) %dopar% { do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...) }
      res <- t(sapply(res, "["))
   } else {
     if (verbose) {
@@ -73,8 +73,9 @@ randomPTF <- function (spec, env, fun, ncol=1, nVar, nTF=500, verbose=TRUE, do.p
        }        
        res[i, ] <- do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...)
      }
-    #      res <- foreach(1:nTF, .packages=c('rioja')) %do% do.TF(y, x, nsp, nsam, fun, ncol, nvar, ...)
+    #      res <- foreach(1:nTF, .packages=c('rioja')) %do% do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...)
   }
+  print(class(res))
   colnames(res) <- colnames(y)
   SumErr <- colSums(res, na.rm=TRUE)
   nTree <- colSums(!is.na(res)) 

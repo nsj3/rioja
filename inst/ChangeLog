@@ -1,6 +1,9 @@
 rioja Change Log
 
 Version 0.9-13
+Fixed bug in parallel code of randomPTF
+
+Version 0.9-13
 * Released on CRAN 05/04/2017
 Remove aspline interpolation from interp.dataset to remove dependence on package akima.
 Removed functions read.C2.Model and write.list.Excel to remove dependence on RODBC.

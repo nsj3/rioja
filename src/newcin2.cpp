@@ -6,6 +6,8 @@
 #include "mat.h"
 #include "nutil.h"
 
+using namespace std;
+
 #define MAX_SPECIES 5000
 #define MAX_SAMPLES 50000
 #define MIN(a, b) (a < b ? a : b) 

@@ -1,5 +1,37 @@
 rioja Change Log
 
+Version 0.9-13
+Fixed bug in parallel code of randomPTF
+
+Version 0.9-13
+* Released on CRAN 05/04/2017
+Remove aspline interpolation from interp.dataset to remove dependence on package akima.
+Removed functions read.C2.Model and write.list.Excel to remove dependence on RODBC.
+Fixed Protect / Unprotect issues in C / C++ code.
+
+Version 0.9-12
+* Released on CRAN 
+Fixed various bugs in read.Tilia
+
+Version 0.9-11
+* Released on CRAN 
+Updated C++ code to include:
+using namespace std;
+
+Version 0.9-10
+* Released on CRAN 
+curve index and name passed to custom function in strat.plot
+Fixed bugs and updated help page for function MR
+
+Version 0.9-9
+* Released on CRAN 14/07/16
+removed smooth functions from strat.plot and added ability to define a function for custom analysis / drawing for each curve
+
+Version 0.9-8
+* Not released on CRAN
+added randomPTF
+minor fixes and corrections to .rd files
+
 Version 0.9-7
 * Released on CRAN 24/05/16
 Added grid lines to inkspot

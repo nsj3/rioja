@@ -105,11 +105,12 @@ If function \code{predict} is called with \code{newdata=NULL} it returns a matri
 \item{x.n}{ environmental values of the k closest analogues. }
 \item{match.name}{ column names of the k closest analogues. }
 \item{dist}{ dissimilarity matrix (returned if \code{lean=FALSE}). }
+
 If sample specific errors were requested the list will also include:
 \item{fit.boot}{ mean of the bootstrap estimates of newdata. }
-\item{v1}{ squared standard error of the bootstrap estimates for each new sample. }
-\item{v2}{ mean squared error for the training set samples, across all bootstram samples. }
-\item{SEP}{ standard error of prediction, calculated as the square root of v1 + v2. }
+\item{v1}{ standard error of the bootstrap estimates for each new sample. }
+\item{v2}{ root mean squared error for the training set samples, across all bootstram samples. }
+\item{SEP}{ standard error of prediction, calculated as the square root of v1^2 + v2^2. }
 
 Functions \code{paldist} and \code{paldist2} return dissimilarity matrices.  \code{performance} returns a matrix of performance statistics for the MAT model, with columns for RMSE, R2, mean and max bias for each number of analogues up to k. See \code{\link{performance}} for a description of the output.
 }

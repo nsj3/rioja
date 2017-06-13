@@ -7,7 +7,6 @@
 \alias{Hill.N2}
 \alias{site.summ}
 \alias{sp.summ}
-\alias{write.list.Excel}
 
 \title{Utility functions. }
 \description{
@@ -24,16 +23,12 @@ site.summ(y, max.cut=c(2, 5, 10, 20))
 
 sp.summ(y, n.cut=c(5, 10, 20))
 
-write.list.Excel(x, fName)
-
 }
 \arguments{
   \item{fact}{ a factor to convert to a matrix of dummy variables. }
-  \item{x}{ a matrix or data frame of dummy variables to convert to a factor, 
-        or a list to save as an Excel file. }
+  \item{x}{ a matrix or data frame of dummy variables to convert to a factor. }
   \item{df}{ a data frame of species abundance data. }
   \item{margin}{ margin to calculate over: 1 = by rows, 2 = by columns. }
-  \item{fName}{ file name for Excel file. }
   \item{y}{ data frame or matrix of species by sites data. }
   \item{n.cut}{ cut levels of abundance for species summary (see below). }
   \item{max.cut}{ cut levels of occurence for species sumamry. }
@@ -43,8 +38,6 @@ write.list.Excel(x, fName)
   Function \code{make.dummy} converts a factor into a matrix of dummy (1/0) variables. \code{dummy2factor} converts a matrix or data frame of dummy variables into a factor.
   
   Function \code{Hill.N2} returns Hill's N2 values for species or samples for a given species by sites dataset (Hill 1973).
-
-  Function \code{write.list.Excel} saves the data frames in a list object as a series of names worksheets in Excel format.  Not that this function is only available on Windows.  See package \code{WriteXLS} for a Linux / MacOS X alternative.
 }
 
 \value{

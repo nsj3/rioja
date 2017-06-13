@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include "nutil.h"
 
+using namespace std;
+
 void RLS(char *s)
 {
 	char *s1 = s;

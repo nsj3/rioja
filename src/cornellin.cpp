@@ -3,8 +3,9 @@
 #include <Rdefines.h>
 #include "mat.h"
 
-void NewCornellIn2(dataMat &S, char * fname, int etf, double missing_value, char &InFileType, long &nMissingValues, int &ColsWithNoData, int &RowsWithNoData, int &nCouplets, double impliedZero);
+using namespace std;
 
+void NewCornellIn2(dataMat &S, char * fname, int etf, double missing_value, char &InFileType, long &nMissingValues, int &ColsWithNoData, int &RowsWithNoData, int &nCouplets, double impliedZero);
 
 extern "C" {
 /* __declspec(dllexport) */

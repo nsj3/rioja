@@ -9,6 +9,8 @@
 #include "mat.h"
 #include "nutil.h"
 
+using namespace std;
+
 bool Conslink(long nsam, double **DPtr, double **dend);
 bool ConISS(long nsam, double **DPtr, double **dend);
 bool CalcDissimilarity(dMat &Data, double ***DissimPtr, int coef);

@@ -2,8 +2,11 @@
 #include <string.h>
 #include "tilfuncs.h"
 #include "mat.h"
+#include <R_ext/Print.h>
 
 /* Must be compiled with 1 Byte Structure Member Alignment under MSVC */
+
+using namespace std;
 
 bool TiliaReadHeader(FILE *fin, char *header, int size)
 {
@@ -14,7 +17,7 @@ bool TiliaReadHeader(FILE *fin, char *header, int size)
 
 bool Tilia1ReadFlags(FILE *fin, int &n, int &m)
 {
-   TILIAFLAGS flags;
+  TILIAFLAGS flags;
    if (fread(&flags,sizeof(flags),1,fin) != 1)
       return false;
    n = flags.levs;
@@ -25,7 +28,7 @@ bool Tilia1ReadFlags(FILE *fin, int &n, int &m)
 bool Tilia2ReadFlags(FILE *fin, int &n, int &m)
 {
    TILIA2FLAGS flags;
-   if (fread(&flags,sizeof(flags),1,fin) != 1)
+  if (fread(&flags,sizeof(flags),1,fin) != 1)
       return false;
    n = flags.levs;
    m = flags.vars;
@@ -35,7 +38,7 @@ bool Tilia2ReadFlags(FILE *fin, int &n, int &m)
 void TiliaWriteFlags(FILE *fout, int n, int m)
 {
 	TILIA2FLAGS flags2;
-   memset(&flags2,0,sizeof(flags2));
+  memset(&flags2,0,sizeof(flags2));
    flags2.vars            = m;
 	flags2.levs            = n;
    flags2.showVarNums     = 0;
@@ -60,7 +63,7 @@ void TiliaWriteFlags(FILE *fout, int n, int m)
 bool Tilia1ReadVar(FILE *fin, char *name, char *longcode, char *shortcode, int &spnum, char &sum)
 {
    TILIAVARS var;
-   if (fread(&var,sizeof(var),1,fin) != 1) {
+  if (fread(&var,sizeof(var),1,fin) != 1) {
       return false;
    }
    spnum = (short) var.cam_code;
@@ -74,7 +77,7 @@ bool Tilia1ReadVar(FILE *fin, char *name, char *longcode, char *shortcode, int &
 bool Tilia2ReadVar(FILE *fin, char *name, char *longcode, int &spnum, char &sum)
 {
    TILIA2VARS var;
-   if (fread(&var,sizeof(var),1,fin) != 1)
+  if (fread(&var,sizeof(var),1,fin) != 1)
       return false;
    strcpy(name, (char *) var.name);
    strcpy(longcode, (char *) var.VarCode);
@@ -89,7 +92,7 @@ bool Tilia2ReadVar(FILE *fin, char *name, char *longcode, int &spnum, char &sum)
 void TiliaWriteVar(FILE *fout, const char *code, const char *name, int num, char sum)
 {	
    TILIA2VARS var;
-   strncpy((char *) var.VarCode, code, 8);
+  strncpy((char *) var.VarCode, code, 8);
    var.VarCode[8] = '\0';
    if (name == NULL) {
       strncpy((char *) var.name, code, 8);
@@ -108,7 +111,7 @@ void TiliaWriteVar(FILE *fout, const char *code, const char *name, int num, char
 void TiliaWriteSample(FILE *fout, float num, const char *s)
 {
    TILIA2SAMPLES level;
-	level.num = (float) num;
+  level.num = (float) num;
 	strcpy((char *) level.name, s);
    fwrite(&level,sizeof(level),1,fout);
 }
@@ -116,7 +119,7 @@ void TiliaWriteSample(FILE *fout, float num, const char *s)
 bool TiliaReadSample(FILE *fin, float &num, char *s)
 {
    TILIASAMPLES level;
-   if (fread(&level,sizeof(level),1,fin) == 0)
+  if (fread(&level,sizeof(level),1,fin) == 0)
       return false;
 	num = level.num;
 	strcpy(s, (char *) level.name);

@@ -13,7 +13,7 @@ strat.plot (d, yvar = NULL, scale.percent = FALSE,
     scale.minmax = TRUE, xLeft = 0.07, xRight = 1, 
     yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, 
     y.axis=TRUE, x.axis=TRUE, min.width = 5, ylim = NULL, y.rev = FALSE, 
-    y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=1, 
+    y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8, 
     xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
     wa.order = "none", plot.line = TRUE,
     col.line = "black", lwd.line = 1, plot.bar = TRUE, 
@@ -22,8 +22,8 @@ strat.plot (d, yvar = NULL, scale.percent = FALSE,
     lwd.poly = 1, plot.symb = FALSE, symb.pch=19, symb.cex=1,
     x.names=NULL, cex.xlabel = 1.1, srt.xlabel=90, 
     mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1, 
-    orig.fig=NULL, add.smooth=FALSE, col.smooth="red", smooth.span=0.1, lwd.smooth=1, 
-    exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, add=FALSE, ...)
+    orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", 
+    exag.alpha=0.2, fun1=NULL, fun2=NULL, add=FALSE, ...)
     
 addZone (x, upper, lower=NULL, ...)
 
@@ -63,9 +63,6 @@ addClustZone(x, clust, nZone, ...)
   \item{cex.xlabel}{ size of label for variable names. }
   \item{srt.xlabel}{ rotation angle for variable names. }
   \item{plot.symb, symb.pch, symb.cex}{ logical for plotting symbols and symbol type / size. }
-  \item{add.smooth}{ logical for adding loess smooth to a curve. Can be a single value or a vector to add smooths to individual curves. }
-  \item{col.smooth, lwd.smooth}{ colour / line width of loess smooth. }
-  \item{smooth.span}{ span for the loess smooth. }
   \item{exag}{ logical to add exaggerated curves when \code{plot.poly=TRUE}. Can be a single value or a vector to add exaggeration to individual curves.}
   \item{exag.mult}{ multiplier for exaggerated curves. Can be a single value or a vector to control exaggeration to individual curves.}
   \item{col.exag}{ colour for exaggerated curves. Can be a single value, a vector to control colour of individual curves, or \code{"auto"} for transparent version of main curve.}
@@ -73,6 +70,7 @@ addClustZone(x, clust, nZone, ...)
   \item{mgp}{ value of mgp for x-axes.  See \code{par} for details. }
   \item{cex.axis}{ text size for x-axis labels.  See \code{par} for details. }
   \item{clust}{ an constrained classification object of class \code{chclust} to add to plot. }
+  \item{fun1, fun2}{ custom functions to add additional features to curve. Can be a single function applied to all curves or a vector to apply individual functions to individual curves. fun1 draws behind curves, fun2 draws on top of curves. }
   \item{clust.width}{ width of dendrogram to add to right of plot, in relative units. }
   \item{orig.fig}{ fig values to specify area of window in which to place diagram.  See \code{par} for details. Defaults to whole window. }
   \item{add}{ logical to contol drawing of new page. See \code{par} for details. Defaults to FALSE in which a call to strat.plot will start a new diagram. Set to  TRUE to add a diagram to an existing plot. }
@@ -82,7 +80,7 @@ addClustZone(x, clust, nZone, ...)
   \item{...}{ further graphical arguments. }
 }
 \details{
-\code{strat.plot} plots a series of variables in a stratigraphic diagram. Diagrams can be plotted as line graphs and / or bar charts. Samples are plotted on the y-axis by sample number by default but may be plotted against sample age otr depth by specifying a variable for yvar. Margins of the plotting area can be changed using xLeft, xRight, yBottom and yTop.  A dendrogram produced by \code{chclust} can be added to the right of the diagram.
+\code{strat.plot} plots a series of variables in a stratigraphic diagram. Diagrams can be plotted as line graphs and / or bar charts. Samples are plotted on the y-axis by sample number by default but may be plotted against sample age or depth by specifying a variable for yvar. Margins of the plotting area can be changed using xLeft, xRight, yBottom and yTop.  A dendrogram produced by \code{chclust} can be added to the right of the diagram.
 
 The function \code{addZone} can be used to add a horizontal line or box to an existing plot, and 
 \code{addClustZone} will add a specified number of zones from a dendrogram (see examples).
@@ -145,8 +143,19 @@ sc <- scores(dca, display="sites", choices=1:2)
 strat.plot(sc, xLeft = 0.7, yvar = depth, y.rev=TRUE, xRight=0.99,
 y.axis=FALSE, clust=clust, clust.width=0.08, add=TRUE)
 
-# Pollen diagram using built-in Abernethy Forest dataset
+# Use custom function to add smooth to curve
 
+sm.fun <- function(x, y, i, nm) {
+  tmp <- data.frame(x=y, y=x)
+  tmp <- na.omit(tmp)
+  lo <- lowess(tmp, f=0.3)
+  lines(lo$y, lo$x, col="red", lwd=1)
+}
+
+x <- strat.plot(spec, yvar = depth, y.rev=TRUE, scale.percent=TRUE, 
+title="Round Loch of Glenhead", ylabel="Depth (cm)", fun1=sm.fun)
+
+# Pollen diagram using built-in Abernethy Forest dataset
 data(aber)
 depth <- aber$ages$Age
 spec <- aber$spec

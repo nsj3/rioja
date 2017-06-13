@@ -9,6 +9,8 @@
 #include "tilfuncs.h"
 #include "mat.h"
 
+using namespace std;
+
 typedef struct {
    char pollentypes[61];
    int num;
@@ -39,6 +41,7 @@ SEXP ReadTiliaFile(SEXP fN)
    SET_STRING_ELT(retNames, 5, mkChar("Sum"));
    SET_STRING_ELT(retNames, 6, mkChar("Depths"));
    SET_STRING_ELT(retNames, 7, mkChar("ErrorMessage"));
+   SET_NAMES(ans, retNames);
    PROTECT(errorM = allocVector(STRSXP, 1));
    bool bError = false;
 
@@ -47,16 +50,18 @@ SEXP ReadTiliaFile(SEXP fN)
    char strError[100];
    PTYPES *pnames;
    double *pdDepths;
-   if (fin) {
+   if (fin!=NULL) {
       bError = TiliaBinIn(dData, fin, title, &pnames, &pdDepths, strError);
+     fclose(fin);
    }
    else {
       bError = false;
       SET_STRING_ELT(errorM, 0, mkChar("Cannot open file"));
    }
+   
    if (bError) {
-      int nr = rows(dData);
-      int nc = cols(dData);
+     int nr = rows(dData);
+     int nc = cols(dData);
       if (nr * nc > 0) {
          PROTECT(mat = allocVector(VECSXP, nc));
          PROTECT(names = allocVector(STRSXP, nc));
@@ -75,7 +80,7 @@ SEXP ReadTiliaFile(SEXP fN)
             SET_STRING_ELT(pSums, i, mkChar(str));
             SET_VECTOR_ELT(mat, i, allocVector(REALSXP, nr));
             for (int j=0;j<nr;j++) {
-               if (dm->isMissing(j,i)) 
+              if (dm->isMissing(j,i)) 
                   REAL(VECTOR_ELT(mat, i))[j] = NA_REAL;
                else
                   REAL(VECTOR_ELT(mat, i))[j] = (*dm)(j,i);
@@ -84,7 +89,7 @@ SEXP ReadTiliaFile(SEXP fN)
          PROTECT(pDepths = allocVector(REALSXP, nr));
          PROTECT(rnames = allocVector(STRSXP, nr));
          for (int j=0;j<nr;j++) {
-            SET_STRING_ELT(rnames, j, mkChar(dData.samName(j)));
+           SET_STRING_ELT(rnames, j, mkChar(dData.samName(j)));
             REAL(pDepths)[j] = (pdDepths)[j];
          }
 //         for (int i=0;i<nc;i++) {
@@ -102,9 +107,8 @@ SEXP ReadTiliaFile(SEXP fN)
    SET_VECTOR_ELT(ans, 6, pDepths);
    SET_VECTOR_ELT(ans, 7, errorM);
 
-   SET_NAMES(ans, retNames);
    if (!bError)
-      UNPROTECT(4);
+      UNPROTECT(3);
    else
       UNPROTECT(11);
    return(ans);
@@ -182,11 +186,15 @@ bool TiliaBinIn(dataMat &S, FILE *fin, char *fname, PTYPES **pnames, double **pD
 		ppnames[i].num = spnum;
     ppnames[i].sum = sum;
 	}
+	
 	S.kill();
+
 	S.setmatType(full);
+	
 	dMat *CC;
 	CC = new dMat(n, m, 0.0);
 	S.setdMat(CC);
+
 	int *Dl = new int[n];
 	char **samnam = new char*[n];
 	char **spnam = new char*[m];
@@ -200,11 +208,12 @@ bool TiliaBinIn(dataMat &S, FILE *fin, char *fname, PTYPES **pnames, double **pD
 		spnam[i] = &sp[i*9];
 	for (i=0;i<n;i++)
 		samnam[i] = &sam[i*9];
+
 	S.setspName(spnam);
 	S.setsamNo(Dl);
 	S.setsamName(samnam);
 
-   *pDepths = new double[n];
+	*pDepths = new double[n];
 
 	for (i=0;i<n;i++) {
       float num;
@@ -223,8 +232,9 @@ bool TiliaBinIn(dataMat &S, FILE *fin, char *fname, PTYPES **pnames, double **pD
 		S.samNo(i) = i+1;
       (*pDepths)[i] = num;
 	}
-   float x;
-   char byte;
+
+  float x;
+  char byte;
 	for (int j=0;j<m;j++) {
 		for (i=0;i<n;i++) {
   		   if (TiliaReadData(fin, byte, x)==FALSE) {
@@ -247,6 +257,8 @@ bool TiliaBinIn(dataMat &S, FILE *fin, char *fname, PTYPES **pnames, double **pD
          }
 		}
 	}
+	
+
 	for (i=0;i<m;i++) {
       if (strlen(ppnames[i].shortname) < 1) {
 		   strncpy(S.spName(i), ppnames[i].pollentypes, 8);
@@ -258,5 +270,6 @@ bool TiliaBinIn(dataMat &S, FILE *fin, char *fname, PTYPES **pnames, double **pD
       }
   	}
    strcpy(strError, "No error");
+
 	return true;
 }

@@ -86,11 +86,12 @@ Function \code{crossval} also returns an object of class \code{MLRC} and adds th
 
 If function \code{predict} is called with \code{newdata=NULL} it returns the fitted values of the original model, otherwise it returns a list with the following named elements:
 \item{fit}{ predicted values for \code{newdata}. }
-if sample specific errors were generated the list will also include:
+
+If sample specific errors were requested the list will also include:
 \item{fit.boot}{ mean of the bootstrap estimates of newdata. }
-\item{v1}{ squared standard error of the bootstrap estimates for each new sample. }
-\item{v2}{ mean squared error for the training set samples, across all bootstrap samples. }
-\item{SEP}{ standard error of prediction, calculated as the square root of v1 + v2. }
+\item{v1}{ standard error of the bootstrap estimates for each new sample. }
+\item{v2}{ root mean squared error for the training set samples, across all bootstram samples. }
+\item{SEP}{ standard error of prediction, calculated as the square root of v1^2 + v2^2. }
 
 Function \code{performance} returns a matrix of performance statistics for the MLRC model.  See \code{\link{performance}}, for a description of the summary.
 }

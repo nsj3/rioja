@@ -1,14 +1,14 @@
 strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, scale.minmax = TRUE,
     xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
-    min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=1,
+    min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8,
     xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order = "none", 
     plot.line = TRUE, col.line = "black", lwd.line = 1, 
     plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
     plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, lwd.poly = 1,
     plot.symb = FALSE, symb.pch=19, symb.cex=1, x.names=NULL,
     cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1,
-    orig.fig=NULL, add.smooth=FALSE, col.smooth="red", smooth.span=0.1, lwd.smooth=1, 
-    exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, add=FALSE, ...)
+    orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, fun1=NULL, fun2=NULL, 
+    add=FALSE, ...)
 {
     fcall <- match.call(expand.dots=TRUE)
     if (!is.null(clust)) {
@@ -63,14 +63,18 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
       col.exag <- rep(col.exag[1], nsp)
     if (length(col.exag) != nsp)
       stop("Length of col.exag should equal number of curves")
-    if (length(add.smooth) == 1)
-      add.smooth <- rep(add.smooth[1], nsp)
-    if (length(add.smooth) != nsp)
-      stop("Length of add.smooth should equal number of curves")
-    if (length(smooth.span) == 1)
-      smooth.span <- rep(smooth.span[1], nsp)
-    if (length(smooth.span) != nsp)
-      stop("Length of smooth.span should equal number of curves")
+    if (!is.null(fun1)) {
+       if (length(fun1) == 1)
+          fun1 <- lapply(1:nsp, function(x) fun1)
+       if (length(fun1) != nsp)
+          stop("Length of fun1 should equal number of curves")
+    }
+    if (!is.null(fun2)) {
+      if (length(fun2) == 1)
+        fun2 <- lapply(1:nsp, function(x) fun2)
+      if (length(fun2) != nsp)
+        stop("Length of fun2 should equal number of curves")
+    }
     if (length(x.axis) == 1)
       x.axis <- rep(x.axis[1], nsp)
     if (length(x.axis) != nsp)
@@ -104,8 +108,10 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
         graph.widths <- graph.widths[opt.order]
         exag <- exag[opt.order]
         exag.mult <- exag.mult[opt.order]
-        add.smooth <- add.smooth[opt.order]
-        smooth.span <- smooth.span[opt.order]
+        if (!is.null(fun1))
+          fun1 <- fun1[opt.order]
+        if (!is.null(fun2))
+          fun2 <- fun2[opt.order]
         x.axis <- x.axis[opt.order]
         cc.poly <- cc.poly[opt.order]
         cc.poly.line <- cc.poly.line[opt.order]
@@ -165,6 +171,9 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
             par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
             plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
                 xaxs = "i", type = "n", yaxs = "r", ylim = ylim, xlab="", ylab="", ...)
+            if (!is.null(fun1[i])) {
+              fun1[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+            }
             if (bar.back) {
               if (is.logical(plot.bar)) {
                 if (plot.bar) {
@@ -210,11 +219,8 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
             lines(c(0, 0), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), ...)
             if (ty == "l") 
                lines(d[, i], yvar, col = cc.line[i], lwd = lwd.line)
-            if (add.smooth[i]) {
-              tmp <- data.frame(x=yvar, y=d[, i])
-              tmp <- na.omit(tmp)
-              lo <- lowess(tmp, f=smooth.span[i])
-              lines(lo$y, lo$x, col=col.smooth, lwd=lwd.smooth)
+            if (!is.null(fun2[i])) {
+              fun2[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
             }
             xlabb <- seq(0, colM[i], by = x.pc.inc[i])
             if (x.axis[i]) {
@@ -242,6 +248,9 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
             }
             tks <- axTicks(1)
             us <- par("usr")
+            if (!is.null(fun1[i])) {
+              fun1[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+            }
             if (bar.back) {
                if (is.logical(plot.bar)) {
                  if (plot.bar) {
@@ -286,11 +295,8 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                 ...)
             if (ty == "l") 
                 lines(d[, i], yvar, col = cc.line[i], lwd = lwd.line)
-            if (add.smooth[i]) {
-              tmp <- data.frame(x=yvar, y=d[, i])
-              tmp <- na.omit(tmp)
-              lo <- lowess(tmp, f=smooth.span[i])
-              lines(lo$y, lo$x, col=col.smooth, lwd=lwd.smooth)
+            if (!is.null(fun2[i])) {
+              fun2[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
             }
             mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll),0) } else { mgp }
             if (x.axis[i]) {

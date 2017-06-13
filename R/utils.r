@@ -44,37 +44,6 @@ site.summ <- function(y, max.cut=c(2, 5, 10, 20)) {
    data.frame(N.taxa=n.taxa, N2 = n2, Max=mx, Total=tot, mm)
 }
 
-write.list.Excel <- function(x, fName) {
-  if(.Platform$OS.type == "windows" & .Machine$sizeof.pointer < 5) {
-     if (file.exists(fName)) 
-         if (!file.remove(fName))
-            stop("Could not remove existing file - is it open?")
-     if (! ("list" %in% class(x)))
-        stop("object should be a list")
-     if (requireNamespace("RODBC", quietly=TRUE)==FALSE) {
-        stop("This function requires package RODBC")
-     }
-     on.exit(RODBC::odbcCloseAll())
-     #     fp <- RODBC:::full.path(fName)
-#     con <- paste("Driver={Microsoft Excel Driver (*.xls)};DriverId=790;Dbq=", fp, ";DefaultDir=", dirname(fp), ";", sep = "")
-#     con = paste(con, "ReadOnly=False", sep = ";")
-#     channel <- odbcDriverConnect(con, tabQuote = c("[", "]"))
-     channel <- RODBC::odbcConnectExcel(fName, readOnly=FALSE)
-     if (channel == -1)
-        stop(paste("Could not open file ", fName, "for writing. Is it already open?", sep=""))
-     nms <- names(x)
-     for (i in 1:length(x)) {
-        if (class(x[[i]]) == "data.frame") {
-           colnames(x[[i]]) <- gsub("\\.", "_", colnames(x[[i]]))
-           RODBC::sqlSave(channel, x[[i]], nms[i], colnames=FALSE, rownames=TRUE)
-        }
-     }    
-     RODBC::odbcCloseAll()
-  } else {
-    stop("This function is only available on 32 bit Windows. See package WriteXLS for a Linux / MacOS X alternative.")
-  }
-}
-
 Hill.N2 <- function(df, margin=2) {
    if (margin == 2) {
      yk <- colSums(df)

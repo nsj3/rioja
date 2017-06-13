@@ -101,9 +101,9 @@ If function \code{predict} is called with \code{newdata=NULL} it returns the fit
 
 If sample specific errors were requested the list will also include:
 \item{fit.boot}{ mean of the bootstrap estimates of newdata. }
-\item{v1}{ squared standard error of the bootstrap estimates for each new sample. }
-\item{v2}{ mean squared error for the training set samples, across all bootstram samples. }
-\item{SEP}{ standard error of prediction, calculated as the square root of v1 + v2. }
+\item{v1}{ standard error of the bootstrap estimates for each new sample. }
+\item{v2}{ root mean squared error for the training set samples, across all bootstram samples. }
+\item{SEP}{ standard error of prediction, calculated as the square root of v1^2 + v2^2. }
 
 Function \code{crossval} also returns an object of class \code{WA} and adds the following named elements:
    \item{predicted}{ predicted values of each training set sample under cross-validation. }

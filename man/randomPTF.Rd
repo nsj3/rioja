@@ -59,7 +59,7 @@ if (.Platform$OS.type=='windows') {
   registerDoParallel(cores=4)
 } else {
   library(doMC)
-  registerDoMC(cores=12)
+  registerDoMC(cores=4)
 }
 system.time(result <- randomPTF(SWAP$spec, SWAP$pH, fun=WA, do.parallel=TRUE, nTF=5000))}
 }

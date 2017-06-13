@@ -3,18 +3,19 @@
 
 \title{Read data in Tilia format}
 \description{
-Reads data in Tilia format used by the Tilia program for plotting stratigraphic diagrams.
+Reads data in old (*.til) Tilia format used by the Tilia program for plotting stratigraphic diagrams.
 }
 \usage{
-read.Tilia(fName)
+read.Tilia(fName, removeChron=FALSE)
 }
 
 \arguments{
   \item{fName}{ filename to read. }
+  \item{removeChron}{ Remove chron variables from data, defaults to FALSE (chron vars will be include in sample list). }
 }
 
 \details{
- \code{read.Tila} reads data in the Tilia format. Tilia is a program written by Eric Grimm to plot stratigraphic diagrams and is popular with palynologists. Note that any spaces or other illegal characters in the species codes will be converted to decimal places on import.
+ \code{read.Tila} reads data in the Tilia format. Tilia is a program written by Eric Grimm to plot stratigraphic diagrams and is popular with palynologists. Note that any spaces or other illegal characters in the species codes will be converted to periods on import.
 }
 \value{
 Returns a list with three names elements:
@@ -24,7 +25,9 @@ Returns a list with three names elements:
 }
 
 \note{
-The code uses a combination of C and C++ and needs 1-byte structure alignment to read the Tilia binary file. It works on 32 bit systems but currently generates an error on some 64-bit Linux systems.
+The code uses a combination of C and C++ and needs 1-byte structure alignment to read the Tilia binary file. It may crash some 64 bit versions of R.
+
+See function \code{\link[neotoma]{read.tilia}} in the package \code{neotoma} for a version to read Tilia *.tlx files.
 }
 
 \author{ 

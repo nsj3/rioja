@@ -4,6 +4,8 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
+using namespace std;
+
 extern "C" {
 
 /* 
@@ -64,7 +66,7 @@ SEXP WriteCornellFile(SEXP sexpData, SEXP sexpfName, SEXP sexpTitle, SEXP sexpSu
       delete pData;
       sprintf(str, "Cannot open file %s", CHAR(STRING_ELT(sexpfName, 0)));
       SET_STRING_ELT(eMessage, 0, mkChar(str));
-      UNPROTECT(3);
+      UNPROTECT(4);
       return eMessage;
    }
 

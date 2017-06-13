@@ -1,9 +1,9 @@
 #ifndef TILFUNCS_HPP
 #define TILFUNCS_HPP 1
 
-//#ifndef _WIN32
-   #define WORD unsigned short
-//#endif
+#pragma pack(push, 1)
+
+#define WORD unsigned short
 
 //these are Eric's Tilia 2.0 structs:
 
@@ -27,7 +27,7 @@ typedef struct
   WORD dummy5;
   WORD dummy6;
   WORD dummy7;
-} TILIA2FLAGS ;
+} __attribute__ ((packed)) TILIA2FLAGS ;
 
 typedef struct
 {
@@ -49,17 +49,13 @@ typedef struct
   WORD dummy5;
   WORD dummy6;
   WORD dummy7;
-} TILIAFLAGS;
+} __attribute__ ((packed)) TILIAFLAGS;
 
 typedef struct
 {
   char null;
-#ifndef _MSC_VER
-  WORD  n __attribute__ ((packed));
-#else
   WORD  n;
-#endif
-} NULLINT;
+} __attribute__ ((packed)) NULLINT;
 
 typedef struct
 {
@@ -67,47 +63,31 @@ typedef struct
   unsigned char sum;
   unsigned char name[61];
   unsigned char VarCode[9];
-} TILIA2VARS;
+} __attribute__ ((packed)) TILIA2VARS;
 
 typedef struct {
   unsigned char code[3];
-#ifndef _MSC_VER
-  WORD          cam_code __attribute__ ((packed));
-#else
   WORD          cam_code ;
-#endif
   unsigned char sum;
   unsigned char name[41];
   unsigned char codename[10];
-} TILIAVARS;
+} __attribute__ ((packed)) TILIAVARS;
 
 typedef struct
 {
-#ifndef _MSC_VER
-  float         num __attribute__ ((packed));
-#else
   float         num ;
-#endif
   unsigned char name[11];
-} TILIA2SAMPLES;
+} __attribute__ ((packed)) TILIA2SAMPLES;
 
 typedef struct
 {
-#ifndef _MSC_VER
-  float         num __attribute__ ((packed));
-#else
   float         num ;
-#endif
   unsigned char name[11];
-} TILIASAMPLES;
+} __attribute__ ((packed)) TILIASAMPLES;
 
 typedef struct
 {
-#ifndef _MSC_VER
-  float x __attribute__ ((packed));
-#else
   float x ;
-#endif 
   union
   {
     unsigned char byte;
@@ -118,15 +98,11 @@ typedef struct
       unsigned char unused : 6;
     } attr;
   } flag;
-} TILIA2DATA;
+} __attribute__ ((packed)) TILIA2DATA;
 
 typedef struct
 {
-#ifndef _MSC_VER
-  float x __attribute__ ((packed));
-#else
   float x ;
-#endif
   union
   {
 	 unsigned char byte;
@@ -136,7 +112,9 @@ typedef struct
 		unsigned char unused : 7;
 	 } attr;
   } flag;
-} TILIADATA;
+} __attribute__ ((packed)) TILIADATA;
+
+#pragma pack(pop)
 
 /*
 typedef struct

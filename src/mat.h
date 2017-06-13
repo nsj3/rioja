@@ -272,10 +272,9 @@ public:
 };
 
 class dataMat: Mat {
-private:
-   dataMatRep *p;
 public:
 
+   dataMatRep *p;
    dataMat();
    ~dataMat();
    dataMat(const dataMat &S);

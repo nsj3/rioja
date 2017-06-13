@@ -99,8 +99,6 @@ extern "C" {
       INTEGER(R_IBeta)[i] = IBeta(i);
    }
 
-   UNPROTECT(2);
-
    PROTECT(ret = allocVector(VECSXP, 2)); 
    PROTECT(retNames = allocVector(STRSXP, 2));
    SET_VECTOR_ELT(ret, 0, R_Beta);
@@ -108,7 +106,7 @@ extern "C" {
    SET_STRING_ELT(retNames, 0, mkChar("Beta"));
    SET_STRING_ELT(retNames, 1, mkChar("IBeta"));
    SET_NAMES(ret, retNames);
-   UNPROTECT(2);
+   UNPROTECT(4);
    return(ret);
 }
 }

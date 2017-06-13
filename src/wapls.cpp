@@ -3,6 +3,8 @@
 #include <Rdefines.h>
 #include "mat.h"
 
+using namespace std;
+
 extern "C" {
 
 #ifdef _MSC_VER

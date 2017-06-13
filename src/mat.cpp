@@ -4,6 +4,8 @@
 #include <string.h>
 #include "mat.h"
 
+using namespace std;
+
 bool Mat::BoundsCheck = true;              
 double Mat::dMissingValue = -99.9;
 double Mat::dTolerance = 1.0E-06;

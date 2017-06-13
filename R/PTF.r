@@ -86,6 +86,7 @@ performance.default <- function(object, ...) {
     d <- matrix(0, nrow=nrow(newdata), ncol=length(nms))
     d[, mt1] <- as.matrix(newdata)[, !is.na(mt)]
     rownames(d) <- rownames(newdata)
+    colnames(d) <- nms
     newdata <- d
   } else {
     if (ncol(object$y) != ncol(newdata)) 

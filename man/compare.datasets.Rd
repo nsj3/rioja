@@ -24,7 +24,7 @@ compare.datasets(y1, y2, n.cut=c(5, 10, 20, 50),
 } 
 
 \details{
- Function \code{compare.datasets} compares two datasets. It summarise the species profile (number of occurences etc.) and sample profile (number of species in each sample etc.) of dataset 1.  For those species recorded in dataset 1 it also provides summaries of their occurence and abundance in dataset 2.  It is useful diagnostic for checking the conformity between core and training set data, specifically for identifying core taxa absent from the training set, and core samples with portions of their assemblage missing from the training set.  Function \code{\link{write.list.Excel}} saves the output of \code{compare.datasets} in Excel format for more convenient browsing.
+ Function \code{compare.datasets} compares two datasets. It summarise the species profile (number of occurences etc.) and sample profile (number of species in each sample etc.) of dataset 1.  For those species recorded in dataset 1 it also provides summaries of their occurence and abundance in dataset 2.  It is useful diagnostic for checking the conformity between core and training set data, specifically for identifying core taxa absent from the training set, and core samples with portions of their assemblage missing from the training set.
   
  \code{\link{plot.compare.datasets}} provides a simple visualisation of the comparisons.  It produces a matrix of plots, one for each sample in dataset 1, showing the abundance of each taxon in dataset 1 (x-axis) against the N2 value of that taxon in dataset 2 (y-axis, with symbols scaled according to abundance in dataset 2.  The plots shouls aid identification of samples with high abundance of taxa that are rare (low N2) or have low abundance in the training set. Taxa thar are absent from the training set are indicated with a red "+".
 }
@@ -41,9 +41,6 @@ compare.datasets(y1, y2, n.cut=c(5, 10, 20, 50),
 Steve Juggins
 }
 
-\seealso{ 
-\code{\link{write.list.Excel}} to save the output of \code{compare.datasets} in Excel format.
-}
 \examples{
 # compare diatom data from core from Round Loch of Glenhead
 # with SWAP surface sample dataset
@@ -53,9 +50,6 @@ result <- compare.datasets(RLGH$spec, SWAP$spec)
 result
 
 \dontrun{
-#save comparison to Excel for more convenient browsing
-write.list.Excel(result, "Comparison.xls")
-
 #visualise the comparison
 plot(result, RLGH$spec)
 }

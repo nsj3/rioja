@@ -7,14 +7,15 @@ MR <- function(y, x, check.data=TRUE, lean=FALSE, ...)
        stop(paste("Species data have zero abundances for the following columns:", paste(which(apply(y, 2, sum) < 1.0E-8), collapse=",")))
   }
   fit <- MR.fit(y=y, x=x)
-  xHat <- predict.internal.MR(object=fit, y=y, lean=lean, ...) 
   call.fit <- as.call(list(quote(MR.fit), y=quote(y), x=quote(x), lean=FALSE))
   call.print <- match.call()
-  result <- list(lm=fit, fitted.values=xHat, call.fit=call.fit, call.print=call.print, x=x)
+  result <- list(lm=fit, call.fit=call.fit, call.print=call.print, x=x)
   result$cv.summary <- list(cv.method="none")
-	if (!lean) 
-	   result$y <- y
+  if (!lean) 
+    result$y <- y
   class(result) <- "MR" 
+  xHat <- predict.internal.MR(object=result, y=y, lean=lean, ...) 
+  result$fitted.values <- xHat
   result
 }
 
@@ -27,7 +28,10 @@ MR.fit <- function(y, x, lean=FALSE)
 predict.internal.MR <- function(object, y, ...)
 {
   y <- as.data.frame(y)
-  xHat <- predict.lm(object, y)
+  if (class(object) == "lm")
+    xHat <- predict.lm(object, y)
+  else
+    xHat <- predict.lm(object$lm, y)
   xHat <- matrix(xHat, ncol=1)
   rownames(xHat) <- rownames(y)
   colnames(xHat) <- "xHat"
@@ -77,7 +81,7 @@ summary.MR <- function(object, full=FALSE, ...)
 
 plot.MR <- function(x, resid=FALSE, xval=FALSE, xlab="", ylab="", ylim=NULL, xlim=NULL, add.ref=TRUE, add.smooth=FALSE, ...) {
   if (xval & x$cv.summary$cv.method=="none")
-     stop("IKFA model does not have cross validation estimates")
+     stop("MR model does not have cross validation estimates")
   xx <- x$x
   if (resid) {
      if (xval) {
@@ -128,6 +132,9 @@ residuals.MR <- function(object, cv=FALSE, ...) {
 }
 
 coef.MR <- function(object, ...) {
-  object$lm$coefficients
+  m <- matrix(object$lm$coefficients, ncol=1)
+  rownames(m) <- names(object$lm$coefficients)
+  colnames(m) <- "beta"
+  m
 }
 

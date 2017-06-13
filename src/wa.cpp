@@ -3,6 +3,8 @@
 #include <Rdefines.h>
 #include "mat.h"
 
+using namespace std;
+
 #ifndef max
    #define max(a,b) ((a)>(b)?(a):(b))
 #endif
@@ -199,7 +201,6 @@ __declspec(dllexport)
    REAL(R_Coef)[5] = tb1cla;
    REAL(R_Coef)[6] = tb1invTol;
    REAL(R_Coef)[7] = tb1claTol;
-   UNPROTECT(2);
 
    PROTECT(ret = allocVector(VECSXP, 2)); 
    PROTECT(retNames = allocVector(STRSXP, 2));
@@ -210,7 +211,7 @@ __declspec(dllexport)
    SET_STRING_ELT(retNames, 1, mkChar("DS_Coefficients"));
 
    SET_NAMES(ret, retNames);
-   UNPROTECT(2);
+   UNPROTECT(4);
 
 //   delete str;
    return(ret);

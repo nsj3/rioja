@@ -72,7 +72,7 @@ write.CEP <- function(x, fName, fTitle=fName, type = "condensed", nSig=5, nCoupl
   invisible (list(site.names=rN, sp.names=cN))
 }
 
-read.Tilia <- function(fName) {
+read.Tilia <- function(fName, removeChron=FALSE) {
   if (!is.character(fName))
     stop("Expecting filename as first argument")
   ret <- .Call("ReadTiliaFile", fName, PACKAGE="rioja")
@@ -83,15 +83,17 @@ read.Tilia <- function(fName) {
     levels = data.frame(Names=make.unique(ret[[2]]), Depths = ret[[7]])
     mt <- na.omit(grep(toupper("Chron*"), toupper(colnames(df))))
     if (length(mt) > 0) {
-       ch <- df[, mt]
-       df <- df[, -mt]
-       levels <- cbind(levels, ch)
+      ch <- df[, mt]
+      if (removeChron) {
+        df <- df[, -mt]
+      }
+      levels <- cbind(levels, ch)
     }
     out <- list(data=df, vars=vars, levels=levels)
   }
   else {
     out <- NULL
-    stop(ret[[8]])
+    warning(ret[[8]])
   }
   return(out)
 }

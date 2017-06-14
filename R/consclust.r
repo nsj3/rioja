@@ -12,7 +12,7 @@ chclust <- function(d, method="coniss") {
      stop("Invalid clustering method")
   if(method == -1)
      stop("Ambiguous clustering method")
-  ret <- .Call("chclust", x, as.integer(method), PACKAGE="rioja")
+  ret <- .Call("chclust_c", x, as.integer(method), PACKAGE="rioja")
   if (is.character(ret))
      stop(ret)
   merge <- .find.groups(ret)

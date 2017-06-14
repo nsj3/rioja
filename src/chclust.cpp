@@ -17,7 +17,7 @@ bool CalcDissimilarity(dMat &Data, double ***DissimPtr, int coef);
 
 extern "C" {
  /* __declspec(dllexport) */
-SEXP chclust(SEXP sexpData, SEXP sexMethod)
+SEXP chclust_c(SEXP sexpData, SEXP sexMethod)
 {
    SEXP dims, eMessage = R_NilValue;
    dims = Rf_getAttrib(sexpData, R_DimSymbol);

@@ -5,7 +5,7 @@ Version: 0.9-14
 Date: 2017-06-09
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
-Imports: vegan, mgcv, lattice, grDevices
+Imports: vegan, mgcv, grDevices
 Suggests: maptools, foreach
 Description: Functions for the analysis of Quaternary science data, including
          constrained clustering, WA, WAPLS, IKFA, MLRC and MAT transfer 

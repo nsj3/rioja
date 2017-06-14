@@ -25,10 +25,9 @@ interp.dataset(y, x, xout, method=c("linear","loess","sspline"),
 \details{
 Function \code{interp.dataset} interpolates the columns of data frame with rows measured at intervals given by \code{x}, to new intervals given by \code{xout}. This function is useful to interpolation one set of sediment core data to the depth or ages of another, or to a regular set of intervals. Interpolation can be done using linear interpolation between data points in the original series (default) using \code{\link[stats]{approx}}, using \code{\link[stats]{loess}} locally weighted regression, or by \code{\link[stats]{smooth.spline}}. The latter two methods will also smooth the data and additional arguments may be passed to these functions to control the amount of smoothing. 
 
-The effects of the interpolation can be visualised against the original sequence using \code{strat.plot.simple}.
 }
 \value{
-Function \code{interp.datasets} returns a data frame of the input data interpolated to the values given in \code{xout}. Values of \code{xout} outside the range of the oiriginal data are replaced by \code{NA}.
+Function \code{interp.datasets} returns a data frame of the input data interpolated to the values given in \code{xout}. Values of \code{xout} outside the range of the original data are replaced by \code{NA}.
 } 
 
 \author{ 
@@ -36,7 +35,7 @@ Steve Juggins
 }
 
 \seealso{ 
-\code{\link[stats]{approx}}, \code{\link[stats]{loess}}, \code{\link[stats]{smooth.spline}} for details of interpolation methods, and \code{\link{strat.plot.simple}} to visualise the effect of interpolation and / or smoothing.
+\code{\link[stats]{approx}}, \code{\link[stats]{loess}}, and \code{\link[stats]{smooth.spline}} for details of interpolation methods.
 }
 
 \examples{

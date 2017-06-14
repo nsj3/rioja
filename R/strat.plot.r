@@ -370,39 +370,3 @@ addClustZone <- function(x, clust, nZone, ...) {
    par(oldpar)
 }
 
-strat.plot.simple <- function(y1, x1, y2=NULL, x2=NULL, col=c("blue", "red"), sort.vars=c("original","wa", "alphabetical"), ylim=range(x1), y.rev=FALSE, type=c("b", "l"), subset=c(1:ncol(y1)), ...) {
-   nsp.y1 <- ncol(y1)
-   y1 <- y1[, subset]
-   if (ncol(y1) > 50)
-      stop("You have more than 50 columns in the species data, split the data into smaller subsets")
-   sort.vars <- match.arg(sort.vars)
-   if (sort.vars == "original") {
-      or1 <- order(colnames(y1))
-      ord <- order(or1)
-   } else {
-      if (sort.vars == "wa") {
-          or1 <- order(colnames(y1))
-          wa.sc <- apply(y1[, or1], 2, function(x, env) { sum(x*env, na.rm=TRUE) / sum(x, na.rm=TRUE) }, env=x1)
-          ord <- order(wa.sc)
-      }
-      else {
-         ord <- 1:ncol(y1)
-      }
-   }
-#   require(lattice)
-   s <- stack(y1)
-   s$x <- rep(x1, times=ncol(y1))
-   s$set <- 1
-   if (!is.null(y2) | !is.null(x2)) {
-     if (nsp.y1 != ncol(y2))
-        stop("Number of columns different in y1 and y2")
-     y2 <- y2[, subset] 
-     s2 <- stack(data.frame(y2))
-     s2$x <- rep(x2, times=ncol(y2))
-     s2$set <- 2
-     s <- rbind(s, s2)
-   }
-   if (y.rev)
-      ylim <- rev(ylim)
-   xyplot(x ~ values| ind, data = s, type=type, distribute.type=TRUE, groups = s$set, col=c("blue", "red"), ylim=ylim, index.cond=list(ord), ylab="", xlab="", ...)
-}

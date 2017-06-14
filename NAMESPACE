@@ -1,13 +1,10 @@
 ## compiled code
-useDynLib(rioja)
+useDynLib(rioja, .registration=TRUE)
 
 ## Imports
 ##
 importFrom(vegan, bstick, make.cepnames)
 
-## lattice
-importFrom(lattice,
-           current.panel.limits, panel.text, panel.xyplot, xyplot)
 ## mgcv
 importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
@@ -15,16 +12,13 @@ importFrom(mgcv,
 ## grDevices
 importFrom("grDevices", "chull", "col2rgb", "rgb")
 
-## RODBC
-# importFrom(RODBC, odbcCloseAll, odbcConnectExcel, sqlSave, sqlTables, sqlFetch)
 
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge, bstick)
 
 ## export regular functions with dot names
 export(read.CEP, read.Tilia, write.CEP, compare.datasets, 
-       rand.t.test, interp.dataset,
-       sp.plot, strat.plot, strat.plot.simple, addClustZone,
+       rand.t.test, interp.dataset, strat.plot, addClustZone,
        addZone)
 
 ## export utility functions
@@ -98,7 +92,6 @@ S3method(performance, WAPLS)
 S3method(performance, MR)
 
 # plot: graphics
-S3method(plot, compare.datasets)
 S3method(plot, chclust)
 S3method(plot, IKFA)
 S3method(plot, MAT)
@@ -147,10 +140,6 @@ S3method(residuals, MR)
 S3method(screeplot, IKFA)
 S3method(screeplot, MAT)
 S3method(screeplot, WAPLS)
-
-# sp.plot: rioja
-S3method(sp.plot, default)
-S3method(sp.plot, formula)
 
 # summary: base
 S3method(summary, IKFA)

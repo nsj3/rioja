@@ -35,26 +35,3 @@ compare.datasets <- function(y1, y2, n.cut=c(5, 10, 20, 50), max.cut=c(2, 5, 10,
    invisible(result)
 }
 
-plot.compare.datasets <- function(x, y, subset=1:nrow(x$obs), ...) {
-   if (max(subset) > nrow(x$obs))
-      stop("Subset outside range of original data")
-   if (length(subset) > 80) {
-      warning("too many rows, only plotting first 80")
-      subset <- subset[1:80]
-   }
-   if (nrow(x$obs) != nrow(y)) {
-      stop("Number of observations different in comparison and original data")
-   }
-#   require(lattice)
-   n <- length(subset)
-   d <- stack(data.frame(t(y[subset, ])))
-   d$N2 <- rep(x$vars$N2.2, times=n)
-   d$Max <- rep(x$vars$Max.2, times=n)
-   sel <- d$N2 < 0.1
-   d$Max[sel] <- 1
-   d$zero <- sel
-   d$col <- c("blue", "red")[as.integer(sel)+1]
-   d$pch <- c(1, 3)[as.integer(sel)+1]
-   xyplot(N2 ~ values | ind, data=d, col=d$col, pch=d$pch, cex=sqrt(d$Max), xlab="Abundance in dataset 1", ylab="N2 in dataset 2", ...)
-}
-

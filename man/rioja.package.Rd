@@ -14,7 +14,7 @@ Analysis of Quaternary Science Data
 Package: \tab rioja\cr
 Type: \tab Package\cr
 Version: \tab 0.9-14\cr
-Date: \tab 2017-06-08\cr
+Date: \tab 2017-06-09\cr
 License: \tab GPL-2\cr
 }
 

@@ -272,7 +272,7 @@ strat.plot <- function (d, yvar = NULL, scale.percent = FALSE, graph.widths=1, m
                y <- c(min(yvar, na.rm=TRUE), yvar, max(yvar, na.rm=TRUE))
                x <- c(us[1], d[, i], us[1])
                if (exag[i]) {
-                 x2 <- c(0, d[, i]*exag.mult[i], 0)
+                 x2 <- c(us[1], d[, i]*exag.mult[i], us[1])
                  polygon(x2, y, col = col.exag[i], border = NA)
                }
                polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)

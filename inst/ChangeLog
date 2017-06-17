@@ -1,5 +1,8 @@
 rioja Change Log
 
+Version 0.9-15
+Fixed problem with #pragma not compoliing on Sun machines
+
 Version 0.9-14
 Fixed bug in parallel code of randomPTF
 

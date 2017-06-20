@@ -13,8 +13,8 @@ Analysis of Quaternary Science Data
 \tabular{ll}{
 Package: \tab rioja\cr
 Type: \tab Package\cr
-Version: \tab 0.9-14\cr
-Date: \tab 2017-06-08\cr
+Version: \tab 0.9-15\cr
+Date: \tab 2017-06-16\cr
 License: \tab GPL-2\cr
 }
 
@@ -36,10 +36,7 @@ randomPTF               Variable important via random palaeoecological
 read.CEP                Read and write data in Cornell Ecology 
                         Program format
 read.Tilia              Read old format Tilia (*.til) files
-sp.plot                 Plot species distributions along one or two 
-                        environmental gradients 
 strat.plot              Plot a stratigraphic diagram
-strat.plot.simple       Plot a simple stratigraphic diagram
 chclust                 Constrained heirarchical clustering (zonation)
 bstick                  Broken stick model to determine number of 
                         significant groups in a constrained cluster 

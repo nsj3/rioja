@@ -57,7 +57,7 @@ randomPTF <- function (spec, env, fun, ncol=1, nVar, nTF=500, verbose=TRUE, do.p
     fe_call <- as.call(c(list(quote(foreach::foreach), i = i), .paropts))
     fe <- eval(fe_call)
 #    res <- foreach::`%dopar%`(fe, do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...))
-    
+    `%dopar%` <- foreach::`%dopar%`
      res <- foreach::foreach(1:nTF, .packages=c('rioja')) %dopar% { do.TF(y, x, nsp, nsam, fun, ncol, nVar, ...) }
      res <- t(sapply(res, "["))
   } else {

@@ -10,17 +10,11 @@ Compare two datasets and summarise species occurrance and abundance of species r
 compare.datasets(y1, y2, n.cut=c(5, 10, 20, 50), 
       max.cut=c(2, 5, 10, 20, 50))
 
-\method{plot}{compare.datasets}(x, y, subset=1:nrow(x$obs), \dots) 
 }
 \arguments{
  \item{y1, y2}{ two data frames or matrices, usually of biological species abundance data, to compare. }
- \item{x}{ an object of class \code{compare.datasets} produce by function 
-           \code{compare.datasets}. }
- \item{y}{ original dataset (ie. y1 above) used in comparison. }
  \item{n.cut}{ vector of abundances to be used for species occurrence calculations (see details). }
  \item{max.cut}{ vector of occurences to be used for species maximum abundance calculations (see details). }
- \item{subset}{ a vector giving row indices to plot. Used to limit the number of plots with larges datsets. }
- \item{\dots}{ additional arguments to \code{\link[lattice]{xyplot}}. }
 } 
 
 \details{
@@ -34,7 +28,6 @@ compare.datasets(y1, y2, n.cut=c(5, 10, 20, 50),
    \item{vars}{ data frame listing for each variable in the first dataset: N.occur = number of occurences in dataset 1, N2, Hill's N2 for species in dataset 1, Max = maximum value in dataset 1, N.2 = number of occurences in dataset 2, N2.2 = Hill's N2 for species in dataset 2, Max.2 = maximum value in dataset 2, N.005, number of occurences where the species is greater than 5 etc. }
    \item{objs}{ data frame listing for each observation in the first dataset: N.taxa = number of species greater than zero abundance, N2, Hill's N2 for samples, Max = maximum value, total =  sample total, M.002 = number of taxa with a maximum abundance greater than 2 2 etc., N2.005 = number of taxa in dataset 1 with more than 5 occurences in 2 dataset 2 etc., Sum.N2.005 = sample total including only those taxa with at least 5 occurrences in dataset 2 etc., M2.005 = number of taxa in dataset 1 with maximum abundance greater than 2 in dataset 2 etc., and Sum. M2.005 = sample total including only those taxa with a maximum abundance greater than 2 in dataset 2 etc. }
    
- Function \code{plot.compare.datasets} returns an object of class \code{trellis} which may be plotted.
 }
 
 \author{ 
@@ -49,9 +42,5 @@ data(SWAP)
 result <- compare.datasets(RLGH$spec, SWAP$spec)
 result
 
-\dontrun{
-#visualise the comparison
-plot(result, RLGH$spec)
-}
 }
 \keyword{ utilities }

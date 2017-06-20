@@ -1,7 +1,9 @@
 #ifndef TILFUNCS_HPP
 #define TILFUNCS_HPP 1
 
-#pragma pack(push, 1)
+#ifndef __sun 
+   #pragma pack(push, 1)
+#endif
 
 #define WORD unsigned short
 
@@ -27,7 +29,11 @@ typedef struct
   WORD dummy5;
   WORD dummy6;
   WORD dummy7;
+#ifndef __sun 
 } __attribute__ ((packed)) TILIA2FLAGS ;
+#else
+} TILIA2FLAGS ;
+#endif
 
 typedef struct
 {
@@ -49,13 +55,21 @@ typedef struct
   WORD dummy5;
   WORD dummy6;
   WORD dummy7;
+#ifndef __sun 
 } __attribute__ ((packed)) TILIAFLAGS;
+#else
+} TILIAFLAGS ;
+#endif
 
 typedef struct
 {
   char null;
   WORD  n;
+#ifndef __sun 
 } __attribute__ ((packed)) NULLINT;
+#else
+} NULLINT ;
+#endif
 
 typedef struct
 {
@@ -63,7 +77,11 @@ typedef struct
   unsigned char sum;
   unsigned char name[61];
   unsigned char VarCode[9];
+#ifndef __sun 
 } __attribute__ ((packed)) TILIA2VARS;
+#else
+} TILIA2VARS ;
+#endif
 
 typedef struct {
   unsigned char code[3];
@@ -71,19 +89,31 @@ typedef struct {
   unsigned char sum;
   unsigned char name[41];
   unsigned char codename[10];
+#ifndef __sun 
 } __attribute__ ((packed)) TILIAVARS;
+#else
+} TILIAVARS ;
+#endif
 
 typedef struct
 {
   float         num ;
   unsigned char name[11];
+#ifndef __sun 
 } __attribute__ ((packed)) TILIA2SAMPLES;
+#else
+} TILIA2SAMPLES ;
+#endif
 
 typedef struct
 {
   float         num ;
   unsigned char name[11];
+#ifndef __sun 
 } __attribute__ ((packed)) TILIASAMPLES;
+#else
+} TILIASAMPLES ;
+#endif
 
 typedef struct
 {
@@ -98,7 +128,11 @@ typedef struct
       unsigned char unused : 6;
     } attr;
   } flag;
+#ifndef __sun 
 } __attribute__ ((packed)) TILIA2DATA;
+#else
+} TILIA2DATA ;
+#endif
 
 typedef struct
 {
@@ -112,9 +146,16 @@ typedef struct
 		unsigned char unused : 7;
 	 } attr;
   } flag;
+#ifndef __sun 
 } __attribute__ ((packed)) TILIADATA;
+#else
+} TILIADATA ;
+#endif
 
-#pragma pack(pop)
+
+#ifndef __sun 
+   #pragma pack(pop)
+#endif
 
 /*
 typedef struct

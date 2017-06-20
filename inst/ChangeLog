@@ -1,7 +1,10 @@
 rioja Change Log
 
+Version 0.9-16
+Fixed bug in strat.plot & protection stack imbalance in cornellout.cpp
+
 Version 0.9-15
-Fixed problem with #pragma not compoliing on Sun machines
+Fixed problem with #pragma not compiling on Sun machines
 
 Version 0.9-14
 Fixed bug in parallel code of randomPTF

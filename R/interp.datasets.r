@@ -1,8 +1,8 @@
 interp.dataset <- function(y, x, xout, method=c("linear","loess","sspline"), rep.negt=TRUE, span=0.25, df=min(20, nrow(y)*.7), ...) {
 # Smooth and interpolate a core (x) on depths (y) to new y-intervals (yout)
    method <- match.arg(method)
-   lin.f <- function(y, x1, xout) {
-      approx(x1, y, xout)$y
+   lin.f <- function(y, x1, xout, ...) {
+      approx(x1, y, xout, ...)$y
    }
    lo.f <- function(y, x1, xout, span, ...) {
        fit <- loess(y ~ x1, span=span, ...)

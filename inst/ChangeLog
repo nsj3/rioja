@@ -1,9 +1,13 @@
 rioja Change Log
 
+Version 0.9-17
+Added ... argument to approx in interp.dataset
+
 Version 0.9-16
 Fixed bug in strat.plot & protection stack imbalance in cornellout.cpp
 
 Version 0.9-15
+* Released on CRAN 20/06/2017
 Fixed problem with #pragma not compiling on Sun machines
 
 Version 0.9-14

@@ -19,7 +19,7 @@ interp.dataset(y, x, xout, method=c("linear","loess","sspline"),
   \item{rep.negt}{ logical to indicate whether or not to replace negative values with zero in the interpolated data. }
   \item{span}{ span for loess, default=0.25. }
   \item{df}{ degress of freedome for smoothing spline, default is the lower of 20 or 0.7 * number of samples. }
-  \item{\dots}{ additional arguments to \code{loess} and \code{smooth.spline}. }
+  \item{\dots}{ additional arguments to \code{approx}, \code{loess} and \code{smooth.spline}. }
 }
 
 \details{

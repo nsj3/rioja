@@ -71,7 +71,7 @@ performance.default <- function(object, ...) {
   result
 }
 
-.predict <- function(object, newdata=NULL, sse=FALSE, nboot=100, match.data=TRUE, verbose=TRUE, ...) {
+.predict <- function(object, newdata=NULL, sse=FALSE, nboot=100, match.data=TRUE, keep.boot.data=FALSE, verbose=TRUE, ...) {
   if (is.null(newdata)) {
      return (object$fitted.values)
   }
@@ -147,6 +147,10 @@ performance.default <- function(object, ...) {
     colnames(SEP.boot) <- colnames(xHat)
     rownames(SEP.boot) <- rownames(newdata)
     results <- list(fit=xHat.new, fit.boot=xHat.new.boot, v1.boot=v1.boot, v2.boot=v2.boot, SEP.boot=SEP.boot)
+    if (keep.boot.data) {
+       results$boot.array=res2
+       results$boot.array.newdata=res2.new
+    }
   } else {
     results <- list(fit=xHat.new)
   }

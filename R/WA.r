@@ -157,7 +157,7 @@ crossval.WA <- function(object, cv.method="loo", verbose=TRUE, ngroups=10, nboot
 }
 
 predict.WA <- function(object, newdata=NULL, sse=FALSE, nboot=100, match.data=TRUE, verbose=TRUE, ...) {
-  .predict(object=object, newdata=newdata, sse=sse, nboot=nboot, match.data=TRUE, verbose=verbose, ...)
+  .predict(object=object, newdata=newdata, sse=sse, nboot=nboot, match.data=match.data, verbose=verbose, ...)
 }
 
 print.WA <- function(x, ...) 

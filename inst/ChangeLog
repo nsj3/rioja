@@ -1,5 +1,8 @@
 rioja Change Log
 
+Version 0.9-18
+Added option to save bootstrap matrices in predict
+
 Version 0.9-17
 Added ... argument to approx in interp.dataset
 

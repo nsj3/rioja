@@ -312,7 +312,7 @@ dataMat::~dataMat()
 
 dataMat::dataMat(const dataMat &D)
 {
-   p->refs++;
+   D.p->refs++;
    p = D.p;
 }
 
@@ -2349,9 +2349,9 @@ dMat count(const dMat &f, enumDirection dir)
    }
    else
       throw("Direction out of range in dMat::count(dir)");
-   return NULL;
+   dMat retval;
+   return retval;
 }
-
 
 dMat sum(const dMat &f, enumDirection dir)
 {
@@ -2379,7 +2379,8 @@ dMat sum(const dMat &f, enumDirection dir)
    }
    else
       throw("Integer out of range in sum (must be 0 or 1)");
-   return NULL;
+   dMat retval;
+   return retval;
 }
 
 
@@ -2425,7 +2426,8 @@ dMat sumsq(const dMat &f, enumDirection dir)
    }
    else
       throw("Integer out of range in sumsq (must be 0 or 1)");
-   return NULL;
+   dMat retval;
+   return retval;
 }
 
 double sumsq(const dMat &f)
@@ -2497,7 +2499,8 @@ dMat sd(const dMat &f, enumDirection dir)
 	}
 	else
 		throw("Integer out of range in sum (must be 0 or 1)");
-   return NULL;
+	 dMat retval;
+   return retval;
 }
 
 
@@ -2515,7 +2518,8 @@ dMat mean(const dMat &f, enumDirection dir)
    }
    else
       throw("Integer out of range in sum (must be 0 or 1)");
-   return NULL;
+   dMat retval;
+   return retval;
 }
 
 void maxmin(const dMat &f, double &min, double &max)

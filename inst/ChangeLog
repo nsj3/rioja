@@ -1,6 +1,9 @@
 rioja Change Log
 
 Version 0.9-19
+Fixed return bugs in mat.cpp 
+
+Version 0.9-19
 Removed read.CEP and read.Tilia to package riojaExtra on github
 Added R_registerRoutines
 

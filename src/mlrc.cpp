@@ -141,7 +141,7 @@ int logit(dMat &x, dMat &y, dMat &bhat, dMat &mmxinv, double tol, int maxiter, i
        errorflag = 3;
     }
     if (errorflag)
-     	break;
+     	 break;
     delta = mmxinv.product((x).tproduct(y-r));
 		bhat = bhat - delta;
 		double maxi, mini;
@@ -152,9 +152,11 @@ int logit(dMat &x, dMat &y, dMat &bhat, dMat &mmxinv, double tol, int maxiter, i
 		if (iter == maxiter)
 			break;
 	} while (maxii >= tol);
-  if (errorflag)
-   	return -2;
-	return iter;
+  if (errorflag) {
+   	 return -2;
+  } else {
+	   return iter;
+  }
 }
 
 extern "C" {

@@ -12,7 +12,7 @@
 #include "mat.h"
 #include "mlrc.h"
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+// #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
 #define LOGITTOL 1.0E-12
 
@@ -117,7 +117,7 @@ int logit(dMat &x, dMat &y, dMat &bhat, dMat &mmxinv, double tol, int maxiter, i
 	bhat = dMat(cols(x),1, 0.0);
 	int iter=0;
 	double maxii;
-   char errorflag = 0;
+  char errorflag = 0;
 	do {
     dMat t;
 		ys = x.product(bhat);
@@ -355,7 +355,7 @@ void mnbrak(double *ax, double *bx, double *cx, double *fa, double *fb,
 void powell(double *p, double **xi, int n, double ftol, int *iterate,
             double *fret, dMat &params, dMat &SpecData, double (*func)(double *, dMat &, dMat &))
 {
-   int errorflag = 0;
+//   int errorflag = 0;
    int i,ibig,j;
    double t,fptt,fp,del;
    double *pt,*ptt,*xit;
@@ -387,7 +387,7 @@ void powell(double *p, double **xi, int n, double ftol, int *iterate,
 */         
 /*         if (finite(*fret) == FALSE) {  */
            if (R_FINITE(*fret) == FALSE) {
-            errorflag = 1;
+//            errorflag = 1;
             throw ("NAN in routine brent");
          }
          if (fabs(fptt-(*fret)) >= del) {
@@ -396,7 +396,7 @@ void powell(double *p, double **xi, int n, double ftol, int *iterate,
          }
       }
       if (ibig < 1) {
-         errorflag = 1;
+//         errorflag = 1;
          throw("Error in routine POWELL");
       }
       if (2.0*fabs(fp-(*fret)) <= ftol*(fabs(fp)+fabs(*fret))) {
@@ -407,7 +407,7 @@ void powell(double *p, double **xi, int n, double ftol, int *iterate,
 //         return errorflag;
       }
       if (*iterate == ITMAX2) {
-         errorflag = 1;
+//         errorflag = 1;
          throw("Too many iterations in routine POWELL");
 //         nrerror("Too many iterations in routine POWELL");
       }

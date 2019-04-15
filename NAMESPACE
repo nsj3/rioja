@@ -17,7 +17,7 @@ importFrom("grDevices", "chull", "col2rgb", "rgb")
 export(chclust, crossval, performance, inkspot, Merge, bstick)
 
 ## export regular functions with dot names
-export(read.CEP, read.Tilia, write.CEP, compare.datasets, 
+export(compare.datasets, 
        rand.t.test, interp.dataset, strat.plot, addClustZone,
        addZone)
 

@@ -10,7 +10,7 @@ MLRC2 <- function(y, x, n.out=100, expand.grad=0.1, use.gam=FALSE, check.data=TR
   }
   if (any(y>1) | any (y<0))
     stop("Species data must be proportions between 0 and 1")
-  fit <- MLRC2.fit(y=y, x=x, n.out=n.out, expand.grid=expand.grid, use.gam=use.gam, lean=lean, n.cut=n.cut, verbose=verbose, ...)
+  fit <- MLRC2.fit(y=y, x=x, n.out=n.out, expand.grad=expand.grad, use.gam=use.gam, lean=lean, n.cut=n.cut, verbose=verbose, ...)
   xHat <- predict.internal.MLRC2(object=fit, y=y, lean=lean, ...) 
   call.print <- match.call()
   call.fit <- as.call(list(quote(MLRC2.fit), y=quote(y), x=quote(x), lean=FALSE))
@@ -21,7 +21,6 @@ MLRC2 <- function(y, x, n.out=100, expand.grad=0.1, use.gam=FALSE, check.data=TR
   class(result) <- "MLRC2" 
   result
 }
-
 
 MLRC2.fit <- function(y, x, n.out=100, expand.grad=0.1, use.gam=FALSE, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, ...) {
 #  require(mgcv)

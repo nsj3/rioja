@@ -47,7 +47,7 @@ MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, ve
     rownames(beta) <- c("b0", "b1", "b2")
 	  return (list(coefficients=t(BETA), meanX=mean(x, na.rm=TRUE)))
   } else {
-    res <- .Call("MLRC_regress", as.matrix(y[, !skip]), as.matrix(x), as.integer(max.iter), as.integer(verbose), NAOK=TRUE, PACKAGE="rioja")  
+    res <- .Call("MLRC_regress", as.matrix(y[, !skip]), as.matrix(x), as.integer(max.iter), as.integer(verbose), PACKAGE="rioja")  
     beta <- matrix(res$Beta, ncol=3)
     BETA <- matrix(NA, ncol = 3, nrow = ncol(y))
     BETA[!skip, ] <- beta
@@ -67,7 +67,7 @@ predict.internal.MLRC <- function(object, y, lean=FALSE, verbose=FALSE, ...)
 	   if (nrow(object$coefficients) != ncol(y))
 	      stop("Number of columns different in y, beta in predict.internal.MLRC")
 	}
-  xHat <- .Call("MLRC_predict", as.matrix(y), as.matrix(object$coefficients), as.double(object$meanX), as.integer(verbose), NAOK=TRUE, PACKAGE="rioja")
+  xHat <- .Call("MLRC_predict", as.matrix(y), as.matrix(object$coefficients), as.double(object$meanX), as.integer(verbose), PACKAGE="rioja")
   xHat <- as.matrix(xHat, ncol=1)
   colnames(xHat) <- "MLRC"
   rownames(xHat) <- rownames(y)

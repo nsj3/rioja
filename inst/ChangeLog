@@ -1,6 +1,9 @@
 rioja Change Log
 
-Version 0.9-19
+Version 0.9-21
+Fixed new / delete mismatch in mat.cpp 
+
+Version 0.9-20
 Fixed return bugs in mat.cpp 
 
 Version 0.9-19

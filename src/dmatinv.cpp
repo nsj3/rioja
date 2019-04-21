@@ -3,7 +3,7 @@
 #include <string.h>
 #include "mat.h"
 
-using namespace std;
+// using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

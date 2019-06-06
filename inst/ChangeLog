@@ -1,5 +1,8 @@
 rioja Change Log
 
+Version 0.9-22
+removed 1000 col and 20000 row limit in mat
+
 Version 0.9-21
 Fixed new / delete mismatch in mat.cpp 
 

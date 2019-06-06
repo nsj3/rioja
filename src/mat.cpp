@@ -9,9 +9,9 @@
 bool Mat::BoundsCheck = true;              
 double Mat::dMissingValue = -99.9;
 double Mat::dTolerance = 1.0E-06;
-int Mat::maxCols = 10000;
-int Mat::maxRows = 20000;
-int Mat::maxIndex = 20000;
+int Mat::maxCols = 1000000; 
+int Mat::maxRows = 1000000;
+int Mat::maxIndex = 1000000;
 char Mat::MATVER[10] = "1.00";
 
 void Mat::BoundsError(void)

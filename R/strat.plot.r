@@ -1,6 +1,8 @@
 strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, scale.minmax = TRUE,
   xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
-  min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8,
+  min.width = 5, ylim = NULL, y.rev = FALSE,
+  y.tks=NULL, y.tks.labels=NULL,
+  ylabel = "", cex.ylabel=1, cex.yaxis=0.8,
   xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order = "none", 
   plot.line = TRUE, col.line = "black", lwd.line = 1, 
   plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
@@ -147,7 +149,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   if (y.axis) {
     if (is.null(y.tks))
       y.tks <- axTicks(2)
-    ax <- axis(side = 2, las = 1, at = y.tks, labels = as.character(y.tks), cex.axis=cex.yaxis, xpd=NA)
+    if(is.null(y.tks.labels))
+      y.tks.labels <- as.character(y.tks)
+    ax <- axis(side = 2, las = 1, at = y.tks, labels = y.tks.labels, cex.axis=cex.yaxis, xpd=NA)
     x1 <- x1 + xSpace
     mtext(title, adj = 0, line = 5, cex = cex.title)
     mtext(ylabel, side = 2, line = 2.5, cex=cex.ylabel)

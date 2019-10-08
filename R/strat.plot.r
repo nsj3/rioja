@@ -1,13 +1,13 @@
 strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, scale.minmax = TRUE,
   xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
-  min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8,
-  xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order = "none", 
-  plot.line = TRUE, col.line = "black", lwd.line = 1, 
+  min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, y.tks.labels=NULL, ylabel = "",
+  cex.ylabel=1, cex.yaxis=0.8, xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
+  wa.order = "none", plot.line = TRUE, col.line = "black", lwd.line = 1,
   plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
   plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, lwd.poly = 1,
   plot.symb = FALSE, symb.pch=19, symb.cex=1, x.names=NULL,
   cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1,
-  orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, fun1=NULL, fun2=NULL, 
+  orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, fun1=NULL, fun2=NULL,
   add=FALSE, ...)
 {
   fcall <- match.call(expand.dots=TRUE)
@@ -147,7 +147,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   if (y.axis) {
     if (is.null(y.tks))
       y.tks <- axTicks(2)
-    ax <- axis(side = 2, las = 1, at = y.tks, labels = as.character(y.tks), cex.axis=cex.yaxis, xpd=NA)
+    if (is.null(y.tks.labels))
+      y.tks.labels <- as.character(y.tks)
+    ax <- axis(side = 2, las = 1, at = y.tks, labels = as.character(y.tks.labels), cex.axis=cex.yaxis, xpd=NA)
     x1 <- x1 + xSpace
     mtext(title, adj = 0, line = 5, cex = cex.title)
     mtext(ylabel, side = 2, line = 2.5, cex=cex.ylabel)
@@ -172,15 +174,15 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
            xaxs = "i", type = "n", yaxs = "r", ylim = ylim, xlab="", ylab="", ...)
       if (!is.null(fun1[i])) {
-        fun1[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+        fun1[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
       if (bar.back) {
         if (is.logical(plot.bar)) {
           if (plot.bar) {
             if (sep.bar) {
-              segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+              segments(rep(0, nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar)
             } else {
-              segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
+              segments(rep(0, nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar[i])
             }
           }
         } else {
@@ -190,13 +192,13 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
         }
       }
       if (plot.symb) {
-        points(d[, i], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
+        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
       }
       if (plot.poly) {
         y <- c(yvar[1], yvar, yvar[nsam])
-        x <- c(0, d[, i], 0)
+        x <- c(0, d[, i, drop=TRUE], 0)
         if (exag[i]) {
-          x2 <- c(0, d[, i]*exag.mult[i], 0)
+          x2 <- c(0, d[, i, drop=TRUE]*exag.mult[i], 0)
           polygon(x2, y, col = col.exag[i], border = NA)
         }
         polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
@@ -205,9 +207,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
         if (is.logical(plot.bar)) {
           if (plot.bar) {
             if (sep.bar) {
-              segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+              segments(rep(0, nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar)
             } else {
-              segments(rep(0, nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])
+              segments(rep(0, nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar[i])
             }
           }
         } else {
@@ -218,9 +220,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       }
       lines(c(0, 0), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), ...)
       if (ty == "l") 
-        lines(d[, i], yvar, col = cc.line[i], lwd = lwd.line)
+        lines(d[, i, drop=TRUE], yvar, col = cc.line[i], lwd = lwd.line)
       if (!is.null(fun2[i])) {
-        fun2[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+        fun2[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
       xlabb <- seq(0, colM[i], by = x.pc.inc[i])
       if (x.axis[i]) {
@@ -240,24 +242,24 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       inc2 <- inc * colM[i]
       par(fig = figCnvt(orig.fig, c(x1, min(1, x1 + inc2), yBottom, yTop)))
       if (!is.null(minmax)) {
-        plot(d[, i], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
+        plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
              type = "n", yaxs = "r", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)
       } else {
-        plot(d[, i], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
+        plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
              type = "n", yaxs = "r", ylim = ylim, ...)
       }
       tks <- axTicks(1)
       us <- par("usr")
       if (!is.null(fun1[i])) {
-        fun1[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+        fun1[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
       if (bar.back) {
         if (is.logical(plot.bar)) {
           if (plot.bar) {
             if (sep.bar) {
-              segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+              segments(rep(us[1], nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar)
             } else {
-              segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])                            }
+              segments(rep(us[1], nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar[i])                            }
           }
         } else {
           if (plot.bar=="Full") {
@@ -266,13 +268,13 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
         }
       }
       if (plot.symb) {
-        points(d[, i], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
+        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
       }
       if (plot.poly) {
         y <- c(yvar[1], yvar, yvar[nsam])
-        x <- c(us[1], d[, i], us[1])
+        x <- c(us[1], d[, i, drop=TRUE], us[1])
         if (exag[i]) {
-          x2 <- c(us[1], d[, i]*exag.mult[i], us[1])
+          x2 <- c(us[1], d[, i, drop=TRUE]*exag.mult[i], us[1])
           polygon(x2, y, col = col.exag[i], border = NA)
         }
         polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
@@ -281,9 +283,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
         if (is.logical(plot.bar)) {
           if (plot.bar) {
             if (sep.bar) {
-              segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar)
+              segments(rep(us[1], nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar)
             } else {
-              segments(rep(us[1], nsam), yvar, d[, i], yvar, lwd = lwd.bar, col = cc.bar[i])                              }
+              segments(rep(us[1], nsam), yvar, d[, i, drop=TRUE], yvar, lwd = lwd.bar, col = cc.bar[i])                              }
           }
         } else {
           if (plot.bar=="Full") {
@@ -294,9 +296,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), 
             ...)
       if (ty == "l") 
-        lines(d[, i], yvar, col = cc.line[i], lwd = lwd.line)
+        lines(d[, i, drop=TRUE], yvar, col = cc.line[i], lwd = lwd.line)
       if (!is.null(fun2[i])) {
-        fun2[[i]](x=d[, i], y=yvar, i=i, nm=x.names[i])
+        fun2[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
       mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll),0) } else { mgp }
       if (x.axis[i]) {

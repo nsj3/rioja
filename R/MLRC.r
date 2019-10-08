@@ -44,8 +44,10 @@ MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, ve
 	  beta <- apply(y[, !skip], 2, glr, e=lp)
     BETA <- matrix(NA, nrow = 3, ncol = ncol(y))
     BETA[, !skip] <- beta
-    rownames(beta) <- c("b0", "b1", "b2")
-	  return (list(coefficients=t(BETA), meanX=mean(x, na.rm=TRUE)))
+    beta <- t(BETA)
+    rownames(beta) <- colnames(y)
+    colnames(beta) <- c("b0", "b1", "b2")
+    return (list(coefficients=beta, meanX=mean(x, na.rm=TRUE)))
   } else {
     res <- .Call("MLRC_regress", as.matrix(y[, !skip]), as.matrix(x), as.integer(max.iter), as.integer(verbose), PACKAGE="rioja")  
     beta <- matrix(res$Beta, ncol=3)

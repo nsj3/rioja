@@ -246,8 +246,8 @@ double calib_func(double *xt, dMat &params, dMat &SpecData)
       if (SpecData(j, 0) < 0.0)
          continue;
       pred = (params(j, 0)+params(j, 1)*xt[1]+params(j, 2)*xt[1]*xt[1]);
-      if (pred > 50) pred = 50;
-	   if (pred < -50) pred = -50;
+      if (pred > 100) pred = 100;
+	   if (pred < -100) pred = -100;
       prob = 1/(1+exp(-pred));
 	   like += SpecData(j, 0)*log(prob)+(1.0-SpecData(j, 0))*log(1.0-prob+TINY);
    }

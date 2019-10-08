@@ -1,5 +1,12 @@
 rioja Change Log
 
+version 0.9-24
+Fixed bug in strat.plot when species data are in tibble.
+Added option to specify y tick labels
+
+Version 0.9-23
+fixed bug in MLRC use.glm=TRUE
+
 Version 0.9-22
 removed 1000 col and 20000 row limit in mat
 

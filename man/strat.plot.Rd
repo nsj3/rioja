@@ -13,7 +13,7 @@ strat.plot (d, yvar = NULL, scale.percent = FALSE,
     scale.minmax = TRUE, xLeft = 0.07, xRight = 1, 
     yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, 
     y.axis=TRUE, x.axis=TRUE, min.width = 5, ylim = NULL, y.rev = FALSE, 
-    y.tks=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8, 
+    y.tks=NULL, y.tks.label=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8, 
     xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
     wa.order = "none", plot.line = TRUE,
     col.line = "black", lwd.line = 1, plot.bar = TRUE, 
@@ -45,7 +45,8 @@ addClustZone(x, clust, nZone, ...)
   \item{min.width}{ minimum upper value of x-axis when scaled for percent data. }
   \item{ylim}{ numeric vector of 2 values to control limist of y-axis. Defaults to data range. }
   \item{y.rev}{ logical to reverse y-axis. Defaults to FALSE. }
-  \item{y.tks}{ numerical vector listing values of y-axis ticks / labels. }
+  \item{y.tks}{ numerical vector listing values of y-axis ticks. }
+  \item{y.tks.label}{ character vector listing values of y-axis labels. }  
   \item{ylabel}{ label for y-axis. }
   \item{cex.ylabel, cex.yaxis}{ text size for y-axis labels and values. }
   \item{xSpace}{ space between graphs, in relative units. }

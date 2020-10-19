@@ -47,8 +47,6 @@ N <- 0
 plotIt <- function(fName, sheet, input, session) {
 #  sheet <- input$sheet
   errorMsg <<- ""
-  print(input$sheet)
-  print(fName)
   if (is.character(sheet) & nchar(sheet)==0)
     sheet = 1
   selTaxa <- input$selTaxa
@@ -65,7 +63,6 @@ plotIt <- function(fName, sheet, input, session) {
 
     currentSheet <<- sheet
     currentFile <<- fName
-    print("Read file")
     chron <- c("DEPTH", "AGE")
     sel1 <- toupper(substring(colnames(d), 1, 5)) %in% "DEPTH"
     sel2 <- toupper(substring(colnames(d), 1, 3)) %in% "AGE"
@@ -84,14 +81,6 @@ plotIt <- function(fName, sheet, input, session) {
     updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[sel])
   }
 
-  N <<- N+1
-  print(paste("d ", N))
-  
-  if (!is.null(mydata))
-    print("Got mydata")
-  else
-    print("No mydata")
-  
   style <- list()
   style$exag <- FALSE
   style$yrev <- FALSE
@@ -135,17 +124,11 @@ plotIt <- function(fName, sheet, input, session) {
   clust <- NULL
   showZones <- 0
   
-  print("2")
-  
   d <- mydata$spec
   
  if (!is.null(selTaxa)) {
-    print ("selTaxa")
-    print(selTaxa)
     d <- d[, selTaxa]
  }
- print ("yvar")
- print(yvar)
   if (!is.null(yvar) & (nchar(yvar) > 1)) {
    yvar <- mydata$chron[, yvar, drop=TRUE]
  }
@@ -166,8 +149,6 @@ plotIt <- function(fName, sheet, input, session) {
     }
   }
 
-  print("3")
-  
   nms <- colnames(d)
   
   yTop <- 0.8
@@ -181,8 +162,6 @@ plotIt <- function(fName, sheet, input, session) {
         xRight <- 1 - (strwidth(nms[length(nms)], units='figure') * 0.9 * sin(pi/180 * (90-input$nameAngle)))
   }
 
-  print("4")
-  
   poly.line <- NA
   if (style$line)
     poly.line <- input$outlineCol
@@ -196,8 +175,7 @@ plotIt <- function(fName, sheet, input, session) {
   if (showZones > 0) {
      addClustZone(x, clust, showZones, col="red")
   }
-  print("5")
-  
+
 }
 
 D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
@@ -383,8 +361,6 @@ D_server <- function(input, output, session) {
       outFile
     },
     content <- function(file) {
-      print (session$clientData$output_myPlot_width)
-      print(session$clientData$output_myPlot_height)
       ratio <-  session$clientData$output_myPlot_width / session$clientData$output_myPlot_height
       if (input$saveType=='png') {
         png(file, 

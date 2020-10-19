@@ -1,8 +1,8 @@
 Package: rioja
 Type: Package
 Title: Analysis of Quaternary Science Data
-Version: 0.9-24
-Date: 2019-10-08
+Version: 0.9-25
+Date: 2020-10-19
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Imports: vegan, mgcv, grDevices

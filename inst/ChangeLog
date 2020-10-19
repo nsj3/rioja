@@ -1,5 +1,9 @@
 rioja Change Log
 
+version 0.9-25
+Tweaks to strat.plot
+Shiny plotting app
+
 version 0.9-24
 Fixed bug in strat.plot when species data are in tibble.
 Added option to specify y tick labels

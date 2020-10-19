@@ -1,0 +1,12 @@
+name: rioja
+title: rioja
+username:
+account: nsj3
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3049111
+bundleId: 3758753
+url: https://nsj3.shinyapps.io/rioja/
+when: 1603120553.94606
+asMultiple: FALSE
+asStatic: FALSE

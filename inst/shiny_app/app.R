@@ -25,21 +25,28 @@ suppressPackageStartupMessages(library(shinyWidgets))
 suppressPackageStartupMessages(library(readxl))
 suppressPackageStartupMessages(library(RColorBrewer))
 suppressPackageStartupMessages(library(rioja))
-suppressPackageStartupMessages(library(svglite))
+suppressPackageStartupMessages(library(Cairo))
+suppressPackageStartupMessages(library(cluster))
+suppressPackageStartupMessages(library(graphics))
+
 
 header <- dashboardHeader(title = paste0("Rioja plotting"), titleWidth=750)
 email <- tags$html( tags$body( a(href="mailto:Stephen.Juggins@ncl.ac.uk")))
 riojaURL <- a("rioja", href="https://cran.r-project.org/web/packages/rioja/index.html")
 SJURL <- a("Steve Juggins", href="mailto:Stephen.Juggins@ncl.ac.uk")
 
+errorMsg <- ""
 currentSheet <- ""
 currentFile <- ""
 colWidth <- "120px"
 mydata <- NULL
 currentEx <- FALSE
 
+N <- 0
+
 plotIt <- function(fName, sheet, input, session) {
 #  sheet <- input$sheet
+  errorMsg <<- ""
   print(input$sheet)
   print(fName)
   if (is.character(sheet) & nchar(sheet)==0)
@@ -48,6 +55,14 @@ plotIt <- function(fName, sheet, input, session) {
   yvar <- input$yvar
   if (currentSheet != sheet || currentFile != fName) {
     d <- read_excel(fName, sheet=sheet)
+    nMiss <- sum(is.na(d))
+    if (nMiss > 0) {
+      msg <- paste0("<p><text style='color:red'>Spreadsheet has ", nMiss, " missing values.<br>",
+                     "Check the help and example data for the correct data format.</text></p>")
+      errorMsg <<- msg
+        return("") 
+    }
+
     currentSheet <<- sheet
     currentFile <<- fName
     print("Read file")
@@ -62,13 +77,20 @@ plotIt <- function(fName, sheet, input, session) {
     }
     mydata$spec <<- d[, !sel]
     yvars <- colnames(mydata$chron)
-    print(colnames(mydata$chron))
-    updateSelectInput(session, 'yvar', choices=yvars, selected=yvars[1])
+    updateSelectInput(session, 'yvar', choices=yvars)
     yvar <- yvars[1]
-    sel <- apply(mydata$spec, 2, max) > 2   
+    sel <- apply(mydata$spec, 2, max, na.rm=TRUE) > 2   
     selTaxa <- sel
     updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[sel])
   }
+
+  N <<- N+1
+  print(paste("d ", N))
+  
+  if (!is.null(mydata))
+    print("Got mydata")
+  else
+    print("No mydata")
   
   style <- list()
   style$exag <- FALSE
@@ -109,17 +131,28 @@ plotIt <- function(fName, sheet, input, session) {
   style$lwdBar <- input$barSize;
   style$colBar <- input$hLineCol
   style$SymbSize <- input$symbSize
-#  print(style$SymbSize)
 
   clust <- NULL
   showZones <- 0
   
+  print("2")
+  
   d <- mydata$spec
   
-  d <- d[, selTaxa]
-  yvar <- mydata$chron[, yvar, drop=TRUE]
-    
-  if (doZone) {
+ if (!is.null(selTaxa)) {
+    print ("selTaxa")
+    print(selTaxa)
+    d <- d[, selTaxa]
+ }
+ print ("yvar")
+ print(yvar)
+  if (!is.null(yvar) & (nchar(yvar) > 1)) {
+   yvar <- mydata$chron[, yvar, drop=TRUE]
+ }
+ else {
+    yvar <- mydata$chron[, 1, drop=TRUE]
+ }
+ if (doZone) {
     diss <- dist(sqrt(d))
     clust <- chclust(diss)
     if (input$showZones == "No")
@@ -133,6 +166,8 @@ plotIt <- function(fName, sheet, input, session) {
     }
   }
 
+  print("3")
+  
   nms <- colnames(d)
   
   yTop <- 0.8
@@ -146,19 +181,23 @@ plotIt <- function(fName, sheet, input, session) {
         xRight <- 1 - (strwidth(nms[length(nms)], units='figure') * 0.9 * sin(pi/180 * (90-input$nameAngle)))
   }
 
-  print ("yTop")
-  print(yTop)
-  print(xRight)
+  print("4")
   
+  poly.line <- NA
+  if (style$line)
+    poly.line <- input$outlineCol
+
   x <- strat.plot(d, yvar = yvar, y.rev=style$yrev, scale.percent=style$scalePC, 
              plot.bar=style$bar, plot.line=style$line, plot.poly=style$poly, plot.symb=style$symbol, 
              col.poly=input$fillCol, col.bar=style$colBar, lwd.bar=style$lwdBar, col.symb=style$fillCol, 
-             col.poly.line=input$outlineCol, col.line=input$outlineCol, symb.cex=style$symbSize, exag=style$exag, 
+             col.poly.line=poly.line, col.line=input$outlineCol, symb.cex=style$symbSize, exag=style$exag, 
              wa.order=style$autoOrder, bar.back=!input$barTop, clust=clust, cex.xlabel=input$nameSize, srt.xlabel=input$nameAngle,
-             yTop=yTop, xRight=xRight, ylabel=input$title)
+             yTop=yTop, xRight=xRight, ylabel=input$title, cex.yaxis=input$axisSize, cex.axis=0.8*input$axisSize)
   if (showZones > 0) {
      addClustZone(x, clust, showZones, col="red")
   }
+  print("5")
+  
 }
 
 D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
@@ -171,30 +210,29 @@ D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
                               '))),
     # Boxes need to be put in a row (or column)
     fluidRow(shinyjs::useShinyjs(),
-             
       column(width=3,
-             box(fileInput("fn", "Select input file:",
+             box(fileInput("fn", "Select input file:", 
               accept=c("application/vnd.ms-excel",
                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         ".xlsx", ".xls")),
               checkboxInput('exampleDF', 'Or use example data', value=FALSE), 
-              width=NULL),
-        box(textOutput("message1"),
-            selectInput("sheet", "Select worksheet:", ""), width=NULL),
+              width=NULL, solidHeader=TRUE),
+        box(selectInput("sheet", "Select worksheet:", ""), width=NULL, solidHeader=TRUE),
         box(downloadButton("downloadResults", "Save plot"), 
-            radioButtons('saveType', "", choices=c('pdf', 'png', 'svg'), selected='png'), width=NULL),
+            radioButtons('saveType', "", choices=c('pdf', 'png', 'svg'), selected='png'), width=NULL, solidHeader=TRUE),
         box(paste0("Powered by "), 
               riojaURL, 
             p(paste0(" Version ", utils::packageDescription("rioja", fields="Version"), 
                   " (", utils::packageDescription("rioja", fields="Date"), ")")),
-            "Please email comments, bug reports etc to ", SJURL, ".", width=NULL)
+            "Please email comments, bug reports etc to ", SJURL, ".", width=NULL, solidHeader=TRUE)
       ),
       column(width=9,
-        box(plotOutput("myPlot"), width=NULL, solidHeader=TRUE),
+        shinyjs::hidden(wellPanel(id="errorBox", htmlOutput("errorText"), width=NULL, solidHeader=TRUE, height="50px")),
+        box(plotOutput("myPlot", height="600px"), width=NULL, solidHeader=TRUE),
         wellPanel(
         fluidRow(
           column(3, 
-            selectInput('yvar', 'Y axis', choices='', selected='', width="80%"),
+            selectInput('yvar', 'Y axis', choices='', selected='', width="80%", multiple=FALSE),
             checkboxGroupInput('style', 'Style', choices = c(Line=1, Symbols=2, Shilouette=3), selected=3),
             radioButtons("hLine", "Show bar", choices=c("None", "Curve", "Full"), selected="Curve", inline=TRUE), 
             checkboxInput('barTop', 'Bars on top', value=TRUE),
@@ -238,8 +276,9 @@ D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
           column(2, 
              numericInput('symbSize', 'Symbol size', value=1, min=0.2, max=4, step=0.1, width="80%"),
              numericInput('barSize', 'Bar width', value=1, min=1, max=10, step=1, width="80%"), 
-             numericInput('nameSize', 'Font size', value=1, min=.4, max=2, step=0.05, width="80%"), 
+             numericInput('nameSize', 'X-var font size', value=1, min=.4, max=2, step=0.05, width="80%"), 
              numericInput('nameAngle', 'Rotate names', value=90, min=0, max=90, step=5, width="80%"), 
+             numericInput('axisSize', 'Axis font size', value=1, min=.4, max=2, step=0.05, width="80%"), 
           ),
           column(2, 
              checkboxInput('doClust', 'Add zonation', value=FALSE),
@@ -268,10 +307,12 @@ summarise_data <- function(fn, sheet, data) {
 }
 
 D_server <- function(input, output, session) {
-  shinyjs::disable("downloadResults")
-  
-  observeEvent(input$exampleDF, {
+   shinyjs::disable("downloadResults")
+   shinyjs::hide(id="errorBox")
+   errorMsg <<- ""
+   observeEvent(input$exampleDF, {
     output$myPlot <- renderPlot({
+      shinyjs::hideElement(id="errorBox")
       if (input$exampleDF) {
         fn <- system.file("shiny_app/aber.xlsx", package="rioja")
         plotIt(fn, "Aber", input, session)
@@ -283,6 +324,7 @@ D_server <- function(input, output, session) {
         }          
       }
     })
+    
   }, ignoreNULL = TRUE)
   
   observeEvent(input$fn$name, {
@@ -302,7 +344,6 @@ D_server <- function(input, output, session) {
        file.remove(fn2)
     file.rename(input$fn$datapath, fn2)
     fn <<- fn1
-    output$table2 <- renderText("")
     mydata <<- NULL
     sheets.nms <<- tryCatch(get_Sheets(fn2), error=function(e) return (e))
     if (inherits(sheets.nms, "error")) {
@@ -310,7 +351,6 @@ D_server <- function(input, output, session) {
       output$message1 <- renderText(paste0("Cannot open Excel file.\nReason: ", sheets.nms$message), quoted=TRUE)
       fn1 <- input$fn$name
       sheets.nms <<- ""
-      output$table1 <- renderText("")
       shinyjs::disable("downloadResults")
       return()
     } else {
@@ -319,6 +359,12 @@ D_server <- function(input, output, session) {
     updateSelectInput(session, "sheet", choices=sheets.nms)
     output$myPlot <- renderPlot({
       plotIt(fn2, input$sheet, input, session)
+      if (nchar(errorMsg) > 1 ) {
+        shinyjs::showElement(id="errorBox")
+        output$errorText <- renderText(errorMsg)
+      } else {
+        shinyjs::hideElement(id="errorBox")
+      }
     })
   }, ignoreNULL = TRUE)
 
@@ -347,15 +393,15 @@ D_server <- function(input, output, session) {
         )
       } else if (input$saveType=='pdf') {
         ratio <-  session$clientData$output_myPlot_width / session$clientData$output_myPlot_height
-          width <- 10
+          width <- 15
           pdf(file, 
             width =  width,
             height = width / ratio
          )
       } else {
         ratio <-  session$clientData$output_myPlot_width / session$clientData$output_myPlot_height
-        width <- 10
-        svglite(file, 
+        width <- 15
+        CairoSVG(file, 
            width =  width,
            height = width / ratio
         )

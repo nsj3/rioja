@@ -75,10 +75,15 @@ plotIt <- function(fName, sheet, input, session) {
     mydata$spec <<- d[, !sel]
     yvars <- colnames(mydata$chron)
     updateSelectInput(session, 'yvar', choices=yvars)
-    yvar <- yvars[1]
-    sel <- apply(mydata$spec, 2, max, na.rm=TRUE) > 2   
-    selTaxa <- sel
-    updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[sel])
+    
+    selTaxa <- colnames(mydata$spec)
+    mx <- apply(mydata$spec, 1, sum, na.rm=TRUE)
+    if (any(mx > 50)) {
+      yvar <- yvars[1]
+      sel <- apply(mydata$spec, 2, max, na.rm=TRUE) > 2   
+      selTaxa <- sel
+    } 
+    updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[selTaxa])
   }
 
   style <- list()
@@ -178,13 +183,21 @@ plotIt <- function(fName, sheet, input, session) {
 
 }
 
-D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
-  dashboardBody(
+inputWidth <- "300px"
+numericWidth <- "100px"
+
+
+D_ui <- dashboardPage(dashboardHeader(title="riojaPlot"), 
+    dashboardSidebar(disable = TRUE),
+    dashboardBody(
     tags$head(tags$style(HTML('.skin-blue .main-header .logo {
                               background-color: #3c8dbc;
                               text-align: left; }
                               .skin-blue .main-header .logo:hover {
                               background-color: #3c8dbc; }
+                              .box {-webkit-box-shadow: none; 
+                              -moz-box-shadow: none;
+                              box-shadow: none; }
                               '))),
     # Boxes need to be put in a row (or column)
     fluidRow(shinyjs::useShinyjs(),
@@ -207,36 +220,50 @@ D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
       column(width=9,
         shinyjs::hidden(wellPanel(id="errorBox", htmlOutput("errorText"), width=NULL, solidHeader=TRUE, height="50px")),
         box(plotOutput("myPlot", height="600px"), width=NULL, solidHeader=TRUE),
-        wellPanel(
+
         fluidRow(
-          column(3, 
-            selectInput('yvar', 'Y axis', choices='', selected='', width="80%", multiple=FALSE),
-            checkboxGroupInput('style', 'Style', choices = c(Line=1, Symbols=2, Shilouette=3), selected=3),
-            radioButtons("hLine", "Show bar", choices=c("None", "Curve", "Full"), selected="Curve", inline=TRUE), 
-            checkboxInput('barTop', 'Bars on top', value=TRUE),
-            textInput('title', 'Y-axis title')
-          ),
-          column(3, 
-            pickerInput('selTaxa', 'Select X vars', choices='', multiple=TRUE, options=pickerOptions(dropupAuto=FALSE), width="80%"),
-            checkboxGroupInput('misc', 'Settings', c('Reverse Y axis'=1, 'Show 5x exag'=2, 'Scale for % data'=3, 'Auto order taxa'=4), 
-                                                     selected=c(1, 2, 3)),
-          ),
-          column(2, 
-            spectrumInput("outlineCol", "Line", "black", width=colWidth, choices = c(
+          tabBox(title='',id='tab1', width=8, height="250px",
+            tabPanel('Select Variables',      
+               selectInput('yvar', 'Y axis', choices='', selected='', width=inputWidth, multiple=FALSE),
+               pickerInput('selTaxa', 'Select X vars', choices='', multiple=TRUE, options=pickerOptions(dropupAuto=FALSE), width=inputWidth),
+               textInput('title', 'Y-axis title', width=inputWidth)
+             ),
+            tabPanel(title='Settings', height="300px",
+               box( 
+                  checkboxGroupInput('style', 'Style', choices = c(Line=1, Symbols=2, Shilouette=3), selected=3),
+               solidHeader=TRUE, width=3),
+               box( 
+                    radioButtons("hLine", "Show bar", choices=c("None", "Curve", "Full"), selected="Curve", inline=FALSE), 
+                    checkboxInput('barTop', 'Bars on top', value=TRUE),
+               solidHeader=TRUE, width=3),
+               box(
+                 numericInput('symbSize', 'Symbol size', value=1, min=0.2, max=4, step=0.1, width=numericWidth),
+                 numericInput('barSize', 'Bar width', value=1, min=1, max=10, step=1, width=numericWidth), 
+                 solidHeader=TRUE, width=3),
+               box( 
+                  checkboxGroupInput('misc', 'Settings', c('Reverse Y axis'=1, 'Show 5x exag'=2, 'Scale for % data'=3, 'Auto order taxa'=4), 
+                                                   selected=c(1, 2, 3)),
+               solidHeader=TRUE, width=3)
+            ),
+          tabPanel(title='Colours', 
+            box(
+              spectrumInput("outlineCol", "Line", "black", width=colWidth, choices = c(
                 list('black' ),
                 as.list(brewer.pal(9, "Blues")[-(1:3)]),
                 as.list(brewer.pal(9, "Greens")[-(1:3)]),
                 as.list(brewer.pal(9, "Reds")[-(1:3)]),
                 as.list(brewer.pal(9, "Greys")))
-             ),
-             spectrumInput("fillCol", "Shilouette", "darkgreen", width=colWidth, choices = c(
+              ),
+              spectrumInput("fillCol", "Shilouette", "darkgreen", width=colWidth, choices = c(
                 list('black' ),
                 as.list(brewer.pal(9, "Blues")[-(1:3)]),
                 as.list(brewer.pal(9, "Greens")[-(1:3)]),
                 as.list(brewer.pal(9, "Reds")[-(1:3)]),
                 as.list(brewer.pal(9, "Greys")))
-             ),
-             spectrumInput("hLineCol", "Bar", "#D9D9D9", width=colWidth, choices = c(
+              ),
+              solidHeader=TRUE, width=2),
+            box(
+              spectrumInput("hLineCol", "Bar", "#D9D9D9", width=colWidth, choices = c(
                  list('black' ),
                  as.list(brewer.pal(9, "Blues")[-(1:3)]),
                  as.list(brewer.pal(9, "Greens")[-(1:3)]),
@@ -249,19 +276,26 @@ D_ui <- dashboardPage(header, dashboardSidebar(disable = TRUE),
                as.list(brewer.pal(9, "Greens")[-(1:3)]),
                as.list(brewer.pal(9, "Reds")[-(1:3)]),
                as.list(brewer.pal(9, "Greys"))), 
-             )
+             ),
+           solidHeader=TRUE, width=2),
           ),
-          column(2, 
-             numericInput('symbSize', 'Symbol size', value=1, min=0.2, max=4, step=0.1, width="80%"),
-             numericInput('barSize', 'Bar width', value=1, min=1, max=10, step=1, width="80%"), 
-             numericInput('nameSize', 'X-var font size', value=1, min=.4, max=2, step=0.05, width="80%"), 
-             numericInput('nameAngle', 'Rotate names', value=90, min=0, max=90, step=5, width="80%"), 
-             numericInput('axisSize', 'Axis font size', value=1, min=.4, max=2, step=0.05, width="80%"), 
+          tabPanel(title='Sizes',  
+            box(
+              numericInput('nameSize', 'X-var font size', value=1, min=.4, max=2, step=0.05, width=numericWidth), 
+              numericInput('nameAngle', 'Rotate names', value=90, min=0, max=90, step=5, width=numericWidth), 
+            solidHeader=TRUE, width=3),
+            box(
+              numericInput('axisSize', 'Axis font size', value=1, min=.4, max=2, step=0.05, width=numericWidth), 
+            solidHeader=TRUE, width=3)
           ),
-          column(2, 
+          tabPanel(title='Zonation', 
+            box(
              checkboxInput('doClust', 'Add zonation', value=FALSE),
              radioButtons("showZones", "Show zones", choices=c("No", "Auto", "Choose"), selected="Auto", inline=FALSE), 
-             numericInput('nZones', 'Number of zones', value=2, min=2, max=10, step=1, width="80%"),
+            solidHeader=TRUE, width=3),
+            box(
+             numericInput('nZones', 'Number of zones', value=2, min=2, max=10, step=1, width="120px"),
+            solidHeader=TRUE, width=4),
           )
         )
       )

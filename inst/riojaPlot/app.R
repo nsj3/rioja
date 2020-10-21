@@ -42,6 +42,8 @@ errorMsg <- ""
 currentSheet <- ""
 currentFile <- ""
 mydata <- NULL
+fn <- ""
+fn2 <- ""
 
 plotIt <- function(fName, sheet, input, session, fileFlag=FALSE) {
 #  sheet <- input$sheet
@@ -58,11 +60,27 @@ plotIt <- function(fName, sheet, input, session, fileFlag=FALSE) {
     d <- read_excel(fName, sheet=sheet)
     nMiss <- sum(is.na(d))
     if (nMiss > 0) {
-      msg <- paste0("<p><text style='color:red'>Spreadsheet has ", nMiss, " missing values.<br>",
+      msg <- paste0("<p><text style='color:red'>Spreadsheet has ", nMiss, " missing values. ",
+                     "Plotting silouette diagrams and zonation are disabled.<br>",  
                      "Check the help and example data for the correct data format.</text></p>")
       errorMsg <<- msg
-        return("") 
+      shinyjs::showElement(id="errorBox")
+      shinyjs::disable(selector = "#showZones")
+      shinyjs::disable(selector = "#nZones")
+      shinyjs::disable(selector = "#doClust")
+      shinyjs::disable(selector = "#style input[value='3']")
+      updateCheckboxGroupInput(session, 'style', selected=as.numeric(1))
+#        return("") 
+    } else {
+      shinyjs::hideElement(id="errorBox")
+      errorMsg <<- ""
+      shinyjs::enable(selector = "#showZones")
+      shinyjs::enable(selector = "#nZones")
+      shinyjs::enable(selector = "#doClust")
+      shinyjs::enable(selector = "#style input[value='3']")
+      updateCheckboxGroupInput(session, 'style', selected=as.numeric(3))
     }
+
     currentSheet <<- sheet
     currentFile <<- fName
     chron <- c("DEPTH", "AGE")
@@ -76,23 +94,20 @@ plotIt <- function(fName, sheet, input, session, fileFlag=FALSE) {
     }
     mydata$spec <<- d[, !sel]
     yvars <- colnames(mydata$chron)
+    yvar <- yvars[1]
     updateSelectInput(session, 'yvar', choices=yvars)
     
     selTaxa <- colnames(mydata$spec)
     mx <- apply(mydata$spec, 1, sum, na.rm=TRUE)
-    if (any(mx > 50)) {
-      yvar <- yvars[1]
-      sel <- apply(mydata$spec, 2, max, na.rm=TRUE) > 2   
+    if (any(mx > 50 && mx < 150)) {
+      sel <- apply(mydata$spec, 2, max, na.rm=TRUE) > 2
       selTaxa <- sel
-    } 
-    updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[selTaxa])
-    mx2 <- max(mx, na.rm=TRUE)
-    if (mx2 > 50 & mx2 < 150) {
       style$scalePC <- TRUE
       sel <- input$misc
       sel <- unique(c(sel, "3"))
-      updateCheckboxGroupInput('misc', selected=sel)
-    }
+      updateCheckboxGroupInput(session, 'misc', selected=as.numeric(sel))
+    } 
+    updatePickerInput(session, 'selTaxa', choices=colnames(mydata$spec), selected=colnames(mydata$spec)[selTaxa])
   }
 
   style$scaleMinMax <- FALSE
@@ -141,10 +156,10 @@ plotIt <- function(fName, sheet, input, session, fileFlag=FALSE) {
   
   d <- mydata$spec
   
- if (!is.null(selTaxa)) {
+ if (!is.null(selTaxa) & length(selTaxa) > 0) {
     d <- d[, selTaxa]
  }
-  if (!is.null(yvar) & (nchar(yvar) > 1)) {
+ if (!is.null(yvar) & (nchar(yvar) > 1)) {
    yvar <- mydata$chron[, yvar, drop=TRUE]
  }
  else {
@@ -226,6 +241,12 @@ D_ui <- dashboardPage(header,
                               border: 0;
                               height: 50px;
                               }
+                              .errorMsg {
+                              padding-top: 0px;
+                              margin-top: -15px;
+                              margin-bottom: -5px;
+                              height: 30px;
+                              }
                               '))),
     # Boxes need to be put in a row (or column)
     fluidRow(shinyjs::useShinyjs(),
@@ -241,7 +262,7 @@ D_ui <- dashboardPage(header,
         box(selectInput("sheet", "Select worksheet:", ""), width=NULL, solidHeader=TRUE),
         box(downloadButton("downloadResults", "Save plot"), 
             radioButtons('saveType', "", choices=c('pdf', 'png', 'svg'), selected='png', inline=TRUE), width=NULL, solidHeader=TRUE),
-        box(p(paste0("riojaPlot "), version),
+        box(p(tags$b(paste0("riojaPlot "), version)),
           paste0("Powered by "), 
               riojaURL, 
             p(paste0(" Version ", utils::packageDescription("rioja", fields="Version"), 
@@ -249,7 +270,7 @@ D_ui <- dashboardPage(header,
             "Comments & bug reports to ", SJURL, ".", width=NULL, solidHeader=TRUE)
       ),
       column(width=10,
-        shinyjs::hidden(wellPanel(id="errorBox", htmlOutput("errorText"), width=NULL, solidHeader=TRUE, height="50px")),
+        shinyjs::hidden(wellPanel(id="errorBox", htmlOutput("errorText", class="errorMsg", height="30px"), width=NULL, solidHeader=TRUE)),
         box(plotOutput("myPlot", height="600px"), width=NULL, solidHeader=TRUE),
 
         fluidRow(
@@ -277,7 +298,7 @@ D_ui <- dashboardPage(header,
                  solidHeader=TRUE, width=3),
                box( 
                   checkboxGroupInput('misc', 'Settings', c('Reverse Y axis'=1, 'Show 5x exag'=2, 'Scale for %'=3, 
-                                                           'Show min/max'=4, 'Auto sort vars'=4), 
+                                                           'Show min/max'=4, 'Auto sort vars'=5), 
                                                    selected=c(1, 2, 3)),
                solidHeader=TRUE, width=3)
             ),
@@ -352,11 +373,6 @@ D_ui <- dashboardPage(header,
   )
 )
 
-fn <- ""
-fn2 <- ""
-mydata <- NULL
-id <- NULL
-
 summarise_data <- function(fn, sheet, data) {
   nsam <- NULL; nsp <- NULL;
    if (!is.null(data)) {
@@ -381,7 +397,14 @@ D_server <- function(input, output, session) {
         if (nchar(fn2) > 5) {
            plotIt(fn2, input$sheet, input, session)
            shinyjs::enable("downloadResults")
-        }          
+        } else {
+          updateSelectInput(session, 'yvar', choices=integer(0))
+          updatePickerInput(session, 'selTaxa', choices=integer(0))
+          mydata <<- NULL
+          fn2 <- ""
+          currentFile <<- ""
+          currentSheet <<- ""
+        }         
       }
     })
     
@@ -420,10 +443,10 @@ D_server <- function(input, output, session) {
     output$myPlot <- renderPlot({
       plotIt(fn2, input$sheet, input, session)
       if (nchar(errorMsg) > 1 ) {
-        shinyjs::showElement(id="errorBox")
+#        shinyjs::showElement(id="errorBox")
         output$errorText <- renderText(errorMsg)
       } else {
-        shinyjs::hideElement(id="errorBox")
+#        shinyjs::hideElement(id="errorBox")
       }
     })
   }, ignoreNULL = TRUE)

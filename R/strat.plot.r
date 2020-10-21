@@ -99,7 +99,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     col.exag <- make.col(cc.poly, exag.alpha)
   inc <- 0.002
   if (wa.order == "topleft" || wa.order == "bottomleft") {
-    colsum <- colSums(d)
+    colsum <- colSums(d, na.rm=TRUE)
     opt <- (t(d) %*% yvar)/colsum
     if ((wa.order == "topleft" & !y.rev) | (wa.order == "bottomleft" & y.rev))
       opt.order <- rev(order(opt))
@@ -124,13 +124,13 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       cc.bar <- cc.bar[opt.order]
   }
   if (scale.percent) {
-    colM <- apply(d, 2, max)
+    colM <- apply(d, 2, max, na.rm=TRUE)
     colM <- floor((colM + 5)/5) * 5
     colM[colM < min.width] <- min.width
-    colM.sum <- sum(colM)
+    colM.sum <- sum(colM, na.rm=TRUE)
   }
   else {
-    colM.sum <- sum(graph.widths)
+    colM.sum <- sum(graph.widths, na.rm=TRUE)
     colM <- graph.widths
   }
   xLen <- xRight - xLeft
@@ -249,7 +249,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     }
     else {
       inc2 <- inc * colM[i]
-      par(fig = figCnvt(orig.fig, c(x1, min(1, x1 + inc2), yBottom, yTop)))
+      par(fig = figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
       if (!is.null(minmax)) {
         plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
              type = "n", yaxs = "r", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)

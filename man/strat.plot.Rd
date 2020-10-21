@@ -8,23 +8,20 @@
 Plots a diagram of multiple biological, physical or chemical parameters agains depth or time, as used in geology & palaeoecology.
 }
 \usage{
-strat.plot (d, yvar = NULL, scale.percent = FALSE, 
-    graph.widths=1, minmax=NULL, 
-    scale.minmax = TRUE, xLeft = 0.07, xRight = 1, 
-    yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, 
-    y.axis=TRUE, x.axis=TRUE, min.width = 5, ylim = NULL, y.rev = FALSE, 
-    y.tks=NULL, y.tks.label=NULL, ylabel = "", cex.ylabel=1, cex.yaxis=0.8, 
-    xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
-    wa.order = "none", plot.line = TRUE,
-    col.line = "black", lwd.line = 1, plot.bar = TRUE, 
-    lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
-    plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, 
-    lwd.poly = 1, plot.symb = FALSE, symb.pch=19, symb.cex=1,
-    x.names=NULL, cex.xlabel = 1.1, srt.xlabel=90, 
-    mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1, 
-    orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", 
-    exag.alpha=0.2, fun1=NULL, fun2=NULL, add=FALSE, ...)
-    
+strat.plot (d, yvar=NULL, scale.percent=FALSE, graph.widths=1, minmax=NULL, 
+            scale.minmax=TRUE, xLeft=0.07, xRight=1, yBottom=0.07, 
+            yTop=0.8, title="", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
+            min.width=5, ylim=NULL, y.rev=FALSE, y.tks=NULL, y.tks.labels=NULL, 
+            ylabel="", cex.ylabel=1, cex.yaxis=0.8, xSpace=0.01, x.pc.inc=10, 
+            x.pc.lab=TRUE, x.pc.omit0=TRUE, wa.order="none", plot.line=TRUE, 
+            col.line="black", lwd.line=1, col.symb="black", plot.bar=TRUE, 
+            lwd.bar=1, col.bar="grey", sep.bar=FALSE, bar.back=FALSE,
+            plot.poly=FALSE, col.poly="grey", col.poly.line=NA, lwd.poly=1,
+            plot.symb=FALSE, symb.pch=19, symb.cex=1, x.names=NULL, cex.xlabel=1.1, 
+            srt.xlabel=90, mgp=NULL, ylabPos=2, cex.axis=.8, clust=NULL, clust.width=0.1,
+            orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
+            fun1=NULL, fun2=NULL, add=FALSE, ...)
+
 addZone (x, upper, lower=NULL, ...)
 
 addClustZone(x, clust, nZone, ...)
@@ -46,24 +43,26 @@ addClustZone(x, clust, nZone, ...)
   \item{ylim}{ numeric vector of 2 values to control limist of y-axis. Defaults to data range. }
   \item{y.rev}{ logical to reverse y-axis. Defaults to FALSE. }
   \item{y.tks}{ numerical vector listing values of y-axis ticks. }
-  \item{y.tks.label}{ character vector listing values of y-axis labels. }  
+  \item{y.tks.labels}{ character vector listing values of y-axis labels. }  
   \item{ylabel}{ label for y-axis. }
+  \item{ylabPos}{ position for y-axis label.}
   \item{cex.ylabel, cex.yaxis}{ text size for y-axis labels and values. }
   \item{xSpace}{ space between graphs, in relative units. }
   \item{x.pc.inc}{ increment for x-axis values when \code{scale.percent} is TRUE. }
   \item{x.pc.lab}{ logical to control drawing of x-axis values when \code{scale.percent} is TRUE. }
   \item{x.pc.omit0}{ logical to omit initial zero x-axis label when \code{scale.percent} is TRUE. }
   \item{wa.order}{ "none", "topleft" or "bottomleft", to sort variables according to the weighted average with y. }
-  \item{plot.line, plot.poly, plot.bar}{ logical flags to plot graphs as lines, silhouettes, or bars. }
+  \item{plot.line, plot.poly, plot.bar, plot.symb}{ logical flags to plot graphs as lines, silhouettes, bars or symbols. }
   \item{col.line, col.poly.line}{ colour of lines and silhouette outlines. Can be a single colour or a vector of colours, one for each graph. }
   \item{col.poly}{ silhouette fill colour. Can be a single colour or a vector of colours, one for each graph. }
   \item{lwd.line, lwd.poly, lwd.bar}{ line widths for line, silhouette or bar graphs. }
   \item{col.bar}{ colour of bars in a bar graph. \code{col.bar} can be a vector to specify colours of individual bars or graphs.}
+  \item{col.symb}{ symbol colour.}
   \item{sep.bar}{ If true, colours in \code{col.bar} are applied to individual bars, otherwise individual graphs. }
   \item{bar.back}{ logical to plot bars behind (TRUE) or on top (FALSE: default) of curves. }
   \item{cex.xlabel}{ size of label for variable names. }
   \item{srt.xlabel}{ rotation angle for variable names. }
-  \item{plot.symb, symb.pch, symb.cex}{ logical for plotting symbols and symbol type / size. }
+  \item{symb.pch, symb.cex}{ symbol type / size. }
   \item{exag}{ logical to add exaggerated curves when \code{plot.poly=TRUE}. Can be a single value or a vector to add exaggeration to individual curves.}
   \item{exag.mult}{ multiplier for exaggerated curves. Can be a single value or a vector to control exaggeration to individual curves.}
   \item{col.exag}{ colour for exaggerated curves. Can be a single value, a vector to control colour of individual curves, or \code{"auto"} for transparent version of main curve.}

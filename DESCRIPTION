@@ -9,6 +9,6 @@ Imports: vegan, mgcv, grDevices
 Suggests: maptools, foreach
 Description: Constrained clustering, transfer functions, and other methods for analysing Quaternary science data.
 License: GPL-2
-URL: http://www.staff.ncl.ac.uk/stephen.juggins/
+URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/rioja
 NeedsCompilation: yes
 Repository: CRAN

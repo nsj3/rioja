@@ -1,12 +1,13 @@
-strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, scale.minmax = TRUE,
-  xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
+strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, 
+                       scale.minmax = TRUE, xLeft = 0.07, xRight = 1, yBottom = 0.07, yTop = 0.8, 
+                       title = "", cex.title=1.8, y.axis=TRUE, x.axis=TRUE,
   min.width = 5, ylim = NULL, y.rev = FALSE, y.tks=NULL, y.tks.labels=NULL, ylabel = "",
   cex.ylabel=1, cex.yaxis=0.8, xSpace = 0.01, x.pc.inc=10, x.pc.lab=TRUE, x.pc.omit0=TRUE,
-  wa.order = "none", plot.line = TRUE, col.line = "black", lwd.line = 1,
+  wa.order = "none", plot.line = TRUE, col.line = "black", lwd.line = 1, col.symb="black",
   plot.bar = TRUE, lwd.bar = 1, col.bar = "grey", sep.bar = FALSE, bar.back=FALSE,
   plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, lwd.poly = 1,
   plot.symb = FALSE, symb.pch=19, symb.cex=1, x.names=NULL,
-  cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, cex.axis=.8, clust = NULL, clust.width=0.1,
+  cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, ylabPos=2, cex.axis=.8, clust = NULL, clust.width=0.1,
   orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, fun1=NULL, fun2=NULL,
   add=FALSE, ...)
 {
@@ -22,6 +23,9 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     if (is.null(ylim)) {
       ylim=c(0.5, nrow(d)+0.5)
     }
+  } else {
+    if (!is.null(dim(yvar)))
+      yvar <- yvar[, 1, drop=TRUE]
   }
   if (is.null(x.names))
     x.names=colnames(d)   
@@ -152,7 +156,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     ax <- axis(side = 2, las = 1, at = y.tks, labels = as.character(y.tks.labels), cex.axis=cex.yaxis, xpd=NA)
     x1 <- x1 + xSpace
     mtext(title, adj = 0, line = 5, cex = cex.title)
-    mtext(ylabel, side = 2, line = 2.5, cex=cex.ylabel)
+    mtext(ylabel, side = 2, line = ylabPos, cex=cex.ylabel)
   }
   ty <- ifelse(plot.line, "l", "n")
   tcll <- -.3
@@ -220,12 +224,12 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           }
         }
       }
-      if (plot.symb) {
-        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
-      }
       lines(c(0, 0), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), ...)
       if (ty == "l") 
         lines(d[, i, drop=TRUE], yvar, col = cc.line[i], lwd = lwd.line)
+      if (plot.symb) {
+        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=NA)
+      }
       if (!is.null(fun2[i])) {
         fun2[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
@@ -300,13 +304,13 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           }
         }
       }
-      if (plot.symb) {
-        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, xpd=NA)
-      }
       lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), 
             ...)
       if (ty == "l") 
         lines(d[, i, drop=TRUE], yvar, col = cc.line[i], lwd = lwd.line)
+      if (plot.symb) {
+        points(d[, i, drop=TRUE], yvar, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=NA)
+      }
       if (!is.null(fun2[i])) {
         fun2[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
@@ -357,6 +361,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
 }
 
 addZone <- function(x, upper, lower=NULL, ...) {
+  fcall <- match.call(expand.dots=TRUE)
   oldpar <- par(c("fig", "mar", "usr"))
   par(fig=x$box)
   par(mar=c(0,0,0,0))

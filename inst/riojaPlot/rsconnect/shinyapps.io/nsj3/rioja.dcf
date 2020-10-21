@@ -5,8 +5,8 @@ account: nsj3
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3049111
-bundleId: 3758753
+bundleId: 3761173
 url: https://nsj3.shinyapps.io/rioja/
-when: 1603120553.94606
+when: 1603175118.72335
 asMultiple: FALSE
 asStatic: FALSE

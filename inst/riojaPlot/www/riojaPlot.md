@@ -17,7 +17,7 @@ Data should be in an Excel spreadsheet, with a single row of column names.  Thes
 
 ## Getting started
 
-Upload a Excel file and select the worksheet to use, or check the **Use example dataset**.  If your data look like biostratigraphic data with row sums in the range 50-150 riojaPlot will assume they are percentages and scale each curve appropriately, and de-select any variables with a maximum value less than 2. If not, each curve will have equal width and be scaled from min-max data values (option **Scale for %** under the **Settings tab**), and all variables will be plotted.  
+Upload a Excel file and select the worksheet to use, or check the box **Use example dataset**.  If your data look like biostratigraphic data with row sums in the range 50-150 riojaPlot will assume they are percentages and scale each curve appropriately, and de-select any variables with a maximum value less than 2. If not, each curve will have equal width and be scaled from min-max data values (option **Scale for %** under the **Settings tab**), and all variables will be plotted.  
 
 ## Options
 

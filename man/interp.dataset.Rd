@@ -23,7 +23,7 @@ interp.dataset(y, x, xout, method=c("linear","loess","sspline"),
 }
 
 \details{
-Function \code{interp.dataset} interpolates the columns of data frame with rows measured at intervals given by \code{x}, to new intervals given by \code{xout}. This function is useful to interpolation one set of sediment core data to the depth or ages of another, or to a regular set of intervals. Interpolation can be done using linear interpolation between data points in the original series (default) using \code{\link[stats]{approx}}, using \code{\link[stats]{loess}} locally weighted regression, or by \code{\link[stats]{smooth.spline}}. The latter two methods will also smooth the data and additional arguments may be passed to these functions to control the amount of smoothing. 
+Function \code{interp.dataset} interpolates the columns of data frame with rows measured at intervals given by \code{x}, to new intervals given by \code{xout}. This function is useful to interpolation one set of sediment core data to the depth or ages of another, or to a regular set of intervals. Interpolation can be done using linear interpolation between data points in the original series (default) using function `approx` in package `stats`, using \code{\link[stats]{loess}} locally weighted regression, or by \code{\link[stats]{smooth.spline}}. The latter two methods will also smooth the data and additional arguments may be passed to these functions to control the amount of smoothing. 
 
 }
 \value{
@@ -35,7 +35,7 @@ Steve Juggins
 }
 
 \seealso{ 
-\code{\link[stats]{approx}}, \code{\link[stats]{loess}}, and \code{\link[stats]{smooth.spline}} for details of interpolation methods.
+\code{\link[stats]{loess}}, and \code{\link[stats]{smooth.spline}} for details of interpolation methods.
 }
 
 \examples{

@@ -33,9 +33,9 @@ bstick(n, \dots)
 }
 
 \details{
-\code{chclust} performs a constrained hierarchical clustering of a distance matrix, with clusters constrained by sample order.  Returns an object of class \code{chclust} which can be plotted and interrogated.  See Grimm (1987), Gordon & Birks (1972) and Birks & Gordon (1985) for discusssiom of the coniss and conslink algorithms. The resulting dendrogram can be plotted with \code{plot}.  This is an extension of \code{plclust} that allows the dendrogram to be plotted horizontally or vertically (default). \code{plot} also accepts a numeric vector coordinates for x-axis positions of the leaves of the dendrogram.  These could, for example, be the stratigraphic depths of core samples or geographic distances along a line transect.
+\code{chclust} performs a constrained hierarchical clustering of a distance matrix, with clusters constrained by sample order.  Returns an object of class \code{chclust} which can be plotted and interrogated.  See Grimm (1987), Gordon & Birks (1972) and Birks & Gordon (1985) for discusssiom of the coniss and conslink algorithms. The resulting dendrogram can be plotted with \code{plot}.  This is an extension of \code{plot} method for hclust that allows the dendrogram to be plotted horizontally or vertically (default). \code{plot} also accepts a numeric vector coordinates for x-axis positions of the leaves of the dendrogram.  These could, for example, be the stratigraphic depths of core samples or geographic distances along a line transect.
 
-\code{bstick.chclust} compares the dispersion of a hierarchical classification to that obtained from a broken stick model and displays the results graphically.  See Bennett (1996) for details. \code{bstick} is a generic function and the default method is defined in package \code{vegan}. If this package is loaded the function may be called using \code{bstick}, otherwise use \code{bstick.chclust}.
+\code{bstick.chclust} compares the dispersion of a hierarchical classification to that obtained from a broken stick model and displays the results graphically.  See Bennett (1996) for details. \code{bstick} is a generic function and the default method is defined in package \code{vegan}. If package \code{vegan} is installed the function may be called using \code{vegan::bstick}, otherwise use \code{bstick.chclust}.
 }
 
 \value{
@@ -57,8 +57,7 @@ Grimm, E.C. (1987) CONISS: A FORTRAN 77 program for stratigraphically constraine
 }
 
 \seealso{ 
-\code{\link[stats]{hclust}}, \code{\link[stats]{plclust}}, \code{\link[stats]{cutree}}, \code{\link[stats]{dendrogram}},
-\code{\link[vegan]{bstick}}.
+\code{\link[stats]{hclust}}, \code{\link[stats]{cutree}}, \code{\link[stats]{dendrogram}}.
 }
 
 \examples{

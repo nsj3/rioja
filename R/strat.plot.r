@@ -8,13 +8,20 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   plot.poly = FALSE, col.poly = "grey", col.poly.line = NA, lwd.poly = 1,
   plot.symb = FALSE, symb.pch=19, symb.cex=1, x.names=NULL,
   cex.xlabel = 1.1, srt.xlabel=90, mgp=NULL, ylabPos=2, cex.axis=.8, clust = NULL, clust.width=0.1,
-  orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, fun1=NULL, fun2=NULL,
+  orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, col.bg=NULL, fun1=NULL, fun2=NULL,
   add=FALSE, ...)
 {
+  errorMsg <- function(msg) {
+    if (shiny_running()) {
+      stop(msg)
+    } else {
+      stop(msg)
+    }
+  }
   fcall <- match.call(expand.dots=TRUE)
   if (!is.null(clust)) {
     if (class(clust)[1]!="chclust") 
-      stop("clust must be a chclust object")
+      errorMsg("clust must be a chclust object")
   }
   if (!is.null(clust)) 
     xRight = xRight - clust.width
@@ -39,50 +46,50 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   nsp <- ncol(d)
   nsam <- nrow(d)
   if (scale.percent==TRUE & length(x.pc.inc) > 1) {
-    if (length(x.pc.inc) != nsp)
-      stop("length of x.pc.inc should equal number of curves")
+    if (length(x.pc.inc) != nsp) 
+      errorMsg("length of x.pc.inc should equal number of curves")
   } else {
     x.pc.inc <- rep(x.pc.inc[1], nsp)
   }
   if (!is.null(minmax)) {
-    if (ncol(minmax) != 2)
-      stop("minmax should have 2 columns")
-    if (nrow(minmax) != nsp)
-      stop("number of rows of minmax should equal number of curves")
+    if (ncol(minmax) != 2) 
+      errorMsg("minmax should have 2 columns")
+    if (nrow(minmax) != nsp) 
+      errorMsg("number of rows of minmax should equal number of curves")
   }
   par(mai = c(0, 0, 0, 0))
   if (length(graph.widths) == 1)
     graph.widths <- rep(1, nsp)
-  if (length(graph.widths) != nsp)
-    stop("Length of graph.widths should equal number of curves")
+  if (length(graph.widths) != nsp) 
+    errorMsg("Length of graph.widths should equal number of curves")
   if (length(exag) == 1)
     exag <- rep(exag[1], nsp)
-  if (length(exag) != nsp)
-    stop("Length of exag should equal number of curves")
+  if (length(exag) != nsp) 
+    errorMsg("Length of exag should equal number of curves")
   if (length(exag.mult) == 1)
     exag.mult <- rep(exag.mult[1], nsp)
-  if (length(exag.mult) != nsp)
-    stop("Length of exag.mult should equal number of curves")
+  if (length(exag.mult) != nsp) 
+    errorMsg("Length of exag.mult should equal number of curves")
   if (length(col.exag) == 1)
     col.exag <- rep(col.exag[1], nsp)
-  if (length(col.exag) != nsp)
-    stop("Length of col.exag should equal number of curves")
+  if (length(col.exag) != nsp) 
+    errorMsg("Length of col.exag should equal number of curves")
   if (!is.null(fun1)) {
     if (length(fun1) == 1)
       fun1 <- lapply(1:nsp, function(x) fun1)
     if (length(fun1) != nsp)
-      stop("Length of fun1 should equal number of curves")
+      errorMsg("Length of fun1 should equal number of curves")
   }
   if (!is.null(fun2)) {
     if (length(fun2) == 1)
       fun2 <- lapply(1:nsp, function(x) fun2)
     if (length(fun2) != nsp)
-      stop("Length of fun2 should equal number of curves")
+      errorMsg("Length of fun2 should equal number of curves")
   }
   if (length(x.axis) == 1)
     x.axis <- rep(x.axis[1], nsp)
   if (length(x.axis) != nsp)
-    stop("Length of x.axis should equal number of curves")
+    errorMsg("Length of x.axis should equal number of curves")
   cc.line <- rep(col.line, length.out=nsp)
   if (sep.bar)
     cc.bar <- rep(col.bar, length.out=nsam)
@@ -137,7 +144,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   xInc <- xLen - ((nsp + 1) * xSpace)
   inc <- xInc/colM.sum
   if (inc < 0.0)
-    stop("Too many variables, curves will be too small. Reduce xSpace.")
+    errorMsg("Too many variables, curves will be too small.")
   x1 <- xLeft
   #    par(fig = c(x1, x1+0.4, yStart, yTop))
   par(fig = figCnvt(orig.fig, c(x1, min(x1+0.4, .9), yBottom, yTop)), new=add)
@@ -177,13 +184,15 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
       plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
            xaxs = "i", type = "n", yaxs = "r", ylim = ylim, xlab="", ylab="", ...)
+      if (!is.null(col.bg))
+         rect(par("usr")[1],ylim[1],par("usr")[2],ylim[2], col=col.bg, border=NA)
       if (!is.null(fun1[i])) {
         fun1[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
       if (plot.poly & exag[i]) {
         y <- c(yvar[1], yvar, yvar[nsam])
         x2 <- c(0, d[, i, drop=TRUE]*exag.mult[i], 0)
-        polygon(x2, y, col = col.exag[i], border = NA)
+        polygon(x2, y, col = col.exag[i], border = NA, xpd=FALSE)
       }        
       if (bar.back) {
         if (is.logical(plot.bar)) {
@@ -257,6 +266,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
         plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
              type = "n", yaxs = "r", ylim = ylim, ...)
       }
+      if (!is.null(col.bg))
+        rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4], col=col.bg)
       tks <- axTicks(1)
       us <- par("usr")
       if (!is.null(fun1[i])) {
@@ -331,7 +342,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     usr2 <- par("usr")
     tks1 <- usr2[1]
     
-    r <- (usr1[4] - usr1[3]) * 0.01
+    r <- abs((usr1[4] - usr1[3])) * 0.005
     pos <- usr1[4]+r
     if (y.rev)
       pos <- usr1[4]-r
@@ -391,3 +402,25 @@ addClustZone <- function(x, clust, nZone, ...) {
   par(oldpar)
 }
 
+shiny_running = function () {
+  # Look for `runApp` call somewhere in the call stack.
+  
+  # from https://stackoverflow.com/questions/32806974/detecting-whether-shiny-runs-the-r-code
+  
+  frames = sys.frames()
+  calls = lapply(sys.calls(), `[[`, 1)
+  call_name = function (call)
+    if (is.function(call)) '<closure>' else deparse(call)
+  call_names = vapply(calls, call_name, character(1))
+  
+  #  target_call = grep('^runApp$', call_names)
+  target_call = grep('runApp$', call_names)
+  
+  if (length(target_call) == 0)
+    return(FALSE)
+  
+  # Found a function called `runApp`, verify that it’s Shiny’s.
+  target_frame = frames[[target_call]]
+  namespace_frame = parent.env(target_frame)
+  isNamespace(namespace_frame) && environmentName(namespace_frame) == 'shiny'
+}

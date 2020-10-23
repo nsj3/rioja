@@ -21,23 +21,23 @@ Upload a Excel file and select the worksheet to use, or check the box **Use exam
 
 ## Options
 
-### Select Variables
+### Variables
 
 Select a variable for the **Y axis** (if you have included more than one Depth or Age variable).  **Select X variables**: If the data look like biological counts transformed to percentages then variables with a maximum value of less than 2.0 wll be de-selected to avoid over-crowding.  Use this option to remove or add variables to the diagram.  
 
 ### Settings
 
-- **Style**: Choose to plot each variable with lines, symbols or silouettes (filled curves).  Some combinations do not make sense or look ugly so choose wisely.
+- **Style**: Choose to plot each variable with lines, symbols or silhouettes (filled curves).  Some combinations do not make sense or look ugly so choose wisely.
 
-- **Show bar**: Show horizontal bars, either alone or superimposed on a line, symbol or silhouette plot.  **Curve** extends the bar to the data value, **Full** extends the bar the full width of the plotting area.  Try it with silouettes, and **Bars on top** unchecked.
+- **Show bar**: Show horizontal bars, either alone or superimposed on a line, symbol or silhouette plot.  **Curve** extends the bar to the data value, **Full** extends the bar the full width of the plotting area.  Try it with silhouettes, and **Bars on top** unchecked.
 
-- **Bars on top**: plot bars on top of silouette or below. 
+- **Bars on top**: plot bars on top of silhouette or below. 
 
 - **Settings**: **Show 5x exag**: adds a light grey curve with 5 x exaggeration to  the plot, to highlight varition in low-value parts of the curve.  **Scale for %** scales each curve from zero to maximum value and adjusts width to keep scaling constant between curves.  **Show min/max**: with **Scale for %** unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding).  **Auto sort vars**:  sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in biostratigraphic data).
 
 ### Colours
 
-Select colour for lines, bars, silouettes, symbols and zones.
+Select colour for lines, bars, silhouettes, symbols and zones.
 
 ### Sizes
 
@@ -46,6 +46,10 @@ Adjust axis and lable font size and label rotation.
 ### Zonation
 
 Add a zonation (constrained clustering) to the diagram using CONISS (Grimm 1987).  Optional show zones on the diagram with the number of zones determined automatically using a broken-stick model (Bennett 1996) or chosen manually.
+
+### Groups
+
+Assign each variable to a group and plot silhouettes in a different colour for each group.
 
 ## Save the plot
 

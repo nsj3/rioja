@@ -36,13 +36,21 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
   }
   if (is.null(x.names))
     x.names=colnames(d)   
-  if (is.null(ylim)) 
-    ylim = c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE))
+  if (is.null(ylim)) {
+    ylim = range(yvar, na.rm=TRUE)
+  } else {
+    if (is.na(yvar[1]))
+      ylim[1] <- min(yvar, na.rm=TRUE)
+    if (is.na(ylim[2]))
+      ylim[2] <- max(yvar, na.rm=TRUE)
+  }
   oldfig = par("fig")
   oldmai <- par("mai")
   if (is.null(orig.fig)) {
     orig.fig = par("fig")
   }
+  if (exag.mult < 1.0)
+    exag <- FALSE
   nsp <- ncol(d)
   nsam <- nrow(d)
   if (scale.percent==TRUE & length(x.pc.inc) > 1) {
@@ -97,8 +105,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     cc.bar <- rep(col.bar, length.out=nsp)
   cc.poly <- rep(col.poly, length.out=nsp)
   cc.poly.line <- rep(col.poly.line, length.out=nsp)
-  if(plot.poly)
-    plot.line <- FALSE
+#  if(plot.poly)
+#    plot.line <- FALSE
   make.col <- function(x, alpha) {
     apply(col2rgb(x)/255, 2, function(x) rgb(x[1], x[2], x[3], alpha))
   }
@@ -153,7 +161,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     ylim[1] <- ylim[2]
     ylim[2] <- tmp
   }
-  plot(0, 0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", yaxs = "r", ylim = ylim, ...)
+  plot(0, 0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", yaxs = "i", ylim = ylim, ...)
   usr1 <- par("usr")
   if (y.axis) {
     if (is.null(y.tks))
@@ -183,7 +191,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       inc2 <- inc * colM[i]
       par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
       plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
-           xaxs = "i", type = "n", yaxs = "r", ylim = ylim, xlab="", ylab="", ...)
+           xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
       if (!is.null(col.bg))
          rect(par("usr")[1],ylim[1],par("usr")[2],ylim[2], col=col.bg, border=NA)
       if (!is.null(fun1[i])) {
@@ -216,7 +224,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
 #          x2 <- c(0, d[, i, drop=TRUE]*exag.mult[i], 0)
 #          polygon(x2, y, col = col.exag[i], border = NA)
 #        }
-        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+#        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
       }
       if ( !bar.back) {
         if (is.logical(plot.bar)) {
@@ -248,11 +257,11 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           xlabbt <- as.character(xlabb)
           if (x.pc.omit0)
             xlabbt[1] <- ""
-          mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll),0) } else { mgp }
+          mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll), 0.3 ) } else { mgp }
           axis(side = 1, at = xlabb, labels = xlabbt, mgp=mgpX, cex.axis=cex.axis, ...)
         }
         else
-          axis(side = 1, at = xlabb, labels = FALSE, ...)
+          axis(side = 1, at = xlabb, labels = FALSE, mgp=mgpX, ...)
       }
       x1 <- x1 + inc2 + xSpace
     }
@@ -261,10 +270,10 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       par(fig = figCnvt(orig.fig, c(x1, min(1, x1 + inc2, na.rm=TRUE), yBottom, yTop)))
       if (!is.null(minmax)) {
         plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
-             type = "n", yaxs = "r", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)
+             type = "n", yaxs = "i", ylim = ylim, xlim=c(minmax[i, 1], minmax[i,2]), ...)
       } else {
         plot(d[, i, drop=TRUE], yvar, cex = 0.5, axes = FALSE, xaxs = "i", 
-             type = "n", yaxs = "r", ylim = ylim, ...)
+             type = "n", yaxs = "i", ylim = ylim, ...)
       }
       if (!is.null(col.bg))
         rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4], col=col.bg)
@@ -299,7 +308,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           x2 <- c(us[1], d[, i, drop=TRUE]*exag.mult[i], us[1])
           polygon(x2, y, col = col.exag[i], border = NA)
         }
-        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+#        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
       }
       if (!bar.back) {
         if (is.logical(plot.bar)) {
@@ -315,8 +325,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           }
         }
       }
-      lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), 
-            ...)
+      lines(c(us[1], us[1]), c(min(yvar, na.rm=TRUE), max(yvar, na.rm=TRUE)), ...)
       if (ty == "l") 
         lines(d[, i, drop=TRUE], yvar, col = cc.line[i], lwd = lwd.line)
       if (plot.symb) {
@@ -325,7 +334,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       if (!is.null(fun2[i])) {
         fun2[[i]](x=d[, i, drop=TRUE], y=yvar, i=i, nm=x.names[i])
       }
-      mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll),0) } else { mgp }
+      mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll), 0.3) } else { mgp }
       if (x.axis[i]) {
         if (scale.minmax) {
           nn <- length(axTicks(1))
@@ -342,7 +351,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     usr2 <- par("usr")
     tks1 <- usr2[1]
     
-    r <- abs((usr1[4] - usr1[3])) * 0.005
+    r <- abs((usr1[4] - usr1[3])) * 0.015
     pos <- usr1[4]+r
     if (y.rev)
       pos <- usr1[4]-r
@@ -362,7 +371,11 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     #        if(y.rev)
     #           clust <- rev(clust)
 #    mgpX <- if (is.null(mgp)) { c(2, .5, 0) } else { mgp }   
-    plot(clust, xvar=yvar, horiz=TRUE, x.rev=y.rev, labels=rep("", length(yvar)), hang=-1, mgp=mgpX, cex.axis=cex.axis, ...)
+    if (y.rev)
+       xl <- rev(ylim)
+    else
+       xl <- ylim
+    plot(clust, xvar=yvar, horiz=TRUE, x.rev=y.rev, labels=rep("", length(yvar)), hang=-1, mgp=mgpX, cex.axis=cex.axis, xlim=xl, yaxs="i", xpd=FALSE, ...)
   }
   par(mai = oldmai)
   oldfig[oldfig < 0] <- 0
@@ -398,7 +411,12 @@ addClustZone <- function(x, clust, nZone, ...) {
   #   if (x$yaxt.rev)
   #      x$yvar <- rev(x$yvar)
   zone <- (x$yvar[zn] + x$yvar[zn+1]) / 2
-  segments(0, zone, 1, zone, xpd=NA, ...)
+  r <- range(c(x$usr[3], x$usr[4]))
+  sel <- which (zone >= r[1] & zone <= r[2])
+  if (length(sel) > 0) {
+    zone <- zone[sel]
+    segments(0, zone, 1, zone, xpd=NA, ...)
+  }
   par(oldpar)
 }
 

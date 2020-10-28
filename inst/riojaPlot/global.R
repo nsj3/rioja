@@ -17,7 +17,7 @@ SJURL <- a("Steve Juggins", href="mailto:Stephen.Juggins@ncl.ac.uk")
 inputWidth <- "300px"
 numericWidth <- "100px"
 numericWidth2 <- "75px"
-version <- "1.0"
+version <- "1.01"
 colWidth <- "120px"
 colList <- c(list('black' ),
     as.list(brewer.pal(9, "Blues")[-(1:3)]),

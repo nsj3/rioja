@@ -264,7 +264,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       if (ty == "l") 
         lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
       if (plot.symb) {
-        points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=NA)
+        points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=FALSE)
       }
       if (!is.null(fun2[i])) {
         fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
@@ -347,7 +347,7 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
       if (ty == "l") 
         lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
       if (plot.symb) {
-        points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=NA)
+        points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=FALSE)
       }
       if (!is.null(fun2[i])) {
         fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])

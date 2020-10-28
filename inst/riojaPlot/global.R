@@ -159,8 +159,7 @@ readIt <- function(fName, sheet, input, session, forceRead=TRUE) #, forceByCol=F
    nMiss <- sum(is.na(d))
    if (nMiss > 0) {
       msg <- paste0("Spreadsheet has ", nMiss, " missing value(s). ",
-                    "Zonation is disabled and shilouette curves may not plot correctly. ",  
-                    "Check the help and example data for the correct data format.")
+                    "Zonation is disabled.")
       addNotification(msg, duration=messageDur, type="message", closeButton=TRUE)
       shinyjs::disable(selector = "#showZones")
       shinyjs::disable(selector = "#nZones")
@@ -196,6 +195,9 @@ readIt <- function(fName, sheet, input, session, forceRead=TRUE) #, forceByCol=F
    } 
 
    selTaxa <- colnames(mydata$spec)
+   
+   print(r)
+   
    if (scalePC) {
      shinyjs::enable("autoSelect")
      shinyjs::enable("minCut")
@@ -415,6 +417,14 @@ plotIt <- function(mydata, input, session, fileFlag=FALSE)
     exagMult <- 1.0
     style$exag <- FALSE
   }
+  
+  xNames <- colnames(d)
+  
+  if (input$italicise) {
+    xNames <- as.expression(sapply(xNames, function(x) bquote(italic(.(x))) ))
+
+  }
+  
   retVal <- tryCatch(x <- strat.plot(d, yvar = yvar, y.rev=style$yrev, scale.percent=style$scalePC, 
              plot.bar=style$bar, plot.line=style$line, plot.poly=style$poly, plot.symb=style$symbol, 
              col.poly=groupColours, col.bar=style$colBar, lwd.bar=style$lwdBar, col.symb=input$symbCol, 
@@ -424,7 +434,7 @@ plotIt <- function(mydata, input, session, fileFlag=FALSE)
              cex.yaxis=input$axisSize, cex.axis=0.8*input$axisSize, ylabPos=ylabPos,
              cex.ylabel=input$axisSize, tcl=-.4, mgp=c(3, input$axisSize/3, 0.3), xLeft=xLeft, 
              scale.minmax=style$scaleMinMax, ylim=ylim, y.tks=style$ytks, y.tks.labels=yLabels, 
-             col.bg=NULL, col.exag=exagCol, exag.mult=exagMult, exag.alpha=0.1),
+             col.bg=NULL, col.exag=exagCol, exag.mult=exagMult, exag.alpha=0.1, x.names=xNames),
         error=function(e) return(e))
   if (inherits(retVal, "error")) {
     removeMsg()

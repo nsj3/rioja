@@ -136,6 +136,7 @@ D_ui <- dashboardPage(header,
             solidHeader=TRUE, width=3),
             box(
               numericInput('axisSize', 'Axis font size', value=1, min=.4, max=2, step=0.05, width=numericWidth), 
+              checkboxInput('italicise', 'Italicise names', value=FALSE),
               solidHeader=TRUE, width=3)
           ),
           tabPanel(title='Zonation', 

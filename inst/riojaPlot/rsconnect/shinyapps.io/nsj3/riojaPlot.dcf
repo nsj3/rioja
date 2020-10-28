@@ -5,8 +5,8 @@ account: nsj3
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3064245
-bundleId: 3775842
+bundleId: 3788608
 url: https://nsj3.shinyapps.io/riojaPlot/
-when: 1603488605.44554
+when: 1603818747.22182
 asMultiple: FALSE
 asStatic: FALSE

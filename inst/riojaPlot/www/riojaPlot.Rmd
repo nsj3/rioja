@@ -4,7 +4,8 @@ output:
   html_document: default
   pdf_document: default
 ---
-# Steve Juggins Oct 2020
+
+### Steve Juggins (`r Sys.Date()`)
 
 ## Introduction
 

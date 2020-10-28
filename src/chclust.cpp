@@ -113,13 +113,11 @@ bool ConISS(long nsam, double **DPtr, double **es)
 	e = 0.0;
 
 // FULL
-/*
-{
-		fprintf(fout,"\n\n%65sMean\n%50sWithin-        within","","");
-		fprintf(fout,"\n        Clusters    Increase in    Total          cluster        cluster");
-		fprintf(fout,"\n Iter   merged      dispersion     dispersion     dispersion     dispersion\n");
-}
-*/
+
+//		fprintf(fout,"\n\n%65sMean\n%50sWithin-        within","","");
+//		fprintf(fout,"\n        Clusters    Increase in    Total          cluster        cluster");
+//		fprintf(fout,"\n Iter   merged      dispersion     dispersion     dispersion     dispersion\n");
+
 	for (iter=1;iter<=nsam-1;iter++) {
 		dshort = dc(2,1);
 		p = 1;

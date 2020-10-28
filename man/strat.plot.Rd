@@ -20,7 +20,7 @@ strat.plot (d, yvar=NULL, scale.percent=FALSE, graph.widths=1, minmax=NULL,
             plot.symb=FALSE, symb.pch=19, symb.cex=1, x.names=NULL, cex.xlabel=1.1, 
             srt.xlabel=90, mgp=NULL, ylabPos=2, cex.axis=.8, clust=NULL, clust.width=0.1,
             orig.fig=NULL, exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
-            fun1=NULL, fun2=NULL, add=FALSE, ...)
+            col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE, omitMissing=TRUE, ...)
 
 addZone (x, upper, lower=NULL, ...)
 
@@ -77,6 +77,8 @@ addClustZone(x, clust, nZone, ...)
   \item{x}{ a stratigraphic diagram object produced by strat.plot. }
   \item{upper, lower}{ upper and (optional) lower limits of a zone to add to an existing stratigraphic diagram. }
   \item{nZone}{ number of zones to draw. }
+  \item{omitMissing}{ remove missing values before plotting.  Defaults to TRUE. }
+  \item{col.bg}{ background colour for each curve. }
   \item{...}{ further graphical arguments. }
 }
 \details{

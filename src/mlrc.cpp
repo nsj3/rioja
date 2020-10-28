@@ -82,7 +82,7 @@ extern "C" {
       }
       catch (char *ex) {
          if (verbose) {
-            REprintf("\n%s\n", ex);
+            Rprintf("\n%s\n", ex);
          }
          IBeta(i) = -4;
       }
@@ -136,7 +136,7 @@ int logit(dMat &x, dMat &y, dMat &bhat, dMat &mmxinv, double tol, int maxiter, i
     }
     catch (const char *e) {
        if (verbose) {
-          REprintf("\n%s\n", e);
+          Rprintf("\n%s\n", e);
        }
        errorflag = 3;
     }
@@ -215,7 +215,7 @@ SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX, SEXP sexp
        }
        catch (const char *e) {
          if (verbose)
-             REprintf("\n%s\n", e);
+             Rprintf("\n%s\n", e);
           retval = TRUE;
        }
        if (retval) {
@@ -370,13 +370,13 @@ void powell(double *p, double **xi, int n, double ftol, int *iterate,
    *iterate = 0;
    while (1) {
       (*iterate)++;
-/*
-      printf("\niteration %d  ", *iterate);
-      if (n == 1) 
-         printf("b0 = %-.3f, likelihood = %-.9f", p[1], *fret);
-      else  
-         printf("b0 = %-.3f, b1 = %-.3f, b2 = %-.3f, likelihood = %-.9f",p[1],p[2],p[3],*fret);
-*/
+
+//      printf("\niteration %d  ", *iterate);
+//      if (n == 1) 
+//         printf("b0 = %-.3f, likelihood = %-.9f", p[1], *fret);
+//      else  
+//         printf("b0 = %-.3f, b1 = %-.3f, b2 = %-.3f, likelihood = %-.9f",p[1],p[2],p[3],*fret);
+
       fp = (*fret);
       ibig = 0;
       del = 0.0;

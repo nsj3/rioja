@@ -427,15 +427,16 @@ summary {
 </div>
 
 
-<div id="steve-juggins-oct-2020" class="section level1">
-<h1>Steve Juggins Oct 2020</h1>
+<div id="steve-juggins-2020-10-28" class="section level3">
+<h3>Steve Juggins (2020-10-28)</h3>
+</div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>riojaPlot is a web app for plotting stratigraphic data found in micropalaeontological or palaeoecological studies. It can plot multiple biological and non-biological proxies against depth or age and allows trends to be visualized using a range of plot types.</p>
 </div>
 <div id="input-data" class="section level2">
 <h2>Input data</h2>
-<p>Data should be in an Excel spreadsheet, with a single row of column names. These names will be used to label the x-variables so choose them carefully. Any variables sharting with the words “Depth” or “Age” will be used as y-variables. For example, “Depth_in_m”&quot; or “AgeBP” are fine, “Years BP” or “core depth” are not. This allows one to plot the data using different age models by labelling the columns “Age01”, “Age02” etc. If you do not include a Depth or Age variable samples data be plotted against sample number. A column starting with the word “Label” can contain text that will be used to label samples on the the y-axis. All other columns should be numeric and are used as x-variables. Data are plotted ‘as is’ and in the order they appear in the file. That is, if you want to plot a diagram of microfossil counts expressed as relative abundances you should supply percentage data with columns in correct the order. An example spreadsheet containing pollen stratigraphic data from Birks &amp; Mathews (1978) can be downloaded from the Help tab. A screenshot of the data is listed at the end of this help file.</p>
+<p>Data should be in an Excel spreadsheet, with a single row of column names. These names will be used to label the x-variables so choose them carefully. Any variables starting with the words “Depth” or “Age” will be used as y-variables. For example, “Depth_in_m”&quot; or “AgeBP” are fine, “Years BP” or “core depth” are not. This allows one to plot the data using different age models by labelling the columns “Age01”, “Age02” etc. If you do not include a Depth or Age variable samples data be plotted against sample number. A column starting with the word “Label” can contain text that will be used to label samples on the the y-axis. All other columns should be numeric and are used as x-variables. Data are plotted ‘as is’ and in the order they appear in the file. If you want to plot a diagram of microfossil counts expressed as relative abundances you should supply percentage data with columns in correct the order. Zonation is not available is the data contain missing values. An example spreadsheet containing pollen stratigraphic data from Birks &amp; Mathews (1978) can be downloaded from the Help tab. A screenshot of the data is listed at the end of this help file.</p>
 </div>
 <div id="getting-started" class="section level2">
 <h2>Getting started</h2>
@@ -451,7 +452,7 @@ summary {
 <div id="settings" class="section level3">
 <h3>Settings</h3>
 <ul>
-<li><p><strong>Style</strong>: Choose to plot each variable with lines, symbols or silhouettes (filled curves). Some combinations do not make sense or look ugly so choose wisely. Shilouettes may not plot properly if there are missing values in the data.</p></li>
+<li><p><strong>Style</strong>: Choose to plot each variable with lines, symbols or silhouettes (filled curves). Some combinations do not make sense or look ugly so choose wisely.</p></li>
 <li><p><strong>Show bar</strong>: Show horizontal bars, either alone or superimposed on a line, symbol or silhouette plot. <strong>Curve</strong> extends the bar to the data value, <strong>Full</strong> extends the bar the full width of the plotting area. Try the latter with silhouettes and <strong>Bars on top</strong> unchecked.</p></li>
 <li><p><strong>Bars on top</strong>: plot bars on top of silhouette or below.</p></li>
 <li><p><strong>Settings</strong>: <strong>Reverse Y axis</strong> does what it says. Usually this option should be selected so depths / ages run from young at the top to old at the bottom. De-select if your data are in years CE. <strong>Show min/max</strong>: with <strong>Scale for %</strong> unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding). <strong>Auto sort vars</strong>: sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in percentage biostratigraphic data).</p></li>
@@ -501,7 +502,6 @@ summary {
 <p>Birks, HH &amp; Mathews, RW (1978) Studies in the vegetational history of Scotland V. Late Devensian and early Flandrian macrofossil stratigraphy at Abernethy Forest, Invernessshire. <em>New Phytologist</em>, <strong>80</strong>, 455-84.</p>
 <p>Grimm, EC (1987) CONISS: A FORTRAN 77 program for stratigraphically constrained cluster analysis by the method of incremental sum of squares. <em>Computers &amp; Geosciences</em>, <strong>13</strong>, 13-35.</p>
 <p>Legendre, P &amp; Gallagher E (2001) Ecologically meaningful transformations for ordination of species data. <em>Oecologia</em>, <strong>129</strong>, 271-280.</p>
-</div>
 </div>
 
 

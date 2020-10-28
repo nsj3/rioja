@@ -135,7 +135,7 @@ public:
    dMat product(const dMat &d);
    dMat tproduct(const dMat &d);
    void fill(double d);
-   void rand(void);
+//   void rand(void);
    int deleteRows(char *i);
    int deleteCols(char *i);
    int deleteRows(Index &I);

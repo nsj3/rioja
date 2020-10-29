@@ -95,7 +95,7 @@ readIt <- function(fName, sheet, input, session, forceRead=TRUE) #, forceByCol=F
    isolate(updateNumericInput(session, 'yMax', value=NA))
    isolate(updateNumericInput(session, 'yInterval', value=NA))
    isolate(updateTextInput(session, 'yLabel', value=""))
-   isolate(updateCheckboxGroupInput(session, 'misc', selected=1))
+   isolate(updateCheckboxGroupInput(session, 'ySettings', selected=1))
    isolate(updateCheckboxInput(session, 'doClust', value=FALSE))
     
    currentSheet <<- sheet
@@ -196,14 +196,11 @@ readIt <- function(fName, sheet, input, session, forceRead=TRUE) #, forceByCol=F
 
    selTaxa <- colnames(mydata$spec)
    
-   print(r)
-   
    if (scalePC) {
      shinyjs::enable("autoSelect")
      shinyjs::enable("minCut")
      shinyjs::enable("maxCut")
-     isolate(updateCheckboxInput(session, "scalePC", value=TRUE))
-     isolate(updateCheckboxGroupInput(session, "misc", selected=c(1)))
+     isolate(updateCheckboxGroupInput(session, "xSettings", selected=c(1, 2)))
      isolate(updateCheckboxGroupInput(session, "exag", selected=c(1)))
      isolate(updateCheckboxGroupInput(session, "style", selected=c(3)))
      mx <- apply(mydata$spec, 2, max, na.rm=TRUE)
@@ -224,11 +221,9 @@ readIt <- function(fName, sheet, input, session, forceRead=TRUE) #, forceByCol=F
         addNotification(msg, duration=messageDur, type="message", closeButton=TRUE)
      }
    } else {
-     isolate(updateCheckboxInput(session, "scalePC", value=FALSE))
-     isolate(updateCheckboxGroupInput(session, "misc", selected=c(1)))
+     isolate(updateCheckboxGroupInput(session, "xSettings", selected=character(2)))
      isolate(updateCheckboxGroupInput(session, "style", selected=c(1)))
      isolate(updateCheckboxGroupInput(session, "exag", selected=character(0)))
-     
      shinyjs::disable("autoSelect")
      shinyjs::disable("minCut")
      shinyjs::disable("maxCut")
@@ -260,11 +255,15 @@ plotIt <- function(mydata, input, session, fileFlag=FALSE)
   yvar <- input$yvar
   style <- list()
 
-  style$scalePC <- input$scalePC
-  style$scaleMinMax <- FALSE
-  style$exag <- FALSE
-  style$yrev <- FALSE
+  style$scalePC <- 1 %in% input$xSettings
+  style$scaleMinMax <- 2 %in% input$xSettings
+  
+  style$yrev <- 1 %in% input$ySettings
+
   style$autoOrder <- "none"
+  if (3 %in% input$xSettings)
+    style$autoOrder <- "bottomleft"
+
   style$bar <- FALSE
   style$line <- FALSE
   style$poly <- FALSE
@@ -285,21 +284,11 @@ plotIt <- function(mydata, input, session, fileFlag=FALSE)
   else  
     style$bar <- "Full"
   
-  if (1 %in% input$misc)
-    style$yrev <- TRUE
-  if (4 %in% input$misc)
-    style$scaleMinMax <- TRUE
-  if (5 %in% input$misc)
-    style$autoOrder <- "bottomleft"
-  if (1 %in% input$exag)
-    style$exag <- TRUE
-  if (input$scalePC)
-    style$scalePC <- TRUE
-
   style$yMin <- input$yMin
   style$yMax <- input$yMax
   style$yInterval <- input$yInterval
-
+  style$exag <- 1 %in% input$exag
+  
   doZone <- input$doClust
     
   style$lwdBar <- input$barSize;
@@ -434,7 +423,7 @@ plotIt <- function(mydata, input, session, fileFlag=FALSE)
              cex.yaxis=input$axisSize, cex.axis=0.8*input$axisSize, ylabPos=ylabPos,
              cex.ylabel=input$axisSize, tcl=-.4, mgp=c(3, input$axisSize/3, 0.3), xLeft=xLeft, 
              scale.minmax=style$scaleMinMax, ylim=ylim, y.tks=style$ytks, y.tks.labels=yLabels, 
-             col.bg=NULL, col.exag=exagCol, exag.mult=exagMult, exag.alpha=0.1, x.names=xNames),
+             col.bg=NULL, col.exag=exagCol, exag.mult=exagMult, exag.alpha=0.15, x.names=xNames),
         error=function(e) return(e))
   if (inherits(retVal, "error")) {
     removeMsg()

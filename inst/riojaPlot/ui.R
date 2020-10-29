@@ -63,7 +63,8 @@ D_ui <- dashboardPage(header,
                                                   countSelectedText="{0} of {1} variables selected")),
               solidHeader=TRUE, width=3),
               box(
-                 checkboxInput("scalePC", "Scale for %", value=TRUE),
+                 checkboxGroupInput("xSettings", "Settings", choices=c('Scale for %'=1, 'Show min/max'=2, 'Auto sort vars'=3), 
+                                    selected=character(0)),
               solidHeader=TRUE, width=2),
               box(
                  actionButton('autoSelect', 'Auto Select X vars'),
@@ -90,11 +91,6 @@ D_ui <- dashboardPage(header,
                  numericInput('barSize', 'Bar width', value=1, min=1, max=10, step=1, width=numericWidth), 
                solidHeader=TRUE, width=2),
                box( 
-                  checkboxGroupInput('misc', 'Settings', c('Reverse Y axis'=1, 
-                                                           'Show min/max'=4, 'Auto sort vars'=5), 
-                                                   selected=c(1, 2)),
-               solidHeader=TRUE, width=3),
-               box( 
                   checkboxGroupInput('exag', 'Exaggeration', c('Show'=1, 'Auto Col'=2), selected=1), 
                   numericInput('exagMult', 'Exag mult.', value=2, min=1.2, max=10, step=0.2, width=numericWidth), 
                solidHeader=TRUE, width=2),
@@ -107,7 +103,10 @@ D_ui <- dashboardPage(header,
               box( 
                 numericInput('yInterval', 'Y axis interval', value=NA, width=numericWidth),
                 textInput('yLabel', 'Y axis Label'),
-                solidHeader=TRUE, width=3)
+                solidHeader=TRUE, width=3),
+               box( 
+                  checkboxGroupInput('ySettings', 'Settings', c('Reverse Y axis'=1), selected=c(1)),
+                  solidHeader=TRUE, width=3),
             ),
           tabPanel(title='Colours', 
             box(

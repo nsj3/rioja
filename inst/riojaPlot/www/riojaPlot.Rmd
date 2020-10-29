@@ -23,9 +23,13 @@ Upload a Excel file and select the worksheet to use, or check the box **Use exam
 
 ### Variables
 
-Select a variable for the **Y axis** (if you have included more than one *Depth*, *Age* or *Label* columns).  riojaPlot will try to guess the type of data you have.  If the data look like biological counts transformed to percentages then variables with a maximum value of less than 2.0 will be de-selected to avoid over-crowding.  Use **Select X variables** this option to remove or add variables to the diagram.  Use the **Scale for %** checkbox to force riojaPlot to plot the data as percentage (or not).  
+- **Y axis**: select variable for Y axis (if you have included more than one *Depth*, *Age* or *Label* columns).  
 
-**Auto Select X vars** can be used with % scaling to automatically select variables. riojaPlot calculates the maximum value of each variable and selects those variables whose maximum falls between the min / max cutoff.  This is useful for quickly de-selecting rare taxa in large datasets.
+- **Select X variables**: riojaPlot will try to guess the type of data you have.  If the data look like biological counts transformed to percentages then variables with a maximum value of less than 2.0 will be de-selected to avoid over-crowding.  Use **Select X variables** this option to remove or add variables to the diagram.  
+
+- **Settings** Use  **Scale for %** to force riojaPlot to plot the data as percentage (or not). **Show min/max**: with **Scale for %** unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding).  **Auto sort vars**:  sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in percentage biostratigraphic data).
+
+- **Auto Select X vars** can be used with % scaling to automatically select variables. riojaPlot calculates the maximum value of each variable and selects those variables whose maximum falls between the min / max cutoff.  This is useful for quickly de-selecting rare taxa in large datasets.
 
 ### Settings
 
@@ -35,9 +39,9 @@ Select a variable for the **Y axis** (if you have included more than one *Depth*
 
 - **Bars on top**: plot bars on top of silhouette or below. 
 
-- **Settings**: **Reverse Y axis** does what it says.  Usually this option should be selected so depths / ages run from young at the top to old at the bottom.  De-select if your data are in years CE.  **Show min/max**: with **Scale for %** unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding).  **Auto sort vars**:  sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in percentage biostratigraphic data).
+- **Settings**: **Reverse Y axis** - this option should be selected so depths / ages run from young at the top to old at the bottom.  De-select if your chronology is years CE.  
 
-- **Exaggeration**: Show an exaggerated shilouete, either in the **exaggeration colour** selected on the colour tab, or, if **Auto Col** is selected, a pale version of the shilouette colour.  The latter is useful if you groups of variables with different colour shilouettes. **Exag mult**. is the multiplier for the exaggerated curve.
+- **Exaggeration**: Show an exaggerated shilouette, either in the **exaggeration colour** selected on the colour tab, or, if **Auto Col** is selected, a pale version of the shilouette colour.  The latter is useful if you groups of variables with different colour shilouettes. **Exag mult**. is the multiplier for the exaggerated curve.
 
 ### Colours
 

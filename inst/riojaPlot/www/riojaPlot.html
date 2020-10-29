@@ -427,8 +427,8 @@ summary {
 </div>
 
 
-<div id="steve-juggins-2020-10-28" class="section level3">
-<h3>Steve Juggins (2020-10-28)</h3>
+<div id="steve-juggins-2020-10-29" class="section level3">
+<h3>Steve Juggins (2020-10-29)</h3>
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
@@ -446,8 +446,12 @@ summary {
 <h2>Options</h2>
 <div id="variables" class="section level3">
 <h3>Variables</h3>
-<p>Select a variable for the <strong>Y axis</strong> (if you have included more than one <em>Depth</em>, <em>Age</em> or <em>Label</em> columns). riojaPlot will try to guess the type of data you have. If the data look like biological counts transformed to percentages then variables with a maximum value of less than 2.0 will be de-selected to avoid over-crowding. Use <strong>Select X variables</strong> this option to remove or add variables to the diagram. Use the <strong>Scale for %</strong> checkbox to force riojaPlot to plot the data as percentage (or not).</p>
-<p><strong>Auto Select X vars</strong> can be used with % scaling to automatically select variables. riojaPlot calculates the maximum value of each variable and selects those variables whose maximum falls between the min / max cutoff. This is useful for quickly de-selecting rare taxa in large datasets.</p>
+<ul>
+<li><p><strong>Y axis</strong>: select variable for Y axis (if you have included more than one <em>Depth</em>, <em>Age</em> or <em>Label</em> columns).</p></li>
+<li><p><strong>Select X variables</strong>: riojaPlot will try to guess the type of data you have. If the data look like biological counts transformed to percentages then variables with a maximum value of less than 2.0 will be de-selected to avoid over-crowding. Use <strong>Select X variables</strong> this option to remove or add variables to the diagram.</p></li>
+<li><p><strong>Settings</strong> Use <strong>Scale for %</strong> to force riojaPlot to plot the data as percentage (or not). <strong>Show min/max</strong>: with <strong>Scale for %</strong> unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding). <strong>Auto sort vars</strong>: sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in percentage biostratigraphic data).</p></li>
+<li><p><strong>Auto Select X vars</strong> can be used with % scaling to automatically select variables. riojaPlot calculates the maximum value of each variable and selects those variables whose maximum falls between the min / max cutoff. This is useful for quickly de-selecting rare taxa in large datasets.</p></li>
+</ul>
 </div>
 <div id="settings" class="section level3">
 <h3>Settings</h3>
@@ -455,8 +459,8 @@ summary {
 <li><p><strong>Style</strong>: Choose to plot each variable with lines, symbols or silhouettes (filled curves). Some combinations do not make sense or look ugly so choose wisely.</p></li>
 <li><p><strong>Show bar</strong>: Show horizontal bars, either alone or superimposed on a line, symbol or silhouette plot. <strong>Curve</strong> extends the bar to the data value, <strong>Full</strong> extends the bar the full width of the plotting area. Try the latter with silhouettes and <strong>Bars on top</strong> unchecked.</p></li>
 <li><p><strong>Bars on top</strong>: plot bars on top of silhouette or below.</p></li>
-<li><p><strong>Settings</strong>: <strong>Reverse Y axis</strong> does what it says. Usually this option should be selected so depths / ages run from young at the top to old at the bottom. De-select if your data are in years CE. <strong>Show min/max</strong>: with <strong>Scale for %</strong> unchecked, shows either min / max or multiple values on x-axes (to prevent label crowding). <strong>Auto sort vars</strong>: sorts variables to highlight sequence from those with high values at base on left, to those with high values at top on right (can be useful to visualize trends in percentage biostratigraphic data).</p></li>
-<li><p><strong>Exaggeration</strong>: Show an exaggerated shilouete, either in the <strong>exaggeration colour</strong> selected on the colour tab, or, if <strong>Auto Col</strong> is selected, a pale version of the shilouette colour. The latter is useful if you groups of variables with different colour shilouettes. <strong>Exag mult</strong>. is the multiplier for the exaggerated curve.</p></li>
+<li><p><strong>Settings</strong>: <strong>Reverse Y axis</strong> - this option should be selected so depths / ages run from young at the top to old at the bottom. De-select if your chronology is years CE.</p></li>
+<li><p><strong>Exaggeration</strong>: Show an exaggerated shilouette, either in the <strong>exaggeration colour</strong> selected on the colour tab, or, if <strong>Auto Col</strong> is selected, a pale version of the shilouette colour. The latter is useful if you groups of variables with different colour shilouettes. <strong>Exag mult</strong>. is the multiplier for the exaggerated curve.</p></li>
 </ul>
 </div>
 <div id="colours" class="section level3">

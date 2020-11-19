@@ -405,7 +405,11 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
 addZone <- function(x, upper, lower=NULL, ...) {
   fcall <- match.call(expand.dots=TRUE)
   oldpar <- par(c("fig", "mar", "usr"))
-  par(fig=x$box)
+  fig <- x$box
+  nFigs <- length(x$figs)
+  fig[1] <- x$figs[[1]][1]
+  fig[2] <- x$figs[[nFigs]][2]
+  par(fig=fig)
   par(mar=c(0,0,0,0))
   par(usr=c(0, 1, x$usr[3], x$usr[4]))
   tcll <- -.3
@@ -421,7 +425,11 @@ addZone <- function(x, upper, lower=NULL, ...) {
 
 addClustZone <- function(x, clust, nZone, ...) {
   oldpar <- par(c("fig", "mar", "usr"))
-  par(fig=x$box)
+  fig <- x$box
+  nFigs <- length(x$figs)
+  fig[1] <- x$figs[[1]][1]
+  fig[2] <- x$figs[[nFigs]][2]
+  par(fig=fig)
   par(mar=c(0,0,0,0))
   par(usr=c(0, 1, x$usr[3], x$usr[4]))
   cc <- cutree(clust, k=nZone)

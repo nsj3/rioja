@@ -242,8 +242,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
 #          x2 <- c(0, d[, i, drop=TRUE]*exag.mult[i], 0)
 #          polygon(x2, y, col = col.exag[i], border = NA)
 #        }
-#        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
-        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
+        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+#        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
       }
       if ( !bar.back) {
         if (is.logical(plot.bar)) {
@@ -326,8 +326,8 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
           x2 <- c(us[1], x_var*exag.mult[i], us[1])
           polygon(x2, y, col = col.exag[i], border = NA)
         }
-#        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
-        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
+        polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly)
+#        polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
       }
       if (!bar.back) {
         if (is.logical(plot.bar)) {
@@ -373,11 +373,12 @@ strat.plot <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, mi
     pos <- usr1[4]+r
     if (y.rev)
       pos <- usr1[4]-r
-    if (srt.xlabel < 90)
-      text(tks1[1], pos, labels=x.names[i], adj = c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
-    else
-      text(tks1[1], pos, labels=x.names[i], adj = c(0, 1), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
-    
+    if (!is.null(srt.xlabel)) {
+      if (srt.xlabel < 90)
+        text(tks1[1], pos, labels=x.names[i], adj = c(0, 0), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
+      else
+        text(tks1[1], pos, labels=x.names[i], adj = c(0, 1), srt=srt.xlabel, cex = cex.xlabel, xpd=NA)
+    }
     usrs[[i]] <- usr2   
     figs[[i]] <- par("fig")
   }

@@ -25,9 +25,14 @@ MLRC <- function(y, x, check.data=TRUE, lean=FALSE, n.cut=5, verbose=TRUE, ...)
 MLRC.fit <- function(y, x, n.cut=2, use.glm = FALSE, max.iter=50, lean=FALSE, verbose=FALSE, ...)
 { 
   glr <- function(x, e) {
-    gfit <- glm.fit(e, x, family = quasibinomial(link=logit), ...)
+    gfit <- glm.fit(e, x, family = quasibinomial(link=logit), ...) 
+    coef <- gfit$coefficients
+    if (coef[3] > 0) {
+       gfit <- glm.fit(e[, 1:2], x, family = quasibinomial(link=logit), ...)
+       coef <- c(gfit$coefficients, 0)
+    }
     if (gfit$converged)
-       return(gfit$coefficients)
+       return(coef)
     else
        return(c(NA, NA, NA))
   }

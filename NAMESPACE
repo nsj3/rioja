@@ -5,6 +5,10 @@ useDynLib(rioja, .registration=TRUE)
 ##
 importFrom(vegan, bstick, make.cepnames)
 
+importFrom(sjmisc, word_wrap)
+
+importFrom(stringr, str_trim)
+
 ## mgcv
 importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
@@ -12,14 +16,13 @@ importFrom(mgcv,
 ## grDevices
 importFrom("grDevices", "chull", "col2rgb", "rgb")
 
-
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge, bstick)
 
 ## export regular functions with dot names
 export(compare.datasets, 
-       rand.t.test, interp.dataset, strat.plot, addClustZone,
-       addZone)
+       rand.t.test, interp.dataset, strat.plot, riojaPlot, addClustZone, 
+       addClustZone2, addZone)
 
 ## export utility functions
 export(hulls, figCnvt, communality, paldist, paldist2,

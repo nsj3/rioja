@@ -1,11 +1,11 @@
 Package: rioja
 Type: Package
 Title: Analysis of Quaternary Science Data
-Version: 0.9-31
-Date: 2020-11-10
+Version: 1.0-1
+Date: 2022-10-15
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
-Imports: vegan, mgcv, grDevices
+Imports: vegan, mgcv, grDevices, sjmisc, stringr
 Suggests: maptools, foreach
 Description: Constrained clustering, transfer functions, and other methods for analysing Quaternary science data.
 License: GPL-2

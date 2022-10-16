@@ -92,12 +92,13 @@ The function uses fig to split the screen and may be incompatible with \code{par
 }
 
 \value{
-   Returns a list containing the following objects:
+   Returns (invisibly) a list containing the following objects:
    \item{box }{ Vector of 4 values giving the coordinates of the left, right, bottom
     and top of the plotting area, in relative units. }
    \item{usr }{ Ranges of the plotting area, in data units. }
    \item{yvar }{ Variable used for the y-axis. }
    \item{ylim }{ Limits of the y-axis. }
+   \item{figs}{ list of coordinates of each curve, in relative units. }
 }
 
 \author{ 

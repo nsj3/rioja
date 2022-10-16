@@ -9,12 +9,16 @@ importFrom(sjmisc, word_wrap)
 
 importFrom(stringr, str_trim)
 
+importFrom(dplyr, left_join)
+
+importFrom(methods, is)
+
 ## mgcv
 importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
 
 ## grDevices
-importFrom("grDevices", "chull", "col2rgb", "rgb")
+importFrom("grDevices", "chull", "col2rgb", "rgb", "dev.size")
 
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge, bstick)
@@ -22,7 +26,7 @@ export(chclust, crossval, performance, inkspot, Merge, bstick)
 ## export regular functions with dot names
 export(compare.datasets, 
        rand.t.test, interp.dataset, strat.plot, riojaPlot, addClustZone, 
-       addClustZone2, addZone)
+       addClustZone, addZone, addZone2, listStyles)
 
 ## export utility functions
 export(hulls, figCnvt, communality, paldist, paldist2,

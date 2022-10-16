@@ -28,7 +28,7 @@ MR.fit <- function(y, x, lean=FALSE)
 predict.internal.MR <- function(object, y, ...)
 {
   y <- as.data.frame(y)
-  if (class(object) == "lm")
+  if (is(object, "lm"))
     xHat <- predict.lm(object, y)
   else
     xHat <- predict.lm(object$lm, y)

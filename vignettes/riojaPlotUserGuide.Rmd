@@ -1,0 +1,92 @@
+---
+title: 'riojaPlot: User Guide (Version `r read.dcf("../DESCRIPTION", fields="Version")`)'
+author: "Steve Juggins"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    df_print: paged
+  rmarkdown::html_vignette:
+    toc: yes
+  pdf_document:
+    highligh: null
+    number_sections: yes
+vignette: > 
+    %\VignetteIndexEntry{riojaPlot User Guide} 
+    %\VignetteEncoding{UTF-8}
+    %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+if (knitr::is_html_output()) {
+   knitr::opts_chunk$set(out.width = "98%", dev='svg')
+}
+
+```
+
+## 1. Introduction
+
+`darleq3` is an R package for the assessment of river and lake ecological status using diatom data obtained by light microscopy (LM) or Next Generation Sequencing (NGS). The package contains functions to import diatom and associated environmental data from Excel worksheets, perform simple data validation checks, calculate various water quality metrics, EQRs and Water Framework Directive (WFD) quality classes for samples, and classification uncertainty for sites.  The package can calculate Trophic Diatom Index TDI5LM, TDI4 and TDI3 scores for light microscopy river diatom samples, TDI5NGS for NGS river diatom samples, Lake Trophic Diatom Index LTDI2 and LTDI1 scores for light microscopy lake diatom samples, and Diatom Acidification Metric (DAM) scores for lake and river light microscopy samples. Details of the TDI / LTDI metrics, algorithm and derivation of the status class boundaries for rivers are given in Kelly _et al_. (2008) and for lakes in Bennion _et al_. (2014). Details of the DAM acidification metric is described in Juggins _et al_. (2016). Calculation of uncertainty of classification is described in Kelly _et al_. 2009.  At the date of publication, formal WFD classification across the UK uses TDI5 LM for rivers and LTDI2 for lakes.  
+
+`darleq3` can be run in two ways, either as an interactive shiny app, or a a series of R functions issues from the R console or an R script.  The first method attempts to mimic the old DARLEQ2 software will be the easiest for most users. The second methods will be more convenient for processing multiple data sets, for automating darleq calculations, or including them in a longer chain of analysis.
+
+
+```{r c1, fig.width=8, fig.height=4.5, warning=FALSE}
+suppressPackageStartupMessages(library(rioja))
+suppressPackageStartupMessages(library(dplyr))
+
+data(aber)
+
+spec <- aber$spec
+colnames(spec) <- aber$names$Name
+depth <- aber$ages$`Depth (cm)`
+yvar <- aber$ages[, 1:2]
+groups <- aber$types %>% mutate(Group=factor(Group, levels=c("Trees", "Shrubs", "Herbs")))
+
+mx <- apply(spec, 2, max)
+selTaxa <- names(mx[mx > 5])
+
+tmp <- data.frame(Name=colnames(spec)) %>% 
+  dplyr::left_join(groups, by="Name")
+
+ylab <- expression(""^{14}*C~years~BP)
+
+x <- riojaPlot(spec, yvar, selVar=selTaxa, groups=groups,
+   secYvarName="Depth (cm)", 
+   yvarName="Age (14C years BP)",
+   yLabel = ylab,
+   showSecAxis=TRUE, 
+   showGroups=T, 
+   showCumul=TRUE,
+   showExag=F, 
+   exagCol="grey90",
+   outlineCol="grey50",
+   cumulFontSize=0.7,
+   nameAngle=45,
+   nameFontSize=1,
+   yAxisFontSize=0.8,
+   showClust=TRUE, 
+   yInterval=250, yMin=5500,
+   showBars="full",
+   barTop=F, 
+   nameStylenBreak=15,
+   lwdBar=0.5, 
+#   showZones="auto",
+   zoneCol="blue")
+```
+
+
+## 8. References
+
+Bennion, H., Kelly, M.G., Juggins, S., Yallop, M.L., Burgess, A., Jamieson, J., Krokowski, J., 2014. Assessment of ecological status in UK lakes using benthic diatoms. _Freshwater Science_ __33__, 639-654.
+
+Juggins, S., Kelly, M., Allott, T., Kelly-Quinn, M., Monteith, D., 2016. A Water Framework Directive-compatible metric for assessing acidification in UK and Irish rivers using diatoms. _Science of The Total Environment_ __568__, 671-678.
+
+Kelly, M., Bennion, H., Burgess, A., Ellis, J., Juggins, S., Guthrie, R., Jamieson, J., Adriaenssens, V., Yallop, M., 2009. Uncertainty in ecological status assessments of lakes and rivers using diatoms. _Hydrobiologia_ __633__, 5-15.
+
+Kelly, M., Juggins, S., Guthrie, R., Pritchard, S., Jamieson, J., Rippey, B., Hirst, H., Yallop, M., 2008. Assessment of ecological status in UK rivers using diatoms. _Freshwater Biology_ __53__, 403-422.

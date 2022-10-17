@@ -1,17 +1,21 @@
 utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol",
                          "groupColours", "groupCex", "groupNames", ""))
 
-riojaPlot <- function(x, y, selVars=NULL, groups=NULL, ...) {
+riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, ...) {
    plotdata <- list()
    plotdata$spec <- x
    plotdata$chron <- y
    plotdata$selVars <- selVars
    plotdata$groups <- groups
-
    args <- list(...)
    argNames <- names(args)
-   style <- makeStyle()
-   validStyles <- names(style)
+   if (!is.null(style)) {
+      if (!methods::is(style, "riojaPlot.style"))
+        stop("style is not a riojaPlot style object.")
+   } else {
+      style <- makeStyle()
+   }
+   validStyles <- names(makeStyle())
    for (i in argNames) {
       if (!(i %in% validStyles)) 
          stop(paste("Style ", i, "is not a valid riojaPlot style"))
@@ -27,7 +31,7 @@ listStyles <- function() {
   invisible(x)
 }
 
-makeStyle <- function() {
+makeStyle <- function(...) {
    style <- list()
    style$yvarName <- ""
    style$secYvarName <- ""
@@ -81,6 +85,15 @@ makeStyle <- function() {
    style$groupCol4 <- "darkred"
    style$groupCol5 <- "deepskyblue"
    style$groupCol6 <- "darkgrey"
+   args <- list(...)
+   argNames <- names(args)
+   validStyles <- names(style)
+   for (i in argNames) {
+      if (!(i %in% validStyles)) 
+         stop(paste("Style ", i, "is not a valid riojaPlot style"))
+      style[i] <- args[i]
+   }
+   class(style) <- "riojaPlot.style"
    style
 }
 
@@ -90,9 +103,12 @@ splot1 <- function(mydata, style)
       return();
   
    if (!is.null(mydata$selVars) & length(mydata$selVars) > 2) {
-      if (!(any(mydata$selVars %in% colnames(mydata$spec))))
-         stop("Some variables listed in selVars are not found in the data.")
-      d <- mydata$spec[, mydata$selVars]
+      tmp <- !(mydata$selVars %in% colnames(mydata$spec))
+      if (any(tmp)) {
+         print("The following variables are listed in selVars but are not found in the data, did you spell them correctly?")
+         print(mydata$selVars[tmp])
+      } 
+      d <- mydata$spec[, mydata$selVars[!tmp]]
    } else {
      d <- mydata$spec
    }
@@ -154,22 +170,37 @@ splot1 <- function(mydata, style)
    style$groupColours <- rep(style$fillCol, ncol(d))
    groupID <- rep(1, ncol(d))
 
-   if ((style$showGroups | style$showCumul) & !is.null(mydata$groups)) {
-      tmp <- data.frame(Names=colnames(d))
-      colnames(mydata$groups)[1] <- "Names"
-      tmp <- left_join(tmp, mydata$groups, by="Names")
-      if (any(is.na(tmp[, 2, drop=TRUE])))
-        stop("Some variable names not found in the grouping.")
-      if (!is.factor(tmp[, 2])) {
-            stop("Grouping variable must be a factor.")
+   if (is.null(mydata$groups)) {
+     style$showGroups <- FALSE; style$showCumul <- FALSE;
+   }
+   
+   if ((style$showGroups | style$showCumul)) {
+      if (is.null(dim(mydata$groups)) | dim(mydata$groups)[2] < 2) {
+         stop("Grouping object must have at least 2 columns.")
       }
+      tmp <- data.frame(Names=colnames(d))
+      colnames(mydata$groups)[1:2] <- c("Names", "Group")
+      tmp <- left_join(tmp, mydata$groups, by="Names")
+      if (!is.factor(tmp$Group)) {
+            tmp$Group <- factor(tmp$Group)
+      }
+      if (sum(is.na(tmp$Group)) == nrow(tmp)) {
+         stop("None of the variables names found in the grouping variable.")
+      }
+      if (any(is.na(tmp$Group))) {
+         print("The following variable names are not found in the grouping variable:")
+         print(colnames(d)[is.na(tmp$Group)])
+         tmp$Group <- fct_explicit_na(tmp$Group, na_level = "Unkn")
+      }
+      if (length(levels(tmp$Group)) > 6)
+         stop("Too many groups specified, maximum allowed is 6.")
       groupID <- as.integer(tmp[, 2, drop=TRUE])
       groupColours <<- c(style$groupCol1, style$groupCol2, style$groupCol3, 
-                        style$groupCol4, style$groupCol5)
+                        style$groupCol4, style$groupCol5, style$groupCol6)
       groupColours <- c(style$groupCol1, style$groupCol2, style$groupCol3, 
-                        style$groupCol4, style$groupCol5)
-      groupNames <<- levels(tmp[, 2])
-      groupNames <- levels(tmp[, 2])
+                        style$groupCol4, style$groupCol5, style$groupCol6)
+      groupNames <<- levels(tmp$Group)
+      groupNames <- levels(tmp$Group)
       if (style$showGroups)
          style$groupColours <- groupColours[groupID]
    }
@@ -368,7 +399,8 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
    }
    if (!is.null(clust)) {
       if (is.null(xRight))
-         xRight <- 1
+#         xRight <- 1.0
+         xRight <- 0.99
       xRight = xRight - clust.width
    }
    doSecYvar <- FALSE
@@ -530,6 +562,9 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
       xlSpace <- xLabSpace / fin[2]
       yTop <- 1.0 - (maxlen * plotRatio * cos(pi/180 * (90-srt.xlabel))) - xlSpace - 0.01
       yTop <- min(yTop, 0.95)
+      if (srt.xlabel > 0) {
+           yTop <- yTop - strwidth("m", units='figure', cex=cex.xlabel)
+      }
    }
    
    if (is.null(xLeft)) {
@@ -600,18 +635,21 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
 
    if (is.null(clust) & is.null(xRight)) {
         xRight <- 1.0
+#        xRight <- 0.99
         xLen <- xRight - xLeft
         xInc <- xLen - ((nsp + 1) * xSpace)
         n <- length(colM)
         inc <- xInc * colM[n]/colM.sum
         wid <- strwidth(x.names[length(x.names)], units='figure', 
                                cex=cex.xlabel) * 0.9 * sin(pi/180 * (90-srt.xlabel))
+        if (srt.xlabel > 0)
+           wid <- wid + strwidth("m", units='figure', cex=cex.xlabel)
         if (wid > inc) {
           xRight <- 1 - (wid-inc)
         }
    } 
    if (is.null(yBottom)) {
-      yBottom <- 0.06
+      yBottom <- 0.05
    }
 
    xLen <- xRight - xLeft

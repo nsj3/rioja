@@ -13,12 +13,16 @@ importFrom(dplyr, left_join)
 
 importFrom(methods, is)
 
+importFrom(forcats, fct_explicit_na)
+
 ## mgcv
 importFrom(mgcv,
            gam, s, smoothCon, mono.con, pcls, Predict.matrix)
 
 ## grDevices
 importFrom("grDevices", "chull", "col2rgb", "rgb", "dev.size")
+
+importFrom(flextable, flextable, autofit, height_all, padding)
 
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge, bstick)

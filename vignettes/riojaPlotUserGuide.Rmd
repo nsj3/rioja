@@ -36,9 +36,9 @@ if (knitr::is_html_output()) {
 `darleq3` can be run in two ways, either as an interactive shiny app, or a a series of R functions issues from the R console or an R script.  The first method attempts to mimic the old DARLEQ2 software will be the easiest for most users. The second methods will be more convenient for processing multiple data sets, for automating darleq calculations, or including them in a longer chain of analysis.
 
 
-```{r c1, fig.width=8, fig.height=4.5, warning=FALSE}
-suppressPackageStartupMessages(library(rioja))
-suppressPackageStartupMessages(library(dplyr))
+```{r c1, fig.width=10, fig.height=6, warning=FALSE, message=FALSE}
+library(rioja)
+library(dplyr)
 
 data(aber)
 
@@ -74,12 +74,23 @@ x <- riojaPlot(spec, yvar, selVar=selTaxa, groups=groups,
    yInterval=250, yMin=5500,
    showBars="full",
    barTop=F, 
-   nameStylenBreak=15,
+#   nameStylenBreak=15,
    lwdBar=0.5, 
 #   showZones="auto",
    zoneCol="blue")
 ```
 
+## List of modifiable styles
+
+```{r c9, fig.width=8, fig.height=4.5, warning=FALSE, echo=FALSE, ft.align="left"}
+ft <- flextable::flextable(listStyles()) %>% 
+  flextable::autofit() %>% 
+  flextable::height_all(2, unit="mm") %>%
+  flextable::padding(padding=1)
+  
+ft
+
+```
 
 ## 8. References
 

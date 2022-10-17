@@ -54,7 +54,7 @@ listStyles()
   \item{\code{exagMult}}{ multiplication factor for exaggerations (default 2). }
   \item{\code{showGroups}}{ show curves with different colours (default FALSE). }
   \item{\code{showCumul}}{ add a cumulative summary based on groups on right of diagram (default FALSE). }
-  \item{\code{gro   upCol1-6}}{ colours for a maximum of 6 groups. }
+  \item{\code{groupCol1-6}}{ colours for a maximum of 6 groups. }
   \item{\code{nameStyleBreakLong}}{ break long names (default TRUE). }
   \item{\code{nameStylenBreak}}{ number of characters to break after (default 20). }
   \item{\code{nameStyleItalicize}}{ italicize names. }

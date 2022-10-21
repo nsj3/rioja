@@ -1,5 +1,5 @@
 utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol",
-                         "groupColours", "groupCex", "groupNames", ""))
+                         "groupColours", "groupCex", "groupNames"))
 
 riojaPlot <- function(x, y, selVars=NULL, groups=NULL, clust=NULL, style=NULL, ...) {
    plotdata <- list()
@@ -22,7 +22,7 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, clust=NULL, style=NULL, .
          stop(paste("Style ", i, "is not a valid riojaPlot style"))
       style[i] <- args[i]
    }
-   splot1(plotdata, style)  
+   .riojaPlot1(plotdata, style)  
 } 
 
 listStyles <- function() {
@@ -102,7 +102,7 @@ makeStyle <- function(...) {
    style
 }
 
-splot1 <- function(mydata, style) 
+.riojaPlot1 <- function(mydata, style) 
 {
    if (is.null(mydata$spec) | is.null(mydata$chron) )
       return();
@@ -335,7 +335,7 @@ splot1 <- function(mydata, style)
    if (style$showClust)
      mclust <- clust
      
-   x <- splot2(d, yvar = yvar, y.rev=style$yRev, scale.percent=style$scalePC, 
+   x <- .riojaPlot2(d, yvar = yvar, y.rev=style$yRev, scale.percent=style$scalePC, 
                 plot.bar=style$showBars, plot.line=style$showLine, plot.poly=style$showPoly, 
                 plot.symb=style$showSymbol, 
                 col.poly=style$groupColours, col.bar=style$colBar, lwd.bar=style$lwdBar, 
@@ -386,7 +386,7 @@ splot1 <- function(mydata, style)
 }
 
 
-splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, 
+.riojaPlot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, 
                   scale.minmax=TRUE, xLeft=NULL, xRight=NULL, yBottom=NULL, yTop=NULL, 
                   title="", cex.title=1.8, y.axis=TRUE, x.axis=TRUE, min.width=5, 
                   ylim=NULL, y.rev=FALSE, y.tks=NULL, y.tks.labels=NULL, ylabel=NULL,

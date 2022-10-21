@@ -35,7 +35,7 @@ listStyles()
   \item{\code{yLabel, secyLabel}} { labels for the primary and secondary y-axes.  Uses column names if not specified. }
   \item{\code{scalePC}}{ scale the diagram for percentage data (default TRUE). }
   \item{\code{scaleMinMax}}{ only label min and max values of x-axes to avoid crowding (default FALSE). }
-  \item{\code{yrev}}{ reverse the y-axis (default TRUE). }
+  \item{\code{yRev}}{ reverse the y-axis (default TRUE). }
   \item{\code{yMin, yMax, secYMin, secYMax}}{ minimum and maximum of primary and secondary y-axes. }
   \item{\code{yInterval, secYInterval}}{ intervals for primary and secondary y-axes. }
   \item{\code{autoOrder}}{ rearrange the curves to show trend from bottom left to top right (default FALSE). }
@@ -48,7 +48,7 @@ listStyles()
   \item{\code{nameAngle}}{ angle (in degrees) of names (default=90). }
   \item{\code{showClust}}{ add a CONISS cluster dendrogram. }
   \item{\code{dataTransformation}}{ transform data before cluster analysis ("none", "sqrt", or "scale"). }
-  \item{\code{ClustUseSelected}}{ use selected variables (ie. those listed in selVars) or all variables when calculating cluster dendrogram (default FALSE). }
+  \item{\code{clustUseSelected}}{ use selected variables (ie. those listed in selVars) or all variables when calculating cluster dendrogram (default FALSE). }
   \item{\code{showExag}}{ show exaggereted curves (default FALSE. }
   \item{\code{exagCol}}{ colour for exaggerations, either a colour or "auto". }
   \item{\code{exagMult}}{ multiplication factor for exaggerations (default 2). }

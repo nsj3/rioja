@@ -1,12 +1,13 @@
 utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol",
                          "groupColours", "groupCex", "groupNames", ""))
 
-riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, ...) {
+riojaPlot <- function(x, y, selVars=NULL, groups=NULL, clust=NULL, style=NULL, ...) {
    plotdata <- list()
    plotdata$spec <- x
    plotdata$chron <- y
    plotdata$selVars <- selVars
    plotdata$groups <- groups
+   plotdata$clust <- clust
    args <- list(...)
    argNames <- names(args)
    if (!is.null(style)) {
@@ -40,7 +41,7 @@ makeStyle <- function(...) {
    style$showSecAxis <- FALSE
    style$scalePC <- TRUE
    style$scaleMinMax <- FALSE
-   style$yrev <- TRUE
+   style$yRev <- TRUE
    style$yMin <- NA
    style$yMax <- NA
    style$yInterval <- NA
@@ -52,9 +53,11 @@ makeStyle <- function(...) {
    style$showLines <- TRUE
    style$showPoly <- TRUE
    style$showSymbol <- FALSE
+   style$doClust <- FALSE
    style$showClust <- FALSE
    style$showZones <- "auto"
-   style$ClustUseSelected <- FALSE
+   style$clustUseSelected <- FALSE
+   style$clustWidth <- 0.1
    style$lwdBar <- 1
    style$colBar <- "grey"
    style$barTop <- TRUE
@@ -79,12 +82,14 @@ makeStyle <- function(...) {
    style$nameStyleItalicise <- TRUE
    style$showGroups <- FALSE
    style$showCumul <- FALSE
+   style$cumulMult <- 1.0
    style$groupCol1 <- "darkgreen"
    style$groupCol2 <- "darkkhaki"
    style$groupCol3 <- "darkorange"
    style$groupCol4 <- "darkred"
    style$groupCol5 <- "deepskyblue"
    style$groupCol6 <- "darkgrey"
+   style$xRight <- 0.99
    args <- list(...)
    argNames <- names(args)
    validStyles <- names(style)
@@ -128,10 +133,12 @@ splot1 <- function(mydata, style)
    style$poly.line <- NA 
    if (style$showLine)
       poly.line <- style$outlineCol
-     
-   clust <- NULL
-   if (style$showClust) {
-     if (style$ClustUseSelected) {
+   
+   clust <- mydata$clust
+   if (!is.null(clust))
+     style$doClust <- FALSE
+   if (style$doClust) {
+     if (style$clustUseSelected) {
         d2 <- d
      } else {
         d2 <- mydata$spec
@@ -144,14 +151,6 @@ splot1 <- function(mydata, style)
      }
      diss <- dist(d2)
      clust <- chclust(diss)
-     if (style$showZones == "auto") {
-        x <- bstick(clust, plot=FALSE)
-        x2 <- x$dispersion <= x$bstick
-        style$showZones <- which(x2)[1]
-        if (style$showZones < 2) {
-          print("There are no significant zones in these data.")
-        }
-     } 
    } 
 
    if (style$exagMult < 1) {
@@ -332,17 +331,23 @@ splot1 <- function(mydata, style)
 #   if (style$nameStyleBreakLong) {
 #      yLab <- sjmisc::word_wrap(yLab, style$nameStylenBreak)
 #   }
-
-   x <- splot2(d, yvar = yvar, y.rev=style$yrev, scale.percent=style$scalePC, 
-                plot.bar=style$showBars, plot.line=style$showLine, plot.poly=style$showPoly, plot.symb=style$showSymbol, 
+   mclust <- NULL
+   if (style$showClust)
+     mclust <- clust
+     
+   x <- splot2(d, yvar = yvar, y.rev=style$yRev, scale.percent=style$scalePC, 
+                plot.bar=style$showBars, plot.line=style$showLine, plot.poly=style$showPoly, 
+                plot.symb=style$showSymbol, 
                 col.poly=style$groupColours, col.bar=style$colBar, lwd.bar=style$lwdBar, 
                 col.symb=style$symbCol, col.poly.line=style$poly.line, col.line=style$lineColour, 
-                symb.cex=style$symbSize, exag=style$showExag, wa.order=style$autoOrder, bar.back=!style$barTop, 
-                clust=clust, cex.xlabel=style$nameFontSize, srt.xlabel=style$nameAngle, 
+                symb.cex=style$symbSize, exag=style$showExag, wa.order=style$autoOrder, 
+                bar.back=!style$barTop, 
+                clust=mclust, cex.xlabel=style$nameFontSize, srt.xlabel=style$nameAngle, 
                 ylabel=yLab, cex.yaxis=style$yAxisFontSize, cex.axis=style$xAxisFontSize, 
                 cex.ylabel=style$yLabelFontSize, scale.minmax=style$scaleMinMax, ylim=ylim, y.tks=style$ytks, 
                 y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$exagCol, exag.mult=style$exagMult, 
-                exag.alpha=0.15, x.names=style$xNames, fun2=funlist, xSpace=xSpace, tcl=style$tickLen)
+                exag.alpha=0.15, x.names=style$xNames, fun2=funlist, xSpace=xSpace, tcl=style$tickLen,
+                clust.width=style$clustWidth, xRight=style$xRight, cumul.mult=style$cumulMult)
 
       
 #   retVal <- tryCatch(x <- splot2(d, yvar = yvar, y.rev=style$yrev, scale.percent=style$scalePC, 
@@ -362,10 +367,21 @@ splot1 <- function(mydata, style)
 #      print("Error")
 #      return()
 #   }
-   
-   if (style$showClust & style$showZones > 1) {
+
+   if (!is.null(clust)) {
+     if (style$showZones == "auto") {
+        bs <- bstick(clust, plot=FALSE)
+        bs2 <- bs$dispersion <= bs$bstick
+        style$showZones <- which(bs2)[1]
+        if (style$showZones < 2) {
+          print("There are no significant zones in these data.")
+        }
+     } 
+   }    
+   if (!is.null(clust) & style$showZones > 1) {
       addClustZone2(x, clust, style$showZones, col=style$zoneCol, yaxs="i")
    }
+   x$style <- style
    invisible(x)
 }
 
@@ -382,7 +398,7 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
                   x.names=NULL, cex.xlabel=1.0, srt.xlabel=90, mgp=c(3, cex.axis/3, 0.2),
                   ylabPos=NULL, cex.axis=0.8, clust=NULL, clust.width=0.1, orig.fig=NULL, 
                   exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
-                  col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE, omitMissing=TRUE, ...)
+                  col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE, omitMissing=TRUE, cumul.mult = 1.0, ...)
 {
    errorMsg <- function(msg) {
      if (shiny_running()) {
@@ -452,7 +468,8 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
       exag <- FALSE
    nsp <- ncol(d)
    nsam <- nrow(d)
-   if (scale.percent==TRUE & length(x.pc.inc) > 1) {
+
+   if (scale.percent & length(x.pc.inc) > 1) {
       if (length(x.pc.inc) != nsp) 
          errorMsg("length of x.pc.inc should equal number of curves")
    } else {
@@ -539,6 +556,7 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
      if (!sep.bar)
         cc.bar <- cc.bar[opt.order]
    }
+   
    if (scale.percent) {
       colM <- apply(d, 2, max, na.rm=TRUE)
       colM <- floor((colM + 4.9)/5) * 5
@@ -548,7 +566,14 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
       colM.sum <- sum(graph.widths, na.rm=TRUE)
       colM <- graph.widths
    }
-  
+
+   if ("CUMULATIVE" %in% toupper(x.names)) {
+      tmp <- which("CUMULATIVE" == toupper(x.names))
+      colM.sum <- colM.sum - colM[tmp] + colM[tmp] * cumul.mult  
+      colM[tmp] <- colM[tmp] *  cumul.mult
+   }
+   
+   
 # determine fig margins  
   
    maxlen <- max(sapply(x.names, function(x) strwidth(x, units="figure", cex=cex.xlabel))) 
@@ -664,6 +689,8 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
      ylim[1] <- ylim[2]
      ylim[2] <- tmp
    }
+   usr1 <- c(0, 1, ylim)
+
    if (y.axis) {
 
      if (doSecYvar) {
@@ -677,7 +704,6 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
 
      par(fig = figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
      plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
-     usr1 <- par("usr")
      if (is.null(y.tks))
        y.tks <- axTicks(2)
      else if (mode(y.tks)=="list") {
@@ -733,7 +759,8 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
      if (scale.percent) {
         inc2 <- inc * colM[i]
         par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
-        plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
+          
+        plot(0, 0, cex = 0.5, xlim = c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i])), axes = FALSE, 
            xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
         if (!is.null(col.bg))
            rect(par("usr")[1],ylim[1],par("usr")[2],ylim[2], col=col.bg, border=NA)
@@ -921,23 +948,33 @@ splot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax
    invisible(ll)
 }
 
-addClustZone2 <- function(x, clust, nZone, ...) {
-  oldpar <- par(c("fig", "mar", "usr"))
-  par(fig=x$box)
-  par(mar=c(0,0,0,0))
-  par(usr=c(0, 1, x$usr[3], x$usr[4]))
-  cc <- cutree(clust, k=nZone)
-  zn <- which(diff(cc)>0)
+addClustZone2 <- function(x, clust, nZone="auto", ...) {
+  if (nZone == "auto") {
+    bs <- bstick(clust, plot=FALSE)
+    bs2 <- bs$dispersion <= bs$bstick
+    nZone <- which(bs2)[1]
+    if (nZone < 2) {
+        print("There are no significant zones in these data.")
+     }
+  } 
+  if (nZone > 1) {
+    oldpar <- par(c("fig", "mar", "usr"))
+    par(fig=x$box)
+    par(mar=c(0,0,0,0))
+    par(usr=c(0, 1, x$usr[3], x$usr[4]))
+    cc <- cutree(clust, k=nZone)
+    zn <- which(diff(cc)>0)
   #   if (x$yaxt.rev)
   #      x$yvar <- rev(x$yvar)
-  zone <- (x$yvar[zn] + x$yvar[zn+1]) / 2
-  r <- range(c(x$usr[3], x$usr[4]))
-  sel <- which (zone >= r[1] & zone <= r[2])
-  if (length(sel) > 0) {
-    zone <- zone[sel]
-    segments(0, zone, 1, zone, xpd=NA, ...)
+    zone <- (x$yvar[zn] + x$yvar[zn+1]) / 2
+    r <- range(c(x$usr[3], x$usr[4]))
+    sel <- which (zone >= r[1] & zone <= r[2])
+    if (length(sel) > 0) {
+      zone <- zone[sel]
+      segments(0, zone, 1, zone, xpd=NA, ...)
+    }
+    par(oldpar)
   }
-  par(oldpar)
 }
 
 addName <- function(x, xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=0)

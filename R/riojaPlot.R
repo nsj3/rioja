@@ -1,7 +1,21 @@
-utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol",
-                         "groupColours", "groupCex", "groupNames"))
+utils::globalVariables(c("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
+                         "groupColours", "groupCex", "groupNames", "lwd.axis", "col.axis"))
 
-riojaPlot <- function(x, y, selVars=NULL, groups=NULL, clust=NULL, style=NULL, ...) {
+riojaPlot2 <- function(rp, x, y, clust=NULL, xLeft=NULL, xRight=0.99, gap=0.01, verbose=TRUE, ...) {
+   if (is.null(xRight))
+     xRight <- 0.99
+   if (is.null(xLeft))
+     xLeft <- rp$xRight + gap
+  
+   ylim <- c(min(rp$ylim), max(rp$ylim))
+   .riojaPlot2(x, yvar = y[, 1, drop=FALSE], y.rev=rp$y.rev, xRight=xRight, xLeft=xLeft,
+      y.axis=FALSE, add=TRUE, yBottom=rp$box[3], yTop=rp$box[4], mgp=NULL, # c(3, 0.6/3, 0.2), 
+      srt.xlabel=rp$style$srt.xlabel, cex.xlabel=rp$style$cex.xlabel, cex.axis=rp$style$cex.axis, 
+      clust=clust, ylim=ylim, tcl=rp$style$tcl,  
+      exag.alpha=rp$style$exag.alpha, col.axis=rp$style$col.axis, ...)
+}
+
+riojaPlot <- function(x, y, selVars=NULL, groups=NULL, style=NULL, clust=NULL, verbose=TRUE, ...) {
    plotdata <- list()
    plotdata$spec <- x
    plotdata$chron <- y
@@ -14,32 +28,60 @@ riojaPlot <- function(x, y, selVars=NULL, groups=NULL, clust=NULL, style=NULL, .
       if (!methods::is(style, "riojaPlot.style"))
         stop("style is not a riojaPlot style object.")
    } else {
-      style <- makeStyle()
+      style <- makeStyles()
    }
-   validStyles <- names(makeStyle())
+   validStyles <- names(makeStyles())
    for (i in argNames) {
       if (!(i %in% validStyles)) 
          stop(paste("Style ", i, "is not a valid riojaPlot style"))
       style[i] <- args[i]
    }
-   .riojaPlot1(plotdata, style)  
+
+   if (length(style$plot.poly)>1 & length(style$plot.poly) != ncol(x))
+      stop("plot.poly should be a logical vector of length equal to 1 or the number of columns of x")
+   if (length(style$plot.line)>1 & length(style$plot.line) != ncol(x))
+      stop("plot.line should be a logical vector of length equal to 1 or the number of columns of x")
+   if (length(style$plot.bar)>1 & length(style$plot.bar) != ncol(x))
+      stop("plot.bar should be a logical vector of length equal to 1 or the number of columns of x")
+   if (length(style$plot.symb)>1 & length(style$plot.symb) != ncol(x))
+      stop("plot.symb should be a logical vector of length equal to 1 or the number of columns of x")
+   if (length(style$exag)>1 & length(style$exag) != ncol(x))
+      stop("exag should be a logical vector of length equal to 1 or the number of columns of x")
+
+   ncol <- ncol(x)
+   if (length(style$plot.poly)==1)
+       style$plot.poly <- rep(style$plot.poly, ncol)
+   if (length(style$plot.bar)==1)
+       style$plot.bar <- rep(style$plot.bar, ncol)
+   if (length(style$plot.line)==1)
+       style$plot.line <- rep(style$plot.line, ncol)
+   if (length(style$plot.symb)==1)
+       style$plot.symb <- rep(style$plot.symb, ncol)
+   if (length(style$exag)==1)
+       style$exag <- rep(style$exag, ncol)
+
+   .riojaPlot1(plotdata, style, verbose=verbose)  
+#   on.exit({
+#     rm("groupData", "cumulLine", "cumulLineCol", "cumulLineLwd", 
+#                         "groupColours", "groupCex", "groupNames", lwd.axis, envir=.GlobalEnv)
+#   })
 } 
 
 listStyles <- function() {
-  styles <- unlist(makeStyle())
+  styles <- unlist(makeStyles())
   x <- data.frame(Style=names(styles), Value=styles)
   rownames(x) <- NULL
-  invisible(x)
+  x
 }
 
-makeStyle <- function(...) {
+makeStyles <- function(...) {
    style <- list()
    style$yvar.name <- ""
    style$sec.yvar.name <- ""
    style$ylabel <- ""
    style$sec.ylabel <- ""
    style$plot.sec.axis <- FALSE
-   style$scale.percent <- TRUE
+   style$scale.percent <- FALSE
    style$scale.minmax <- FALSE
    style$y.rev <- TRUE
    style$ymin <- NA
@@ -48,7 +90,7 @@ makeStyle <- function(...) {
    style$sec.ymin <- NA
    style$sec.ymax <- NA
    style$sec.yinterval <- NA
-   style$x.names <- vector("character", 0)
+   style$x.names <- list(NULL)
    style$wa.order <- "none"
    style$plot.bar <- TRUE
    style$plot.line <- TRUE
@@ -56,31 +98,41 @@ makeStyle <- function(...) {
    style$plot.symb <- FALSE
    style$do.clust <- FALSE
    style$plot.clust <- FALSE
-   style$plot.zones <- "auto"
-   style$clust.use.selected <- FALSE
-   style$clust.Width <- 0.1
+   style$plot.zones <- 0
    style$lwd.bar <- 1
+   style$lwd.line <- 1
+   style$lwd.poly.line <- 0.6
+   style$lwd.cumul.line <- 0.6
    style$col.bar <- "grey"
    style$bar.back <- FALSE
    style$col.symb <- "black"
+   style$col.line <- "black"
    style$col.poly <- "darkgreen"
-   style$col.poly.line <- "black"
-   style$col.zone <- "red"
-   style$symb.pch <- 0.5
-   style$cex.axis <- 0.7
-   style$cex.yaxis <- 0.8
-   style$cex.ylabel <- 1
-   style$cex.xlabel <- 1
+   style$col.poly.line <- NA
+   style$col.cumul.line <- NA
+   style$col.zones <- "red"
+   style$symb.pch <- 19
+   style$symb.cex <- 1
+   style$cex.axis <- 0.6
+   style$cex.yaxis <- 0.7
+   style$cex.ylabel <- 0.9
+   style$cex.xlabel <- 0.9
    style$srt.xlabel <- 90
-   style$tick.len <- -0.3
+   style$srt.xlabel <- 90
+   style$tcl <- -0.2
    style$cex.cumul <- 0.7
-   style$clust.data.trans <- "sqrt"
+   style$clust.data.trans <- "none"
+   style$clust.use.selected <- FALSE
+   style$clust.width <- 0.05
    style$exag <- FALSE
    style$col.exag <- "auto"
+   style$col.exag.line <- NA
+   style$lwd.exag.line <- 0.6
    style$exag.mult <- 2
+   style$exag.alpha <- 0.2
    style$names.break.long <- TRUE
    style$names.break.n <- 20
-   style$names.italicise <- TRUE
+   style$names.italicise <- FALSE
    style$plot.groups <- FALSE
    style$plot.cumul <- FALSE
    style$cumul.mult <- 1.0
@@ -91,7 +143,27 @@ makeStyle <- function(...) {
    style$group.col5 <- "deepskyblue"
    style$group.col6 <- "darkgrey"
    style$xRight <- 0.99
-   style$orig.fig <- c(0, 1, 0, 1)
+   style$yBottom <- 0.05
+   style$fun1 <- NA
+   style$fun2 <- NA
+   style$ylabPos <- NA
+   style$xlabPos <- 0.1
+   style$xSpace <- 0.01
+   style$x.pc.omit0 <- TRUE
+   style$lwd.axis <- 1
+   style$col.axis <- "grey"
+   style$min.width.pc <- 5
+   style$las.axis <- 1
+   style$las.yaxis <- 1
+   style$ytks1 <- NA
+   style$ytks2 <- NA
+   style$omitMissing <- TRUE
+   style$col.sep.bar <- "black"
+   style$sep.bar <- FALSE
+   style$plot.bottom.axis <- TRUE
+   style$plot.top.axis <- FALSE
+
+#   style$orig.fig <- c(0, 1, 0, 1)
    args <- list(...)
    argNames <- names(args)
    validStyles <- names(style)
@@ -104,22 +176,45 @@ makeStyle <- function(...) {
    style
 }
 
-.riojaPlot1 <- function(mydata, style) 
+.riojaPlot1 <- function(mydata, style, verbose) 
 {
+   orig.fig <- par("fig")
+
    if (is.null(mydata$spec) | is.null(mydata$chron) )
-      return();
+      stop("You must specify a table of data to plot (x) and a dataframe with at least one variable for the y-axis scale (y) data");
   
+   if (is.null(style$x.names[[1]])) {
+      style$x.names <- colnames(mydata$spec)
+      names(style$x.names) <- style$x.names
+   } else {
+      names(style$x.names) <- colnames(mydata$spec)
+   }
+
+   names(style$plot.poly) <- colnames(mydata$spec)    
+   names(style$plot.bar) <- colnames(mydata$spec)    
+   names(style$plot.line) <- colnames(mydata$spec)    
+   names(style$plot.symb) <- colnames(mydata$spec)    
+   names(style$exag) <- colnames(mydata$spec)
+
    if (!is.null(mydata$selVars) & length(mydata$selVars) > 2) {
       tmp <- !(mydata$selVars %in% colnames(mydata$spec))
-      if (any(tmp)) {
-         print("The following variables are listed in selVars but are not found in the data, did you spell them correctly?")
-         print(mydata$selVars[tmp])
+      if (any(tmp) & verbose) {
+         message("The following variables are listed in selVars but are not found in the data, did you spell them correctly?")
+         message(paste(mydata$selVars[tmp], collapse="\n"))
       } 
       d <- mydata$spec[, mydata$selVars[!tmp]]
+      tmp2 <- which(colnames(mydata$spec) %in% mydata$selVars[!tmp])
+#      style$x.names <- style$x.names[tmp2]
+      style$x.names <- style$x.names[mydata$selVars[!tmp]]
+      style$exag <- style$exag[mydata$selVars[!tmp]]
+      style$plot.poly <- style$plot.poly[mydata$selVars[!tmp]]
+      style$plot.line <- style$plot.line[mydata$selVars[!tmp]]
+      style$plot.bar <- style$plot.bar[mydata$selVars[!tmp]]
+      style$plot.symb <- style$plot.symb[mydata$selVars[!tmp]]
    } else {
-     d <- mydata$spec
+      d <- mydata$spec
    }
-  
+   
    yvarName <- style$yvar.name
    if (nchar(stringr::str_trim(yvarName)) > 1) {
      if (!(yvarName %in% colnames(mydata$chron))) {
@@ -130,12 +225,13 @@ makeStyle <- function(...) {
      yvar <- mydata$chron[, 1, drop=FALSE]
      yvarName <- colnames(mydata$chron)[1]
    }
+   if (is(style$fun1, "logical"))
+     style$fun1 <- NULL
+   if (is(style$fun2, "logical"))
+     style$fun2 <- NULL
+   if (is.na(style$ylabPos))
+     style$ylabPos <- NULL
 
-
-   style$poly.line <- NA 
-   if (style$plot.line)
-      poly.line <- style$poly.line
-   
    clust <- mydata$clust
    if (!is.null(clust))
      style$do.clust <- FALSE
@@ -154,13 +250,14 @@ makeStyle <- function(...) {
      diss <- dist(d2)
      clust <- chclust(diss)
    } 
+   if (is.null(clust) & !style$do.clust) {
+     style$plot.clust <- FALSE; style$plot.zones <- 0;
+   }
 
    if (style$exag.mult < 1) {
       style$exag.mult <- 1.0
       style$exag <- FALSE
    }
-   if (length(style$x.names) == 0)
-      style$x.names <- colnames(d)
    if (style$names.break.long) {
      style$x.names <- sjmisc::word_wrap(style$x.names, style$names.break.n)
    }
@@ -172,46 +269,53 @@ makeStyle <- function(...) {
    groupID <- rep(1, ncol(d))
 
    if (is.null(mydata$groups)) {
-     style$plot.groups <- FALSE; style$plot.cumul <- FALSE;
+     style$plot.groups <- FALSE; 
+     style$plot.cumul <- FALSE;
    }
    
    if ((style$plot.groups | style$plot.cumul)) {
       if (is.null(dim(mydata$groups)) | dim(mydata$groups)[2] < 2) {
          stop("Grouping object must have at least 2 columns.")
       }
-      tmp <- data.frame(Names=colnames(d))
       colnames(mydata$groups)[1:2] <- c("Names", "Group")
-      tmp <- dplyr::left_join(tmp, mydata$groups, by="Names")
-      if (!is.factor(tmp$Group)) {
-            tmp$Group <- factor(tmp$Group)
+      if (!is.factor(mydata$groups$Group)) {
+          mydata$groups$Group <- factor(mydata$groups$Group)
       }
-      if (sum(is.na(tmp$Group)) == nrow(tmp)) {
+      gr_names_d <- data.frame(Names=colnames(d))
+      gr_names_d <- dplyr::left_join(gr_names_d, mydata$groups, by="Names")
+      gr_names_d2 <- data.frame(Names=colnames(mydata$spec))
+      gr_names_d2 <- dplyr::left_join(gr_names_d2, mydata$groups, by="Names")
+      if (sum(is.na(gr_names_d$Group)) == nrow(gr_names_d)) {
          stop("None of the variables names found in the grouping variable.")
       }
-      if (any(is.na(tmp$Group))) {
-         print("The following variable names are not found in the grouping variable:")
-         print(colnames(d)[is.na(tmp$Group)])
-         tmp$Group <- forcats::fct_explicit_na(tmp$Group, na_level = "Unkn")
+      if (any(is.na(gr_names_d2$Group)) & verbose) {
+         message("The following variable names are not found in the grouping variable:")
+         message(paste(colnames(mydata$spec)[is.na(gr_names_d2$Group)], collapse="\n"))
+         gr_names_d$Group <- forcats::fct_explicit_na(gr_names_d$Group, na_level = "Unkn")
+         gr_names_d2$Group <- forcats::fct_explicit_na(gr_names_d2$Group, na_level = "Unkn")
       }
-      if (length(levels(tmp$Group)) > 6)
+      if (length(levels(gr_names_d2$Group)) > 6)
          stop("Too many groups specified, maximum allowed is 6.")
-      groupID <- as.integer(tmp[, 2, drop=TRUE])
-      groupColours <<- c(style$groupCol1, style$groupCol2, style$groupCol3, 
-                        style$groupCol4, style$groupCol5, style$groupCol6)
-      groupColours <- c(style$groupCol1, style$groupCol2, style$groupCol3, 
-                        style$groupCol4, style$groupCol5, style$groupCol6)
-      groupNames <<- levels(tmp$Group)
-      groupNames <- levels(tmp$Group)
+      groupID <- as.integer(gr_names_d[, 2, drop=TRUE])
+      groupID2 <- as.integer(gr_names_d2[, 2, drop=TRUE])
+      groupColours <<- c(style$group.col1, style$group.col2, style$group.col3, 
+                        style$group.col4, style$group.col5, style$group.col6)
+      groupColours <- c(style$group.col1, style$group.col2, style$group.col3, 
+                        style$group.col4, style$group.col5, style$group.col6)
+      groupNames <<- levels(gr_names_d2$Group)
+      groupNames <- levels(gr_names_d2$Group)
       if (style$plot.groups)
          style$groupColours <- groupColours[groupID]
    }
 
    if (!is.null(dim(yvar)))
      yvar <- yvar[, 1, drop=FALSE]
-   style$yLabels <- NULL
-   style$ytks <- NULL
-   style$ytks1 <- NULL
-   style$ytks2 <- NULL
+#   style$yLabels <- NULL
+   
+   if (is.na(style$ytks1[1]))
+      style$ytks1 <- NULL
+   if (is.na(style$ytks2[1]))
+      style$ytks2 <- NULL
    ylim <- NULL
    if (is.character(yvar[, 1, drop=TRUE])) {
       style$yLabels <- yvar[, 1, drop=TRUE]
@@ -221,17 +325,20 @@ makeStyle <- function(...) {
       ylim <- range(yvar[, 1], na.rm=TRUE)
       if (!is.na(style$ymin) & is.na(style$ymax)) {
          ylim[1] <- style$ymin
-         ylim[2] <- max(yvar[, 1], na.rm=TRUE)
+#         ylim[2] <- max(yvar[, 1], na.rm=TRUE)
       } else if (!is.na(style$ymax) & is.na(style$ymin)) {
          ylim[2] <- style$ymax
-         ylim[1] <- min(yvar[, 1], na.rm=TRUE)
+#         ylim[1] <- min(yvar[, 1], na.rm=TRUE)
       } else if (!is.na(style$ymax) & !is.na(style$ymin)) {
          ylim[1] <- style$ymin
          ylim[2] <- style$ymax
       }
-      if (!is.null(ylim) & !is.na(style$yinterval)) {
-         style$ytks1 <- seq(ylim[1], ylim[2], by=style$yinterval)
-      } 
+
+      if (is.null(style$ytks1)) {
+         if (!is.null(ylim) & !is.na(style$yinterval)) {
+            style$ytks1 <- seq(ylim[1], ylim[2], by=style$yinterval)
+         }
+      }
    }
 
    secYvarName <- style$sec.yvar.name
@@ -247,8 +354,8 @@ makeStyle <- function(...) {
            stop(paste(secYvarName, " is not a column in the chronology data."))
          }
          secYvar <- mydata$chron[, secYvarName, drop=FALSE]
-         if (!is.numeric(secYvar[, 1, drop=TRUE])) {
-            print("Secondary Y axis variable must be numeric, not character.")
+         if (!is.numeric(secYvar[, 1, drop=TRUE]) & verbose) {
+            message("Secondary Y axis variable must be numeric, not character.")
          } else {
             doSecYvar <- TRUE
             if (nchar(style$sec.ylabel)>0) {
@@ -260,46 +367,46 @@ makeStyle <- function(...) {
       }
    }
    ylim2 <- NULL
-   style$yks <- style$yks1
+   style$ytks <- style$ytks1
    if (doSecYvar) {
       ylim2 <- range(yvar[, 2], na.rm=TRUE)
       if (!is.na(style$sec.ymin) & is.na(style$sec.ymax)) {
          ylim2[1] <- style$sec.ymin
-         ylim2[2] <- max(yvar[, 2], na.rm=TRUE)
+#         ylim2[2] <- max(yvar[, 2], na.rm=TRUE)
       } else if (!is.na(style$sec.ymax) & is.na(style$sec.ymin)) {
          ylim2[2] <- style$sec.ymax
-         ylim2[1] <- min(yvar[, 2], na.rm=TRUE)
-      } else if (!is.na(style$sec.ymax) & !is.na(style$sec.ymin)) {
-         ylim2[1] <- style$sec.ymin
-         ylim2[2] <- style$sec.ymax
+#         ylim2[1] <- min(yvar[, 2], na.rm=TRUE)
+      } else if (!is.na(style$sec.ymax) & !is.na(style$sec.ymin)) {        
+          ylim2[1] <- style$sec.ymin
+          ylim2[2] <- style$sec.ymax
+      
       }
       if (!is.null(ylim2)) {
-         if (is.na(style$sec.yinterval)) {
-            style$ytks2 <- pretty(ylim2, n=10)
-         } else {
-            style$ytks2 <- seq(ylim2[1], ylim2[2], by=style$sec.yinterval)
+         if (is.null(style$ytks2[1])) {
+            if (is.na(style$sec.yinterval)) {
+               style$ytks2 <- pretty(ylim2, n=10)
+            } else {
+               style$ytks2 <- seq(ylim2[1], ylim2[2], by=style$sec.yinterval)
+            }
          }
          style$ytks <- list(style$`ytks1`, style$`ytks2`)
       } 
    }
-#   size <<- dev.size()
-   nms <- colnames(d)
-
+   
 # Groups   
    funlist <- lapply(1:ncol(d), function(x) NULL)
    
    if (style$plot.cumul) {
-      groupData <<- t(apply(d, 1, 
+#      groupData <<- t(apply(d, 1, 
+#                            function(x) cumsum(tapply(unlist(x), 
+#                            groupID, sum, na.rm=TRUE))))
+#      tt <- table(groupID)
+      groupData <<- t(apply(mydata$spec, 1, 
                             function(x) cumsum(tapply(unlist(x), 
-                            groupID, sum, na.rm=TRUE))))
-      groupData <- t(apply(d, 1, 
-                            function(x) cumsum(tapply(unlist(x), 
-                            groupID, sum, na.rm=TRUE))))
-      tt <- table(groupID)
+                            groupID2, sum, na.rm=TRUE))))
+      tt <- table(groupID2)
       if (length(tt) == 1) {
-         groupData <<- t(groupData)
          groupData <- t(groupData)
-         colnames(groupData) <<- names(tt)
          colnames(groupData) <- names(tt)
       }
       d <- data.frame(d, Cumulative=c(100, rep(0, nrow(d)-1)))
@@ -308,22 +415,45 @@ makeStyle <- function(...) {
       funlist <- lapply(1:(nCol), function(x) NULL)
       funlist[[nCol]] <- plotCumul
       style$groupColours <- c(style$groupColours, NA)
-      cumulLine <<- style$plot.line
-      cumulLineCol <<- style$col.poly.line
-      cumulLine <- style$plot.line
-      cumulLineCol <- style$col.poly.line
+#      cumulLine <<- style$plot.cumul.line
+      cumulLineCol <<- style$col.cumul.line
+      cumulLineLwd <<- style$lwd.cumul.line
+#      cumulLine <- style$plot.cumul.line
+      cumulLineCol <- style$col.cumul.line
+      cumulLineLwd <- style$lwd.cumul.line
+      lwd.axis <<- style$lwd.axis
+      lwd.axis <- style$lwd.axis
+      col.axis <<- style$col.axis
+      col.axis <- style$col.axis
+   } else {
+     funlist <- style$fun2
    }
    
    fin <- par("fin")
-   xSpace <- 0.1 / fin[1]
+   xSpace <- style$xSpace * 10 / fin[1]
    groupCex <<- style$cex.cumul
    groupCex <- style$cex.cumul
    
-   style$col.line <- style$col.poly.line
-   if (style$plot.groups & !style$plot.poly & style$plot.line) {
-      style$col.line <- style$groupColours
+#   style$col.line <- style$col.poly.line
+   style$col.line <- rep(style$col.line, length(style$groupColours))
+   style$col.bar <- rep(style$col.bar, length(style$groupColours))
+   style$col.symb <- rep(style$col.symb, length(style$groupColours))
+   
+   sub <- ifelse(style$plot.cumul, 1, 0)
+   
+   for (i in 1:(length(style$groupColours)-sub)) {
+      if (style$plot.groups & !style$plot.poly[i] & style$plot.line[i]) {
+         style$col.line[i] <- style$groupColours[i]
+         style$col.symb[i] <- style$groupColours[i]
+      } 
+      pb <- !(class(style$plot.bar[i]) == "logical" & style$plot.bar[i]==FALSE)
+      if (style$plot.groups & !style$plot.poly[i] & !style$plot.line[i] & pb) {
+         style$col.bar[i] <- style$groupColours[i]
+      } 
+      if (style$plot.groups & style$plot.symb[i]) {
+         style$col.symb[i] <- style$groupColours[i]
+      }
    }
-
    oldfig <- par("fig")
    oldmar <- par("mar")
    oldusr <- par("usr")
@@ -336,57 +466,57 @@ makeStyle <- function(...) {
    mclust <- NULL
    if (style$plot.clust)
      mclust <- clust
-     
+
+   if (style$plot.cumul) {
+     style$exag <- c(style$exag, FALSE)
+     style$plot.poly <- c(style$plot.poly, FALSE)
+     style$plot.bar <- c(style$plot.bar, FALSE)
+     style$plot.line <- c(style$plot.line, FALSE)
+     style$plot.symb <- c(style$plot.symb, FALSE)
+     style$col.poly <- c(style$col.poly, "black")
+     style$col.bar <- c(style$col.bar, "black")
+     style$col.line <- c(style$col.line, "black")
+     style$col.symb <- c(style$col.symb, "black")
+   }
+
    x <- .riojaPlot2(d, yvar = yvar, y.rev=style$y.rev, scale.percent=style$scale.percent, 
                 plot.bar=style$plot.bar, plot.line=style$plot.line, plot.poly=style$plot.poly, 
                 plot.symb=style$plot.symb, 
                 col.poly=style$groupColours, col.bar=style$col.bar, lwd.bar=style$lwd.bar, 
                 col.symb=style$col.symb, col.poly.line=style$col.poly.line, col.line=style$col.line, 
                 symb.cex=style$symb.cex, exag=style$exag, wa.order=style$wa.order, 
-                bar.back=style$bar.back, 
+                bar.back=style$bar.back, symb.pch=style$symb.pch, 
                 clust=mclust, cex.xlabel=style$cex.xlabel, srt.xlabel=style$srt.xlabel, 
                 ylabel=yLab, cex.yaxis=style$cex.yaxis, cex.axis=style$cex.axis, 
                 cex.ylabel=style$cex.ylabel, scale.minmax=style$scale.minmax, ylim=ylim, y.tks=style$ytks, 
                 y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$col.exag, exag.mult=style$exag.mult, 
-                exag.alpha=0.15, x.names=style$x.names, fun2=funlist, xSpace=xSpace, tcl=style$tickLen,
-                clust.width=style$clust.width, xRight=style$xRight, cumul.mult=style$cumul.mult, orig.fig=style$orig.fig)
-
-      
-#   retVal <- tryCatch(x <- splot2(d, yvar = yvar, y.rev=style$yrev, scale.percent=style$scalePC, 
-#                plot.bar=style$bar, plot.line=style$line, plot.poly=style$poly, plot.symb=style$symbol, 
-#                col.poly=style$groupColours, col.bar=style$colBar, lwd.bar=style$lwdBar, 
-#                col.symb=style$symbCol, col.poly.line=style$poly.line, col.line=style$lineColour, 
-#                symb.cex=style$symbSize, exag=style$exag, wa.order=style$autoOrder, bar.back=!style$barTop, 
-#                clust=clust, cex.xlabel=style$nameSize, srt.xlabel=style$nameAngle, 
-#                ylabel=yLab, cex.yaxis=style$yAxisSize, cex.axis=style$xAxisSize, 
-#                cex.ylabel=style$yLabelSize, scale.minmax=style$scaleMinMax, ylim=ylim, y.tks=style$ytks, 
-#                y.tks.labels=style$yLabels, col.bg=NULL, col.exag=style$exagCol, exag.mult=style$exagMult, 
-#                exag.alpha=0.15, x.names=style$x.names, fun2=funlist, xSpace=xSpace),
-#      error=function(e) return(e))
-
-   
-#   if (inherits(retVal, "error")) {
-#      print("Error")
-#      return()
-#   }
+                x.names=style$x.names, fun2=funlist, xSpace=xSpace, tcl=style$tcl,
+                clust.width=style$clust.width, xRight=style$xRight, cumul.mult=style$cumul.mult, 
+                orig.fig=orig.fig, exag.alpha=style$exag.alpha, fun1=style$fun1,
+                ylabPos=style$ylabPos, x.pc.omit0=style$x.pc.omit0, lwd.poly.line=style$lwd.poly.line,
+                lwd.line=style$lwd.line, col.exag.line=style$col.exag.line,
+                lwd.exag.line=style$lwd.exag.line, lwd.axis=style$lwd.axis, col.axis=style$col.axis, 
+                min.width=style$min.width.pc, las=style$las.axis, yBottom=style$yBottom,
+                omitMissing=style$omitMissing, col.sep.bar=style$col.sep.bar, sep.bar=style$sep.bar,
+                plot.top.axis=style$plot.top.axis, plot.bottom.axis=style$plot.bottom.axis,
+                xlabPos=style$xlabPos, las.yaxis=style$las.yaxis)
 
    if (!is.null(clust)) {
      if (style$plot.zones == "auto") {
         bs <- bstick(clust, plot=FALSE)
-        bs2 <- bs$dispersion <= bs$bstick
-        style$plot.zones <- which(bs2)[1]
-        if (style$plot.zones < 2) {
-          print("There are no significant zones in these data.")
+        bs2 <- bs$dispersion > bs$bstick
+        style$plot.zones <- max(which(bs2)) 
+        if (style$plot.zones < 2 & verbose) {
+          message("There are no significant zones in these data.")
         }
      } 
    }    
    if (!is.null(clust) & style$plot.zones > 1) {
-      addClustZone2(x, clust, style$plot.zones, col=style$col.zone, yaxs="i")
+      addRPClustZone(x, clust, style$plot.zones, col=style$col.zones, yaxs="i")
    }
    x$style <- style
    invisible(x)
 }
-
 
 .riojaPlot2 <- function(d, yvar = NULL, scale.percent = FALSE, graph.widths=1, minmax=NULL, 
                   scale.minmax=TRUE, xLeft=NULL, xRight=NULL, yBottom=NULL, yTop=NULL, 
@@ -395,25 +525,22 @@ makeStyle <- function(...) {
                   cex.ylabel=1, cex.yaxis=0.8, xSpace=0.01, x.pc.inc=10, x.pc.lab=TRUE, 
                   x.pc.omit0=TRUE, wa.order="none", plot.line=TRUE, col.line="black", 
                   lwd.line=1, col.symb="black", plot.bar=TRUE, lwd.bar=1, col.bar="grey",
-                  sep.bar=FALSE, bar.back=FALSE, plot.poly=FALSE, col.poly="grey", 
-                  col.poly.line=NA, lwd.poly=1, plot.symb=FALSE, symb.pch=19, symb.cex=1,
-                  x.names=NULL, cex.xlabel=1.0, srt.xlabel=90, mgp=c(3, cex.axis/3, 0.2),
-                  ylabPos=NULL, cex.axis=0.8, clust=NULL, clust.width=0.1, orig.fig=NULL, 
+                  sep.bar=FALSE, col.sep.bar="black", bar.back=FALSE, plot.poly=FALSE, col.poly="grey", 
+                  col.poly.line=NA, lwd.poly.line=1, plot.symb=FALSE, symb.pch=19, symb.cex=1,
+                  x.names=NULL, cex.xlabel=1.0, srt.xlabel=90, mgp=NULL, #c(3, cex.axis/3, 0.2),
+                  ylabPos=NULL, cex.axis=0.8, clust=NULL, clust.width=0.1, orig.fig=c(0, 1, 0, 1), 
                   exag=FALSE, exag.mult=5, col.exag="grey90", exag.alpha=0.2, 
-                  col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE, omitMissing=TRUE, cumul.mult = 1.0, ...)
+                  col.bg=NULL, fun1=NULL, fun2=NULL, add=FALSE,  
+                  cumul.mult = 1.0, col.exag.line=NA, lwd.exag.line=0.6, lwd.axis=1, 
+                  col.axis="black", omitMissing=TRUE, plot.top.axis=FALSE, plot.bottom.axis=TRUE, 
+                  xlabPos=0.1, las.yaxis=1, ...)
 {
-   errorMsg <- function(msg) {
-     if (shiny_running()) {
-       stop(msg)
-     } else {
-       stop(msg)
-     }
-   }
+
    d <- as.data.frame(d)
    fcall <- match.call(expand.dots=TRUE)
    if (!is.null(clust)) {
      if (!is(clust, "chclust"))
-        errorMsg("clust must be a chclust object")
+        stop("clust must be a chclust object")
    }
    if (!is.null(clust)) {
       if (is.null(xRight))
@@ -461,6 +588,7 @@ makeStyle <- function(...) {
       if (is.na(ylim[2]))
          ylim[2] <- max(yvar[, 1], na.rm=TRUE)
    }
+   
    oldfig = par("fig")
    oldmai <- par("mai")
    if (is.null(orig.fig)) {
@@ -473,55 +601,57 @@ makeStyle <- function(...) {
 
    if (scale.percent & length(x.pc.inc) > 1) {
       if (length(x.pc.inc) != nsp) 
-         errorMsg("length of x.pc.inc should equal number of curves")
+         stop("length of x.pc.inc should equal number of curves")
    } else {
       x.pc.inc <- rep(x.pc.inc[1], nsp)
    }
    if (!is.null(minmax)) {
      if (ncol(minmax) != 2) 
-        errorMsg("minmax should have 2 columns")
+        stop("minmax should have 2 columns")
      if (nrow(minmax) != nsp) 
-        errorMsg("number of rows of minmax should equal number of curves")
+        stop("number of rows of minmax should equal number of curves")
    }
    par(mai = c(0, 0, 0, 0))
    if (length(graph.widths) == 1)
       graph.widths <- rep(1, nsp)
    if (length(graph.widths) != nsp) 
-      errorMsg("Length of graph.widths should equal number of curves")
+      stop("Length of graph.widths should equal number of curves")
    if (length(exag) == 1)
       exag <- rep(exag[1], nsp)
    if (length(exag) != nsp) 
-      errorMsg("Length of exag should equal number of curves")
+      stop("Length of exag should equal number of curves")
    if (length(exag.mult) == 1)
       exag.mult <- rep(exag.mult[1], nsp)
    if (length(exag.mult) != nsp) 
-      errorMsg("Length of exag.mult should equal number of curves")
+      stop("Length of exag.mult should equal number of curves")
    if (length(col.exag) == 1)
       col.exag <- rep(col.exag[1], nsp)
    if (length(col.exag) != nsp) 
-      errorMsg("Length of col.exag should equal number of curves")
+      stop("Length of col.exag should equal number of curves")
    if (!is.null(fun1)) {
       if (length(fun1) == 1)
          fun1 <- lapply(1:nsp, function(x) fun1)
       if (length(fun1) != nsp)
-         errorMsg("Length of fun1 should equal number of curves")
+         stop("Length of fun1 should equal number of curves")
    }
    if (!is.null(fun2)) {
       if (length(fun2) == 1)
          fun2 <- lapply(1:nsp, function(x) fun2)
       if (length(fun2) != nsp)
-         errorMsg("Length of fun2 should equal number of curves")
+         stop("Length of fun2 should equal number of curves")
    }
    if (length(x.axis) == 1)
       x.axis <- rep(x.axis[1], nsp)
    if (length(x.axis) != nsp)
-      errorMsg("Length of x.axis should equal number of curves")
+      stop("Length of x.axis should equal number of curves")
    cc.line <- rep(col.line, length.out=nsp)
-   if (sep.bar)
-      cc.bar <- rep(col.bar, length.out=nsam)
-   else      
-      cc.bar <- rep(col.bar, length.out=nsp)
+   if (sep.bar & length(col.sep.bar) > 1 & length(col.sep.bar) != nsam) 
+      warning("length of col.sep.bar does not equal number of rows in data.")
+   cc.sep.bar <- rep(col.sep.bar, length.out=nsam)
+#      cc.sep.bar <- col.sep.bar
+   cc.bar <- rep(col.bar, length.out=nsp)
    cc.poly <- rep(col.poly, length.out=nsp)
+   cc.symb <- rep(col.symb, length.out=nsp)
    cc.poly.line <- rep(col.poly.line, length.out=nsp)
 #  if(plot.poly)
 #    plot.line <- FALSE
@@ -538,7 +668,9 @@ makeStyle <- function(...) {
      opt <- (t(d) %*% V1)/colsum
      if ((wa.order == "topleft" & !y.rev) | (wa.order == "bottomleft" & y.rev))
         opt.order <- rev(order(opt))
-     else opt.order <- order(opt)
+     else 
+       opt.order <- order(opt)
+     
      d <- d[, opt.order]
      if (!is.null(minmax)) 
         minmax <- minmax[opt.order, ]
@@ -555,8 +687,8 @@ makeStyle <- function(...) {
      cc.poly <- cc.poly[opt.order]
      cc.poly.line <- cc.poly.line[opt.order]
      cc.line <- cc.line[opt.order]
-     if (!sep.bar)
-        cc.bar <- cc.bar[opt.order]
+     cc.symb <- cc.symb[opt.order]
+     cc.bar <- cc.bar[opt.order]
    }
    
    if (scale.percent) {
@@ -571,20 +703,38 @@ makeStyle <- function(...) {
 
    if ("CUMULATIVE" %in% toupper(x.names)) {
       tmp <- which("CUMULATIVE" == toupper(x.names))
-      colM.sum <- colM.sum - colM[tmp] + colM[tmp] * cumul.mult  
+      colM.sum <- colM.sum - colM[tmp] + (colM[tmp] * cumul.mult)
       colM[tmp] <- colM[tmp] *  cumul.mult
    }
    
    
 # determine fig margins  
-  
+
+   ylab2 <- NULL
+   yAxis2Pos <- 0
+   tcll <- -.3
+   spc <- 0
+   
+   args <- list(...)
+   if ("tcl" %in% names(args)) {
+       tcll <- args[["tcl"]]
+   }
+   if ("las" %in% names(args)) {
+       if(args[["las"]]==2) {
+         spc <- 0.3
+       }
+   }
+
    maxlen <- max(sapply(x.names, function(x) strwidth(x, units="figure", cex=cex.xlabel))) 
    maxlen <- max(maxlen, strwidth(yNames[1], units="figure", cex=cex.xlabel))
    if (doSecYvar)
       maxlen <- max(maxlen, strwidth(yNames[2], units="figure", cex=cex.xlabel))
    fin <- par("fin")
    plotRatio <- fin[1] / fin[2]
-   xLabSpace <- 0.1
+   
+   xLabSpace <- xlabPos
+   if(plot.top.axis)
+     xLabSpace <- xLabSpace + 0.15
    if (is.null(yTop)) {
       xlSpace <- xLabSpace / fin[2]
       yTop <- 1.0 - (maxlen * plotRatio * cos(pi/180 * (90-srt.xlabel))) - xlSpace - 0.01
@@ -600,7 +750,7 @@ makeStyle <- function(...) {
       else 
 #        ylabs <- as.character(yvar[, 1])
         ylabs <- pretty(yvar[, 1], n=10)
-      incX <- strheight("M", units="figure", cex=1) / plotRatio # distance to axis values
+      incX <- strheight("M", units="figure", cex=cex.ylabel) / plotRatio # distance to axis values
       mx1 <- max(sapply(ylabs, function(x) strwidth(x, units='figure', cex=cex.yaxis))) # width of axis labels
       xLeft <- incX + mx1 + 0.02 / plotRatio
 
@@ -616,31 +766,11 @@ makeStyle <- function(...) {
       if (nchar(yNames[1]) > 0 & !doSecYvar) {
          line2fig <- strheight(yNames[1], units='figure', cex=1) / plotRatio
          if (is.null(ylabPos)) {
-            ylabPos <- 1 + mx1 / line2fig
+#            ylabPos <- 1 + mx1 / line2fig
+            ylabPos <-  (mx1 / line2fig) - tcll
          }
          xLeft <- xLeft + (line2fig + line2fig * cex.ylabel) 
       }
-   }
-   ylab2 <- NULL
-   yAxis2Pos <- 0
-   tcll <- -.3
-   spc <- 0
-   
-#   if ("tcl" %in% names(fcall))
-#      tcll <- eval(fcall$tcl)
-#   spc <- 0
-#   if ("las" %in% names(fcall)) {
-#      if ((eval(fcall$las)) == 2)
-#        spc = 0.3
-#  }
-   args <- list(...)
-   if ("tcl" %in% names(args)) {
-       tcll <- args[["tcl"]]
-   }
-   if ("las" %in% names(args)) {
-       if(args[["las"]]==2) {
-         spc <- 0.3
-       }
    }
 
    if (y.axis & doSecYvar) {
@@ -650,10 +780,12 @@ makeStyle <- function(...) {
       } else {
          xout <- pretty(yvar[, 2], 10)
       }
+      options(warn=-1)
       if (as.integer(R.Version()$major) > 3)
          ylab2 <- stats::approx(yvar[, 2, drop=TRUE], yvar[, 1, drop=TRUE], xout=xout, na.rm=TRUE)
       else 
          ylab2 <- stats::approx(yvar[, 2, drop=TRUE], yvar[, 1, drop=TRUE], xout=xout)
+      options(warn=0)
       mx1 <- max(sapply(as.character(ylab2$x), function(x) strwidth(x, units='figure', cex=cex.yaxis)))
       yAxis2Pos <- mx1 + incX * 3 
       incX <- strwidth("0", units='figure', cex=1)
@@ -683,7 +815,7 @@ makeStyle <- function(...) {
    xInc <- xLen - ((nsp + 1) * xSpace)
    inc <- xInc/colM.sum
    if (inc < 0.0)
-     errorMsg("Too many variables, curves will be too small.")
+     stop("Too many variables, curves will be too small.")
    x1 <- xLeft
     #    par(fig = c(x1, x1+0.4, yStart, yTop))
    if (y.rev) {
@@ -694,29 +826,32 @@ makeStyle <- function(...) {
    usr1 <- c(0, 1, ylim)
 
    if (y.axis) {
+     mgpX <- if (is.null(mgp)) { c(3, max(0.0, 0.3 + 0.1 - tcll), 0.3) } else { mgp }
 
      if (doSecYvar) {
        par(fig = figCnvt(orig.fig, c(yAxis2Pos, yAxis2Pos+0.2, yBottom, yTop)), new=add)
        plot(0, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
-       axis(side = 2, las = 1, at = ylab2$y, labels = as.character(ylab2$x), cex.axis=cex.yaxis, xpd=FALSE, 
-            tcl=tcll, mgp=c(3, 0.6, 0))
+       axis(side=2, las=las.yaxis, at=ylab2$y, labels = as.character(format(ylab2$x)), cex.axis=cex.yaxis, xpd=FALSE, 
+            tcl=tcll, mgp=mgpX) # c(3, 0.6, 0))
        addName(yNames[2], xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=-2)     
        add <- TRUE
      }
 
      par(fig = figCnvt(orig.fig, c(x1, x1+0.2, yBottom, yTop)), new=add)
      plot(NA, cex = 0.5, xlim = c(0, 1), axes = FALSE, type = "n", xaxs="i", yaxs = "i", ylim = ylim, tcl=tcll, ...)
+     if (mode(y.tks)=="list") {
+       y.tks <- y.tks[[1]]
+     }     
      if (is.null(y.tks))
        y.tks <- axTicks(2)
-     else if (mode(y.tks)=="list") {
-       y.tks <- y.tks[[1]]
-     }
      if (is.null(y.tks.labels))
-       y.tks.labels <- as.character(y.tks)
+       y.tks.labels <- format(y.tks, trim=TRUE)
      else
        y.tks.labels <- y.tks.labels
-     ax <- axis(side = 2, las = 1, at = y.tks, labels = as.character(y.tks.labels), cex.axis=cex.yaxis, xpd=NA, 
-                tcl=tcll, mgp=c(3, 0.6, 0))
+     y.tks.labels = as.character(y.tks.labels)
+     
+     ax <- axis(side=2, las=las.yaxis, at=y.tks, labels=y.tks.labels, cex.axis=cex.yaxis, xpd=NA, 
+                tcl=tcll, mgp=mgpX) # c(3, 0.6, 0))
      x1 <- x1 + xSpace
 #     mtext(title, adj = 0, line = 5, cex = cex.title)
 #     if (nchar(stringr::str_trim(yNames[1])) > 0) {
@@ -728,14 +863,15 @@ makeStyle <- function(...) {
         }
      }
    }
-   ty <- ifelse(plot.line, "l", "n")
-   
+
  
    figs <- vector("list", length=nsp)
    usrs <- vector("list", length=nsp)
   
    for (i in 1:nsp) {
-# omit missing values  
+     ty <- ifelse(plot.line[i], "l", "n")
+
+   # omit missing values  
      y_var <- yvar[, 1, drop=TRUE]
      x_var <- d[, i, drop=TRUE]
   
@@ -751,9 +887,7 @@ makeStyle <- function(...) {
         if (nsam2 < nsam) {
            y_var <- y_var[!miss]
            x_var <- x_var[!miss]
-           if (sep.bar) {
-              cc.bar <- cc.bar[!miss]
-           }
+           cc.sep.bar <- cc.sep.bar[!miss]
         }
      }
      par(new = TRUE)
@@ -761,73 +895,92 @@ makeStyle <- function(...) {
      if (scale.percent) {
         inc2 <- inc * colM[i]
         par(fig = figCnvt(orig.fig, c(x1, x1 + inc2, yBottom, yTop)))
-          
+        xxlim <- 
         plot(0, 0, cex = 0.5, xlim = c(0, ifelse(cumulPlot, colM[i]/cumul.mult, colM[i])), axes = FALSE, 
            xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
+#        plot(0, 0, cex = 0.5, xlim = c(0, colM[i]), axes = FALSE, 
+#           xaxs = "i", type = "n", yaxs = "i", ylim = ylim, xlab="", ylab="", ...)
         if (!is.null(col.bg))
            rect(par("usr")[1],ylim[1],par("usr")[2],ylim[2], col=col.bg, border=NA)
         if (!is.null(fun1[[i]])) {
            fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
         }
-        if (plot.poly & exag[i] & !cumulPlot) {
+        if (plot.poly[i] & exag[i] & !cumulPlot) {
            y <- c(y_var[1], y_var, y_var[nsam2])
            x2 <- c(0, x_var*exag.mult[i], 0)
-           polygon(x2, y, col = col.exag[i], border = NA, xpd=FALSE)
+           polygon(x2, y, col=col.exag[i], border=col.exag.line, lwd=lwd.exag.line, xpd=FALSE)
         }        
         if (bar.back  & !cumulPlot) {
-           if (is.logical(plot.bar)) {
-              if (plot.bar) {
+           if (is.logical(plot.bar[i])) {
+              if (plot.bar[i]) {
                 if (sep.bar) {
-                   segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar)
+                   segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.sep.bar)
                 } else {
                    segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar[i])
                 }
               }
            } else {
-              if (plot.bar=="full") {
+              if (plot.bar[i]=="full") {
                  abline(h=y_var, col=cc.bar, lwd=lwd.bar)
               }
            }
         }
-        if (plot.poly) {
+        if (plot.poly[i]) {
            y <- c(y_var[1], y_var, y_var[nsam2])
            x <- c(0, x_var, 0)
-           polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
+           polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly.line)
         }
         if (!bar.back & !cumulPlot) {
-           if (is.logical(plot.bar)) {
-              if (plot.bar) {
+           if (is.logical(plot.bar[i])) {
+              if (plot.bar[i]) {
                  if (sep.bar) {
-                    segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar)
+                    segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.sep.bar)
                  } else {
                     segments(rep(0, nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar[i])
                  }
               }
            } else {
-              if (plot.bar=="full") {
+              if (plot.bar[i]=="full") {
                  abline(h=y_var, col=cc.bar, lwd=lwd.bar)
               }
            }
-       }
-       lines(c(0, 0), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), ...)
+        }
+        
+       yus <- par("usr")
+       yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
+       yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
+
+       lines(c(0, 0), c(yymin, yymax), lwd=lwd.axis, xpd=NA, col=col.axis, ...)
+#       lines(c(0, 0), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), lwd=lwd.axis, xpd=NA, col=col.axis, ...)
        if (ty == "l") 
           lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
-       if (plot.symb & !cumulPlot) {
-          points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=FALSE)
+       if (plot.symb[i] & !cumulPlot) {
+          points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=cc.symb[i], xpd=FALSE)
        }
        if (!is.null(fun2[[i]])) {
           fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
        }
-       xlabb <- seq(0, colM[i], by = x.pc.inc[i])
+       if (!cumulPlot)
+          xlabb <- seq(0, colM[i], by = x.pc.inc[i])
+       else
+          xlabb <- seq(0, colM[i]/cumul.mult, by = x.pc.inc[i])
        if (x.axis[i]) {
           if (x.pc.lab) {
              xlabbt <- as.character(xlabb)
              if (x.pc.omit0)
                 xlabbt[1] <- ""
              mgpX <- if (is.null(mgp)) { c(3,max(0.0, spc-tcll), 0.3 ) } else { mgp }
-             axis(side = 1, at = xlabb, labels = xlabbt, mgp=mgpX, cex.axis=cex.axis, tcl=tcll, ...)
+             mgpX3 <- if (is.null(mgp)) { c(3, max(0, 0.2-tcll), 0.3 ) } else { mgp }
+             if (plot.bottom.axis) 
+                axis(side=1, at=xlabb, labels=xlabbt, mgp=mgpX, cex.axis=cex.axis, tcl=tcll, ...)
+             if (plot.top.axis) {
+                axis(side=3, at=xlabb, labels=xlabbt, mgp=mgpX3, cex.axis=cex.axis, tcl=tcll, ...)
+             }
          } else {
-             axis(side = 1, at = xlabb, labels = FALSE, mgp=mgpX, ...)
+             if (plot.bottom.axis) 
+                axis(side=1, at=xlabb, labels=FALSE, mgp=mgpX, ...)
+             if (plot.top.axis)
+                axis(side=3, at=xlabb, labels=FALSE, mgp=mgpX3, ...)
          }
        }
        x1 <- x1 + inc2 + xSpace
@@ -848,65 +1001,78 @@ makeStyle <- function(...) {
        if (!is.null(fun1[[i]])) {
           fun1[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
        }
-       if (plot.poly & exag[i] & !cumulPlot) {
+       if (plot.poly[i] & exag[i] & !cumulPlot) {
           y <- c(y_var[1], y_var, y_var[nsam2])
           x2 <- c(us[1], x_var*exag.mult[i], us[1])
-          polygon(x2, y, col = col.exag[i], border = NA)
+          polygon(x2, y, col = col.exag[i], border=col.exag.line, lwd=lwd.exag.line)
        }
        if (bar.back & !cumulPlot) {
-          if (is.logical(plot.bar)) {
-            if (plot.bar) {
+          if (is.logical(plot.bar[i])) {
+            if (plot.bar[i]) {
               if (sep.bar) {
-                 segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar)
+                 segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.sep.bar)
               } else {
                  segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar[i])                            }
             }
           } else {
-             if (plot.bar=="full") {
+             if (plot.bar[i]=="full") {
                 abline(h=y_var, col=cc.bar, lwd=lwd.bar)
              }
           }
        }
-       if (plot.poly) {
+       if (plot.poly[i]) {
           y <- c(y_var[1], y_var, y_var[nsam2])
           x <- c(us[1], x_var, us[1])
           if (exag[i]) {
              x2 <- c(us[1], x_var*exag.mult[i], us[1])
-             polygon(x2, y, col = col.exag[i], border = NA)
+             polygon(x2, y, col = col.exag[i], border=col.exag.line, lwd=lwd.exag.line)
           }
-          polygon(x, y, col = cc.poly[i], border = NA, lwd=lwd.poly)
+          polygon(x, y, col = cc.poly[i], border = cc.poly.line[i], lwd=lwd.poly.line)
        }
        if (!bar.back & !cumulPlot) {
-          if (is.logical(plot.bar)) {
-             if (plot.bar) {
+          if (is.logical(plot.bar[i])) {
+             if (plot.bar[i]) {
                if (sep.bar) {
-                  segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar)
+                  segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.sep.bar)
                } else {
                   segments(rep(us[1], nsam2), y_var, x_var, y_var, lwd = lwd.bar, col = cc.bar[i])                              }
              }
           } else {
-             if (plot.bar=="full") {
+             if (plot.bar[i]=="full") {
                 abline(h=y_var, col=cc.bar, lwd=lwd.bar)
              }
           }
        }
-       lines(c(us[1], us[1]), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), ...)
+       yus <- par("usr")
+       yymin <- max(c(min(y_var, na.rm=TRUE), min(yus[3:4]))) 
+       yymax <- min(c(max(y_var, na.rm=TRUE), max(yus[3:4]))) 
+
+       lines(c(us[1], us[1]), c(yymin, yymax), lwd=lwd.axis, 
+#       lines(c(us[1], us[1]), c(min(y_var, na.rm=TRUE), max(y_var, na.rm=TRUE)), lwd=lwd.axis, 
+             col=col.axis, xpd=NA, ...)
        if (ty == "l") 
           lines(x_var, y_var, col = cc.line[i], lwd = lwd.line)
-       if (plot.symb & !cumulPlot) {
-          points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=col.symb, xpd=FALSE)
+       if (plot.symb[i] & !cumulPlot) {
+          points(x_var, y_var, pch=symb.pch, cex=symb.cex, col=cc.symb[i], xpd=FALSE)
        }
        if (!is.null(fun2[[i]])) {
           fun2[[i]](x=x_var, y=y_var, i=i, nm=x.names[i])
        }
        mgpX <- if (is.null(mgp)) { c(3, max(0.0, spc-tcll), 0.3) } else { mgp }
+       mgpX3 <- if (is.null(mgp)) { c(3, max(0, 0.2-tcll), 0.3 ) } else { mgp }
        if (x.axis[i]) {
           if (scale.minmax) {
              nn <- length(axTicks(1))
              tk <- c(axTicks(1)[1], axTicks(1)[nn])
-             axis(side = 1, at = tk, labels = as.character(tk), cex.axis=cex.axis, mgp=mgpX, tcl=tcll, ...)
+             if (plot.bottom.axis) 
+                axis(side=1, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX, tcl=tcll, ...)
+             if (plot.top.axis)
+                axis(side=3, at=tk, labels=as.character(tk), cex.axis=cex.axis, mgp=mgpX3, tcl=tcll, ...)
           } else {
-             axis(side = 1, cex.axis=cex.axis, mgp=mgpX, ...)
+             if (plot.bottom.axis) 
+                axis(side=1, cex.axis=cex.axis, mgp=mgpX, ...)
+             if (plot.top.axis)
+                axis(side=3, cex.axis=cex.axis, mgp=mgpX3, ...)
           }
        }
        x1 <- x1 + inc2 + xSpace
@@ -945,38 +1111,11 @@ makeStyle <- function(...) {
    par(mai = oldmai)
    oldfig[oldfig < 0] <- 0
    par(fig = oldfig)
-   ll <- list(call=fcall, box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop), usr = usr1, mgpX=mgpX,
+   xRight2 <- xRight + ifelse(is.null(clust), 0, clust.width)
+   ll <- list(call=fcall, box=c(xLeft=xLeft, xRight=xRight, yBottom=yBottom, yTop=yTop), 
+              usr = usr1, mgpX=mgpX, xRight=xRight2, orig.fig=orig.fig,
               yvar=yvar[, 1, drop=TRUE], ylim=ylim, y.rev=y.rev, figs=figs, usrs=usrs)
    invisible(ll)
-}
-
-addRPClustZone <- function(x, clust, nZone="auto", ...) {
-  if (nZone == "auto") {
-    bs <- bstick(clust, plot=FALSE)
-    bs2 <- bs$dispersion <= bs$bstick
-    nZone <- which(bs2)[1]
-    if (nZone < 2) {
-        print("There are no significant zones in these data.")
-     }
-  } 
-  if (nZone > 1) {
-    oldpar <- par(c("fig", "mar", "usr"))
-    par(fig=x$box)
-    par(mar=c(0,0,0,0))
-    par(usr=c(0, 1, x$usr[3], x$usr[4]))
-    cc <- cutree(clust, k=nZone)
-    zn <- which(diff(cc)>0)
-  #   if (x$yaxt.rev)
-  #      x$yvar <- rev(x$yvar)
-    zone <- (x$yvar[zn] + x$yvar[zn+1]) / 2
-    r <- range(c(x$usr[3], x$usr[4]))
-    sel <- which (zone >= r[1] & zone <= r[2])
-    if (length(sel) > 0) {
-      zone <- zone[sel]
-      segments(0, zone, 1, zone, xpd=NA, ...)
-    }
-    par(oldpar)
-  }
 }
 
 addName <- function(x, xLabSpace, srt.xlabel, cex.xlabel, y.rev, offset=0)
@@ -1029,14 +1168,21 @@ plotCumul <- function(x, y, i, nm)
   groupN <- as.integer(colnames(groupData))
   N <- length(x)
   usr <- par("usr")
-  segments(usr[2], usr[3], usr[2], usr[4], col="grey")
+#  segments(usr[2], usr[3], usr[2], usr[4], col="grey")
+  
+  yymin <- max(min(y, na.rm=TRUE), min(usr[3:4]))
+  yymax <- min(max(y, na.rm=TRUE), max(usr[3:4]))
+  
+  rect(usr[1], yymin, usr[2], yymax, border=col.axis, lwd=lwd.axis, xpd=NA)
+#  rect(usr[1], min(y, na.rm=TRUE), usr[2], max(y, na.rm=TRUE), border=col.axis, lwd=lwd.axis, xpd=NA)
+#  segments(usr[2], min(y, na.rm=TRUE), usr[2], max(y, na.rm=TRUE), col="grey")
   for (j in nG:1) {
     y2 <- c(y[1], y, y[N])
     x2 <- c(usr[1], groupData[, j, drop=TRUE], usr[1])
-    bord <- NA
-    if (exists("cumulLine") & exists("cumulLineCol") & cumulLine)
+#    bord <- NA
+#    if (exists("cumulLine") & exists("cumulLineCol") & cumulLine)
        bord <- cumulLineCol
-    polygon(x2, y2, col=groupColours[groupN[j]], border = bord, xpd=FALSE)
+    polygon(x2, y2, col=groupColours[groupN[j]], border = bord, lwd=cumulLineLwd, xpd=FALSE)
   } 
   fig <- par("fig")
   oldmar <- par("mar")
@@ -1053,9 +1199,9 @@ plotCumul <- function(x, y, i, nm)
   inc <- min(0.25, lineHeight_in) * scale
   for (i in nG:1) {
      y <- (nG-i)*inc*1.3 + (0.1* scale)
-     rect(0.8, y, 1.0, y+inc, col=groupColours[groupN[i]])
+     rect(0.8, y, 1.0, y+inc, col=groupColours[groupN[i]], xpd=NA)
      if (!is.null(groupNames)) {
-        text(0.75, y+inc/2, groupNames[i], adj=c(1, 0.5), cex=groupCex)
+        text(0.75, y+inc/2, groupNames[i], adj=c(1, 0.5), cex=groupCex, xpd=NA)
      }
   }
   par(mar=oldmar)
@@ -1063,24 +1209,34 @@ plotCumul <- function(x, y, i, nm)
   par(usr=oldusr)
 }
 
-addRPZone <- function(rp, upper, lower=NULL, ...) {
+addRPZone <- function(rp, upper, lower=NULL, xLeft=NULL, xRight=NULL, col="red", 
+                      alpha=0.1, border=NA, verbose=TRUE, ...) {
   oldpar <- par(c("fig", "mar", "usr"))
-  par(fig=figCnvt(rp$style$orig.fig, rp$box))
+  if (!is.null(xLeft))
+    rp$box[1] <- xLeft
+  if (!is.null(xRight))
+    rp$box[2] <- xRight
+  make.col <- function(x, alpha) {
+      apply(col2rgb(x)/255, 2, function(x) rgb(x[1], x[2], x[3], alpha))
+  }
+  fillcol <- make.col(col, alpha)
+  par(fig=figCnvt(rp$orig.fig, rp$box))
   par(mar=c(0,0,0,0))
   par(usr=c(0, 1, rp$usr[3], rp$usr[4]))
   if (is.null(lower))
-    segments(0, upper, 1, upper, xpd=NA, ...)
+    segments(0, upper, 1, upper, xpd=NA, col=col, ...)
   else
-    rect(0, lower, 1, upper, ...)
+    rect(0, lower, 1, upper, col=fillcol, border=border, ...)
   par(oldpar)
 }
 
-addRPClust <- function(rp, clust, xRight=0.99, ...) {
+addRPClust <- function(rp, clust, xLeft=NULL, xRight=0.99, verbose=TRUE, ...) {
 
   if (is.null(clust) | !is(clust, "chclust"))
     stop("clust show be a chclust object.")
   oldpar <- par(c("fig", "mar", "usr"))
-  
+  if (!is.null(xLeft))
+    rp$box[2] <- xLeft
   par(fig = c(rp$box[2], xRight, rp$box[3], rp$box[4]))
   par(mar=c(0,0,0,0))
   par(new = TRUE)
@@ -1090,6 +1246,37 @@ addRPClust <- function(rp, clust, xRight=0.99, ...) {
   else
     xl <- ylim
   plot(clust, xvar=rp$yvar, horiz=TRUE, x.rev=rp$y.rev, labels=rep("", length(rp$yvar)), 
-       hang=-1, mgp=rp$mgp, cex.axis=rp$style$cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=rp$style$tcll, ...)
+       hang=-1, mgp=rp$mgp, cex.axis=rp$style$cex.axis, xlim=xl, yaxs="i", xpd=FALSE, tcl=rp$style$tcl, ...)
    par(oldpar)
+}
+
+addRPClustZone <- function(rp, clust, nZone="auto", xLeft=NULL, xRight=NULL, verbose=TRUE, ...) {
+  if (nZone == "auto") {
+    bs <- bstick(clust, plot=FALSE)
+    bs2 <- bs$dispersion <= bs$bstick
+    nZone <- which(bs2)[1]
+    if (nZone < 2 & verbose) {
+        message("There are no significant zones in these data.")
+     }
+  } 
+  if (nZone > 1) {
+    oldpar <- par(c("fig", "mar", "usr"))
+    if (!is.null(xLeft))
+      rp$box[1] <- xLeft
+    if (!is.null(xRight))
+      rp$box[2] <- xRight
+    par(fig=rp$box)
+    par(mar=c(0,0,0,0))
+    par(usr=c(0, 1, rp$usr[3], rp$usr[4]))
+    cc <- cutree(clust, k=nZone)
+    zn <- which(diff(cc)>0)
+    zone <- (rp$yvar[zn] + rp$yvar[zn+1]) / 2
+    r <- range(c(rp$usr[3], rp$usr[4]))
+    sel <- which (zone >= r[1] & zone <= r[2])
+    if (length(sel) > 0) {
+      zone <- zone[sel]
+      segments(0, zone, 1, zone, xpd=NA, ...)
+    }
+    par(oldpar)
+  }
 }

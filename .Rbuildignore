@@ -4,3 +4,5 @@ README.md
 ^.*\.o$
 ^vignettes/Cache
 ^R/MLRC3\.r$
+^Test/*.*
+^Test.*

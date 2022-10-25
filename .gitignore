@@ -6,3 +6,5 @@ src/*.so
 src/*.dll
 vignettes/Cache/*.*
 R/MLRC3.r
+^Test/*.*
+^Test.*

@@ -22,15 +22,15 @@ importFrom(mgcv,
 ## grDevices
 importFrom("grDevices", "chull", "col2rgb", "rgb", "dev.size")
 
-importFrom(flextable, flextable, autofit, height_all, padding)
+# importFrom(flextable, flextable, autofit, height_all, padding)
 
 ## Export regular function names (no dots)
 export(chclust, crossval, performance, inkspot, Merge, bstick)
 
 ## export regular functions with dot names
 export(compare.datasets, 
-       rand.t.test, interp.dataset, strat.plot, riojaPlot, addClustZone, 
-       addClustZone, addZone, addZone2, listStyles)
+       rand.t.test, interp.dataset, strat.plot, riojaPlot, riojaPlot2, addClustZone, 
+       addClustZone, addZone, addRPZone, addRPClustZone, addRPClust, listStyles, makeStyles)
 
 ## export utility functions
 export(hulls, figCnvt, communality, paldist, paldist2,

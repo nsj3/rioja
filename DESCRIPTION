@@ -1,14 +1,14 @@
 Package: rioja
 Type: Package
 Title: Analysis of Quaternary Science Data
-Version: 1.0-1
-Date: 2022-10-15
+Version: 1.0-2
+Date: 2022-10-25
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: R (>= 3.5)
-Imports: vegan, mgcv, grDevices, sjmisc, stringr, dplyr, methods, forcats, flextable
-Suggests: maptools, foreach, knitr, rmarkdown, R.rsp, flextable
-Description: Constrained clustering, transfer functions, and other methods for analysing Quaternary science data.
+Imports: vegan, mgcv, grDevices, sjmisc, stringr, dplyr, methods, forcats
+Suggests: maptools, foreach, knitr, rmarkdown, R.rsp, flextable, readxl, tibble, readr
+Description: Stratigraphic diagrams, constrained clustering, transfer functions, and other methods for analysing Quaternary science data.
 License: GPL-2
 URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/rioja
 NeedsCompilation: yes

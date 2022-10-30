@@ -1,8 +1,8 @@
 Package: rioja
 Type: Package
 Title: Analysis of Quaternary Science Data
-Version: 1.0-4
-Date: 2022-10-28
+Version: 1.0-5
+Date: 2022-10-30
 Author: Steve Juggins
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: R (>= 3.5)
@@ -13,3 +13,4 @@ License: GPL-2
 URL: http://www.staff.ncl.ac.uk/stephen.juggins/, https://github.com/nsj3/rioja
 NeedsCompilation: yes
 Repository: CRAN
+LazyData: true

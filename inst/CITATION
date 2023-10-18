@@ -2,9 +2,9 @@ if(!exists("meta") || is.null(meta)) meta <- packageDescription("rioja")
 
 citHeader("To cite package 'rioja' in publications use:")
 
-citEntry(entry="Manual",
+bibentry(bibtype="Unpublished",
 	title ="rioja: Analysis of Quaternary Science Data",
-	author = personList(as.person("Steve Juggins")),
+	author = c(as.person("Steve Juggins")),
 	year = format(as.Date(meta$Date), "%Y"),
 	note = paste("R package version", meta$Version),
 	url = "https://cran.r-project.org/package=rioja",

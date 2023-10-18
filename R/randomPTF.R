@@ -92,12 +92,9 @@ plot.randomPTF <- function(x, use.pointLabel=TRUE, ...) {
   mx <- apply(x$spec, 2, max)
   plot(x$VI[, 1], mx[mt], xlab="VI", ylab="Maximum abundance", ...)
   if (use.pointLabel) {
-    if (!requireNamespace("maptools")) {
-      text(x$VI[, 1], mx[mt], labels=rownames(x$VI), ...)
-    } else {
-      maptools::pointLabel(x$VI[, 1], mx[mt], labels=rownames(x$VI), ...)
-    }
+    warning("argument use.pointlabel is deprecated, and will be ignored")
   }
+  text(x$VI[, 1], mx[mt], labels=rownames(x$VI), ...)
 }
 
 print.randomPTF <- function(x, ...) {

@@ -133,7 +133,7 @@ plot.chclust <- function (x, labels = NULL, hang = 0.1,
 #        2) find coordinates to draw the  | |
 #        3) return (*x,*y) of "my anchor"
 #
-# Essentially a R version of the C code of function drawdend in the base R.
+# Essentially a R version of the C code of function drawdend in base R.
 # Modified to plot vertical or horizontal diagrams by Steve Juggins
 
     xx <- vector("numeric", length=4)

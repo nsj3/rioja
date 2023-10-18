@@ -25,7 +25,7 @@ randomPTF(spec, env, fun, ncol = 1, nVar, nTF = 500, verbose = TRUE,
   \item{do.parallel}{ logical to run in parallel on multi-core machines.  If true a suitable parallel back-end should be installed (see examples). }
   \item{\dots}{ additional parameters to the transfer function call. }
   \item{x}{ an object of class randomPTF. }
-  \item{use.pointLabel}{ logical to label points using function \code{labelPoints} in package \code{maptools}. }
+  \item{use.pointLabel}{ argument is deprecated. }
 }
 \details{
 Function \code{randomPTF} calculates taxon importance values using a method analogous to that used in random forests and described in Juggins et al. (2015).

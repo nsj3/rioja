@@ -40,25 +40,25 @@ SEXP chclust_c(SEXP sexpData, SEXP sexMethod)
    bool errorFlag = false;
    if (method==1) {
       if (!Conslink(nr, DPtr, &dend))  {
-         PROTECT(eMessage = allocVector(STRSXP, 1));
-         SET_STRING_ELT(eMessage, 0, mkChar("Error in Conslink C++ code"));
+         PROTECT(eMessage = Rf_allocVector(STRSXP, 1));
+         SET_STRING_ELT(eMessage, 0, Rf_mkChar("Error in Conslink C++ code"));
          errorFlag = true;
       }
    }
    else if (method==2) {
       if (!ConISS(nr, DPtr, &dend)) {
-         PROTECT(eMessage = allocVector(STRSXP, 1));
-         SET_STRING_ELT(eMessage, 0, mkChar("Error in ConISS C++ code"));
+         PROTECT(eMessage = Rf_allocVector(STRSXP, 1));
+         SET_STRING_ELT(eMessage, 0, Rf_mkChar("Error in ConISS C++ code"));
          errorFlag = true;
       }
    }
    else {
-      PROTECT(eMessage = allocVector(STRSXP, 1));
-      SET_STRING_ELT(eMessage, 0, mkChar("Unknown clustering method"));
+      PROTECT(eMessage = Rf_allocVector(STRSXP, 1));
+      SET_STRING_ELT(eMessage, 0, Rf_mkChar("Unknown clustering method"));
          errorFlag = true;
    }
    SEXP sDend;
-   PROTECT(sDend = allocVector(REALSXP, nr-1));
+   PROTECT(sDend = Rf_allocVector(REALSXP, nr-1));
    for (i=1;i<nr;i++) {
       REAL(sDend)[i-1] = dend[i];
    }

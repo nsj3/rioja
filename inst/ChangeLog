@@ -1,5 +1,9 @@
 rioja Change Log
 
+version 1.0-7
+Changed mkChar and allocVector to RF- versions for
+compatibility with _R_CXX_USE_NO_REMAP_ install option
+
 version 1.0-6
 minor improvements and bug fixes
 

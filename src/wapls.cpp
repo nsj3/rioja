@@ -177,7 +177,7 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
       Index II(i);
       gam = gam(II, ColWise);
 //      sprintf(str, "Warning: Only %d components can be extracted", i);
-//      SET_STRING_ELT(eMessage, 0, mkChar(str));
+//      SET_STRING_ELT(eMessage, 0, Rf_mkChar(str));
       nPLS = i;
    }
    if (bIsWAPLS) {
@@ -203,10 +203,10 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
    }
    SEXP ret = R_NilValue, R_coef = R_NilValue;
 
-   PROTECT(ret = allocVector(VECSXP, 6)); 
-   PROTECT(retNames = allocVector(STRSXP, 6));
+   PROTECT(ret = Rf_allocVector(VECSXP, 6)); 
+   PROTECT(retNames = Rf_allocVector(STRSXP, 6));
 
-   PROTECT(R_coef = allocVector(REALSXP, nc*nPLS));
+   PROTECT(R_coef = Rf_allocVector(REALSXP, nc*nPLS));
    for (i=0;i<nc;i++) {
        for (j=0;j<nPLS;j++) {
            if (beta.isMissing(i,j)) 
@@ -215,17 +215,17 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
                REAL(R_coef)[i + j*nc] = (beta)(i,j);
        }
    }
-   PROTECT(R_meanY = allocVector(REALSXP, 1));
+   PROTECT(R_meanY = Rf_allocVector(REALSXP, 1));
    REAL(R_meanY)[0] = meanY;
    SET_VECTOR_ELT(ret, 0, R_coef);
    SET_VECTOR_ELT(ret, 1, R_meanY);
-   SET_STRING_ELT(retNames, 0, mkChar("Beta"));
-   SET_STRING_ELT(retNames, 1, mkChar("meanY"));
+   SET_STRING_ELT(retNames, 0, Rf_mkChar("Beta"));
+   SET_STRING_ELT(retNames, 1, Rf_mkChar("meanY"));
    UNPROTECT(2);
 
    if (!bLean) {
       SEXP R_T, R_P;
-      PROTECT(R_T = allocVector(REALSXP, nr*nPLS));
+      PROTECT(R_T = Rf_allocVector(REALSXP, nr*nPLS));
       for (i=0;i<nr;i++) {
           for (j=0;j<nPLS;j++) {
               if (T.isMissing(i,j)) 
@@ -234,7 +234,7 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
                   REAL(R_T)[i + j*nr] = T(i,j);
          }
       }
-      PROTECT(R_P = allocVector(REALSXP, nc*nPLS));
+      PROTECT(R_P = Rf_allocVector(REALSXP, nc*nPLS));
       for (i=0;i<nc;i++) {
           for (j=0;j<nPLS;j++) {
               if (P.isMissing(i,j)) 
@@ -248,11 +248,11 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
       UNPROTECT(2);
    }
 
-   SET_STRING_ELT(retNames, 2, mkChar("T"));
-   SET_STRING_ELT(retNames, 3, mkChar("P"));
+   SET_STRING_ELT(retNames, 2, Rf_mkChar("T"));
+   SET_STRING_ELT(retNames, 3, Rf_mkChar("P"));
 
    if (!bIsWAPLS) {
-      PROTECT(R_meanT = allocVector(REALSXP, nPLS));
+      PROTECT(R_meanT = Rf_allocVector(REALSXP, nPLS));
       for (j=0;j<nPLS;j++) {
          if (meanT.isMissing(0,j)) 
              REAL(R_meanT)[j] = NA_REAL;
@@ -260,7 +260,7 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
              REAL(R_meanT)[j] = meanT(0,j);
       }
       SET_VECTOR_ELT(ret, 4, R_meanT);
-      PROTECT(R_sdX = allocVector(REALSXP, nc));
+      PROTECT(R_sdX = Rf_allocVector(REALSXP, nc));
       for (j=0;j<nc;j++) {
          if (C.isMissing(0,j)) 
              REAL(R_sdX)[j] = NA_REAL;
@@ -271,8 +271,8 @@ SEXP WAPLS_fit(SEXP sexp_SpecData, SEXP sexp_EnvData, SEXP sexpNPLS, SEXP sexpIs
       UNPROTECT(2);
    }
 
-   SET_STRING_ELT(retNames, 4, mkChar("meanT"));
-   SET_STRING_ELT(retNames, 5, mkChar("sdX"));
+   SET_STRING_ELT(retNames, 4, Rf_mkChar("meanT"));
+   SET_STRING_ELT(retNames, 5, Rf_mkChar("sdX"));
 
    SET_NAMES(ret, retNames);
    UNPROTECT(2);
@@ -368,7 +368,7 @@ SEXP WAPLS_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanY, SEXP sex
       }
    }
 
-   PROTECT(R_est = allocVector(REALSXP, nr*nPLS));
+   PROTECT(R_est = Rf_allocVector(REALSXP, nr*nPLS));
    for (i=0;i<nr;i++) {
        for (j=0;j<nPLS;j++) {
            if (est.isMissing(i,j)) 

@@ -1,9 +1,9 @@
 Package: rioja
 Type: Package
 Title: Analysis of Quaternary Science Data
-Version: 1.0-6
-Date: 2023-10-18
-Author: Steve Juggins
+Version: 1.0-7
+Date: 2024-09-03
+Authors@R: person("Steve Juggins", role=c("aut", "cre"), email="Stephen.Juggins@ncl.ac.uk", comment = c(ORCID = "0000-0003-4466-424X"))
 Maintainer: Steve Juggins <Stephen.Juggins@ncl.ac.uk>
 Depends: R (>= 3.5)
 Imports: vegan, mgcv, grDevices, methods

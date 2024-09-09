@@ -72,8 +72,8 @@ extern "C" {
  	 dMat x2 = ones.concat(X.concat(X * X,ColWise), ColWise);
    dMat sp(nr, 1, 0.0);
 
-   PROTECT(R_Beta = allocVector(REALSXP, nc*3));
-   PROTECT(R_IBeta = allocVector(INTSXP, nc));
+   PROTECT(R_Beta = Rf_allocVector(REALSXP, nc*3));
+   PROTECT(R_IBeta = Rf_allocVector(INTSXP, nc));
 	 for (i=0;i<nc;i++) {
       for (j=0;j<nr;j++)
          sp(j,0) = Y(j,i);
@@ -99,12 +99,12 @@ extern "C" {
       INTEGER(R_IBeta)[i] = IBeta(i);
    }
 
-   PROTECT(ret = allocVector(VECSXP, 2)); 
-   PROTECT(retNames = allocVector(STRSXP, 2));
+   PROTECT(ret = Rf_allocVector(VECSXP, 2)); 
+   PROTECT(retNames = Rf_allocVector(STRSXP, 2));
    SET_VECTOR_ELT(ret, 0, R_Beta);
    SET_VECTOR_ELT(ret, 1, R_IBeta);
-   SET_STRING_ELT(retNames, 0, mkChar("Beta"));
-   SET_STRING_ELT(retNames, 1, mkChar("IBeta"));
+   SET_STRING_ELT(retNames, 0, Rf_mkChar("Beta"));
+   SET_STRING_ELT(retNames, 1, Rf_mkChar("IBeta"));
    SET_NAMES(ret, retNames);
    UNPROTECT(4);
    return(ret);
@@ -196,7 +196,7 @@ SEXP MLRC_predict(SEXP sexp_SpecData, SEXP sexp_Beta, SEXP sexp_meanX, SEXP sexp
       }
    }
    UNPROTECT(1);
-   PROTECT(R_pred = allocVector(REALSXP, nr));
+   PROTECT(R_pred = Rf_allocVector(REALSXP, nr));
    dMat sp(nc, 1, 0.0);
    for (i=0;i<nr;i++) {   
       for (j=0;j<nc;j++) {
